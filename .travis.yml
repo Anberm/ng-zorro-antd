@@ -3,18 +3,14 @@ dist: trusty
 language: node_js
 node_js:
   - '6.10'
-branches:
-  only:
-  - master
 
 env:
-  - TASK=build
+  - TASK=pre-release
   - TASK=test
   - TASK=lint
   - TASK=integration-cli
   - TASK=integration-webpack
   - TASK=integration-rollup
-
 addons:
 apt:
   sources:
@@ -35,6 +31,6 @@ before_script:
 script:
   - npm run $TASK
   - |
-    if [ "$TASK" = "test" ]; then 
-      cat ./coverage/lcov.info | ./node_modules/.bin/coveralls 
+    if [ "$TASK" = "test" ]; then
+      cat ./coverage/lcov.info | ./node_modules/.bin/codecov
     fi

@@ -4,36 +4,52 @@
   ],
   "rules": {
     "adjacent-overload-signatures": true,
-    "align": [
-      true,
-      "parameters", 
-      "statements",
-      "members",
-      "elements"
-    ],
-    "array-type": [true, "array-simple"],
-    "arrow-return-shorthand": true,
-    "ban-comma-operator": true,
-    "ban-types": [
-      true, 
-      ["Object", "Use {} instead."],
-      ["String", "Use string instead."],
-      ["Number", "Use number instead."],
-      ["Boolean", "Use boolean instead."],
-      ["Function", "Use specific callable interface instead."]
-    ],
-    "binary-expression-operand-order": true,
+    "callable-types": true,
     "class-name": true,
     "comment-format": [
       true,
       "check-space"
     ],
-    "curly": [
+    "align": [
       true,
-      "ignore-same-line"
+      "parameters",
+      "statements"
     ],
+    "array-type": [
+      true,
+      "array-simple"
+    ],
+    "arrow-return-shorthand": true,
+    "ban-types": [
+      true,
+      [
+        "Object",
+        "Use {} instead."
+      ],
+      [
+        "String",
+        "Use string instead."
+      ],
+      [
+        "Number",
+        "Use number instead."
+      ],
+      [
+        "Boolean",
+        "Use boolean instead."
+      ],
+      [
+        "Function",
+        "Use specific callable interface instead."
+      ]
+    ],
+    "binary-expression-operand-order": true,
+    "curly": true,
     "encoding": true,
     "eofline": true,
+    "deprecation": {
+      "severity": "warn"
+    },
     "import-blacklist": [
       true,
       "rxjs",
@@ -44,43 +60,21 @@
       true,
       "spaces"
     ],
-    "interface-name": [true, "never-prefix"],
+    "interface-name": [
+      true,
+      "never-prefix"
+    ],
     "interface-over-type-literal": true,
     "label-position": true,
-    "max-line-length": [false, 120],
-    "member-access": [
-      true,
-      "no-public",
-      "check-parameter-property"
-    ],
-    "member-ordering": [
-      false,
-      {
-        "order": [
-          "public-static-field",
-          "protected-static-field",
-          "private-static-field",
-          "public-static-method",
-          "protected-static-method",
-          "private-static-method",
-          "public-instance-field",
-          "protected-instance-field",
-          "private-instance-field",
-          "public-constructor",
-          "protected-constructor",
-          "private-constructor",
-          "public-instance-method",
-          "protected-instance-method",
-          "private-instance-method"
-        ]
-      }
-    ],
     "new-parens": true,
     "no-angle-bracket-type-assertion": true,
+    "member-access": false,
     "no-any": true,
     "no-arg": true,
     "no-bitwise": false,
-    "no-consecutive-blank-lines": true,
+    "no-consecutive-blank-lines": [
+      true
+    ],
     "no-console": [
       true,
       "debug",
@@ -94,10 +88,7 @@
     "no-debugger": true,
     "no-duplicate-imports": true,
     "no-duplicate-super": true,
-    "no-empty": [
-      false, 
-      "allow-empty-catch"
-    ],
+    "no-empty": false,
     "no-empty-interface": true,
     "no-eval": true,
     "no-floating-promises": true,
@@ -108,13 +99,15 @@
       "ignore-params",
       "ignore-properties"
     ],
-    "no-implicit-dependencies": true,
     "no-invalid-template-strings": true,
     "no-invalid-this": true,
     "no-irregular-whitespace": true,
     "no-magic-numbers": false,
     "no-misused-new": true,
-    "no-namespace": [true, "allow-declarations"],
+    "no-namespace": [
+      true,
+      "allow-declarations"
+    ],
     "no-non-null-assertion": true,
     "no-shadowed-variable": true,
     "no-sparse-arrays": true,
@@ -130,7 +123,10 @@
     "no-var-keyword": true,
     "number-literal-format": true,
     "object-literal-sort-keys": false,
-    "object-literal-key-quotes": [true, "consistent"],
+    "object-literal-key-quotes": [
+      true,
+      "consistent"
+    ],
     "object-literal-shorthand": true,
     "one-line": [
       true,
@@ -139,14 +135,15 @@
       "check-else",
       "check-whitespace"
     ],
-    "one-variable-per-declaration": [true, "ignore-for-loop"],
+    "one-variable-per-declaration": [
+      true,
+      "ignore-for-loop"
+    ],
     "ordered-imports": [
       true,
       {
         "import-sources-order": "lowercase-last",
-        "grouped-imports": true,
-        "named-imports-order": "lowercase-first",
-        "module-source-path": "full"
+        "named-imports-order": "lowercase-first"
       }
     ],
     "prefer-conditional-expression": false,
@@ -154,7 +151,10 @@
     "prefer-for-of": true,
     "prefer-method-signature": true,
     "prefer-object-spread": true,
-    "prefer-template": [true, "allow-single-concat"],
+    "prefer-template": [
+      true,
+      "allow-single-concat"
+    ],
     "quotemark": [
       true,
       "single"
@@ -165,17 +165,20 @@
       "always"
     ],
     "trailing-comma": [
-      true, 
-      {"multiline": "ignore", "singleline": "never"}
+      true,
+      {
+        "multiline": "never",
+        "singleline": "never"
+      }
     ],
     "triple-equals": [
       true,
       "allow-null-check"
     ],
     "typedef": [
-      true, 
-      "call-signature", 
-      "parameter", 
+      true,
+      "call-signature",
+      "parameter",
       "property-declaration"
     ],
     "typedef-whitespace": [
@@ -188,7 +191,6 @@
         "variable-declaration": "nospace"
       }
     ],
-    "typeof-compare": true,
     "unified-signatures": true,
     "use-isnan": true,
     "variable-name": [
@@ -202,17 +204,20 @@
       "check-operator",
       "check-module",
       "check-separator",
-      "check-rest-spread",
       "check-type",
-      "check-type-operator",
+      "check-typecast",
       "check-preblock"
     ],
     "directive-selector": [
       true,
       "attribute",
-      "nz",
-      ["camelCase","kebab-case"]
-
+      [
+        "nz"
+      ],
+      [
+        "camelCase",
+        "kebab-case"
+      ]
     ],
     "component-selector": [
       true,
@@ -226,7 +231,11 @@
       ],
       "kebab-case"
     ],
-    "angular-whitespace": [true, "check-interpolation"],
+    "angular-whitespace": [
+      false,
+      "check-interpolation",
+      "check-semicolon"
+    ],
     "no-output-on-prefix": true,
     "use-input-property-decorator": true,
     "use-output-property-decorator": true,

@@ -31,7 +31,7 @@
     "@angular/platform-browser-dynamic": "file:lib/@angular/platform-browser-dynamic",
     "@angular/router": "file:lib/@angular/router",
     "core-js": "file:lib/core-js",
-    "moment": "file:lib/moment",
+    "date-fns": "file:lib/date-fns",
     "ng-zorro-antd": "file:lib/ng-zorro-antd",
     "rxjs": "file:lib/rxjs",
     "zone.js": "file:lib/zone.js"
