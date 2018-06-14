@@ -1,4 +1,17 @@
-import { NzTreeNodeOptions } from './interface';
+export interface NzTreeNodeOptions {
+  title: string;
+  key: string;
+  isLeaf?: boolean;
+  checked?: boolean;
+  selected?: boolean;
+  selectable?: boolean;
+  disabled?: boolean;
+  disableCheckbox?: boolean;
+  expanded?: boolean;
+  children?: NzTreeNodeOptions[];
+  // tslint:disable-next-line:no-any
+  [key: string]: any;
+}
 
 export class NzTreeNode {
   title?: string;
@@ -54,7 +67,7 @@ export class NzTreeNode {
     if (typeof(option.children) !== 'undefined' && option.children !== null) {
       option.children.forEach(
         (nodeOptions) => {
-          if (option.checked && !option.disabled) {
+          if (option.checked && !option.disabled && !nodeOptions.disabled && !nodeOptions.disableCheckbox) {
             nodeOptions.checked = option.checked;
           }
           this.children.push(new NzTreeNode(nodeOptions, this));
@@ -73,8 +86,6 @@ export class NzTreeNode {
 
   /**
    * 支持按索引位置插入,叶子节点不可添加
-   * @param {Array<NzTreeNode>|any[]} children
-   * @param {number} childPos
    */
   // tslint:disable-next-line:no-any
   public addChildren(children: any[], childPos: number = -1): void {
@@ -86,8 +97,12 @@ export class NzTreeNode {
         (node) => {
           let tNode = node;
           if (tNode instanceof NzTreeNode) {
-            tNode.parentNode = this;
+            tNode = new NzTreeNode({
+              checked: !tNode.origin.disabled && !tNode.origin.disableCheckbox && this.isChecked,
+              ...(tNode.origin as NzTreeNodeOptions)
+            }, this);
           } else {
+            node.checked = !node.disabled && !node.disableCheckbox && this.isChecked;
             tNode = new NzTreeNode(node, this);
           }
           tNode.level = this.level + 1;

@@ -1,7 +1,8 @@
 import { DOWN_ARROW, ENTER, ESCAPE, TAB, UP_ARROW } from '@angular/cdk/keycodes';
 import {
   ConnectedOverlayPositionChange,
-  ConnectedPositionStrategy,
+  ConnectionPositionPair,
+  FlexibleConnectedPositionStrategy,
   Overlay,
   OverlayConfig,
   OverlayRef,
@@ -23,12 +24,8 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { Subscription } from 'rxjs/Subscription';
-import { fromEvent } from 'rxjs/observable/fromEvent';
-import { merge } from 'rxjs/observable/merge';
-import { delay } from 'rxjs/operators/delay';
-import { distinct } from 'rxjs/operators/distinct';
-import { map } from 'rxjs/operators/map';
+import { fromEvent, merge, Subscription } from 'rxjs';
+import { delay, distinct, map } from 'rxjs/operators';
 
 import { NzAutocompleteOptionComponent } from './nz-autocomplete-option.component';
 import { NzAutocompleteComponent } from './nz-autocomplete.component';
@@ -61,7 +58,7 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
 
   private overlayRef: OverlayRef | null;
   private portal: TemplatePortal<{}>;
-  private positionStrategy: ConnectedPositionStrategy;
+  private positionStrategy: FlexibleConnectedPositionStrategy;
   private previousValue: string | number | null;
   private selectionChangeSubscription: Subscription;
   private optionsChangeSubscription: Subscription;
@@ -78,7 +75,6 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
 
   /**
    * 当前被激活的 Option
-   * @returns {NzAutocompleteOptionComponent}
    */
   get activeOption(): NzAutocompleteOptionComponent {
     if (this.nzAutocomplete && this.nzAutocomplete.options.length) {
@@ -112,7 +108,6 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
 
   /**
    * 订阅数据源改变事件
-   * @returns {Subscription}
    */
   private subscribeOptionsChange(): Subscription {
     return this.nzAutocomplete.options.changes.pipe(
@@ -125,7 +120,6 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
   /**
    * 订阅 option 选择事件
    * 并设置值
-   * @returns {Subscription}
    */
   private subscribeSelectionChange(): Subscription {
     return this.nzAutocomplete.selectionChange
@@ -137,7 +131,6 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
   /**
    * 订阅组件外部的单击事件
    * 并关闭弹窗
-   * @returns {Subscription}
    */
   private subscribeOverlayBackdropClick(): Subscription {
     return merge(
@@ -157,10 +150,9 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
   /**
    * 订阅 Overlay 位置改变事件
    * 并重新设置动画方向
-   * @returns {Subscription}
    */
   private subscribeOverlayPositionChange(): Subscription {
-    return this.positionStrategy.onPositionChange
+    return this.positionStrategy.positionChanges
     .pipe(
       map((position: ConnectedOverlayPositionChange) => position.connectionPair.originY),
       distinct()
@@ -193,7 +185,9 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
     this.nzAutocomplete.isOpen = this.panelOpen = true;
     this.nzAutocomplete.setVisibility();
     this.resetActiveItem();
-
+    if (this.activeOption) {
+      this.activeOption.scrollIntoViewIfNeeded();
+    }
   }
 
   private destroyPanel(): void {
@@ -222,12 +216,11 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
   }
 
   private getOverlayPosition(): PositionStrategy {
-    this.positionStrategy = this._overlay.position().connectedTo(
-      this.getConnectedElement(),
-      { originX: 'start', originY: 'bottom' }, { overlayX: 'start', overlayY: 'top' })
-    .withFallbackPosition(
-      { originX: 'start', originY: 'top' }, { overlayX: 'start', overlayY: 'bottom' }
-    );
+    const positions = [
+      new ConnectionPositionPair({ originX: 'start', originY: 'bottom' }, { overlayX: 'start', overlayY: 'top' }),
+      new ConnectionPositionPair({ originX: 'start', originY: 'top' }, { overlayX: 'start', overlayY: 'bottom' })
+    ];
+    this.positionStrategy = this._overlay.position().flexibleConnectedTo(this.getConnectedElement()).withPositions(positions);
     return this.positionStrategy;
   }
 
@@ -265,20 +258,23 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
       } else {
         this.nzAutocomplete.setNextItemActive();
       }
+      if (this.activeOption) {
+        this.activeOption.scrollIntoViewIfNeeded();
+      }
       this.doBackfill();
     }
   }
 
   private setValueAndClose(option: NzAutocompleteOptionComponent): void {
-    const value = option.getLabel();
-    this.setTriggerValue(value);
+    const value = option.nzValue;
+    this.setTriggerValue(option.getLabel());
     this._onChange(value);
     this._element.nativeElement.focus();
     this.closePanel();
   }
 
   private setTriggerValue(value: string | number | null): void {
-    this._element.nativeElement.value = value;
+    this._element.nativeElement.value = value || '';
   }
 
   private doBackfill(): void {
@@ -318,7 +314,9 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
     return !element.readOnly && !element.disabled;
   }
 
-  writeValue(obj: {}): void {
+  // tslint:disable-next-line:no-any
+  writeValue(value: any): void {
+    this.setTriggerValue(value);
   }
 
   registerOnChange(fn: (value: {}) => {}): void {
@@ -327,6 +325,12 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
 
   registerOnTouched(fn: () => {}): void {
     this._onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    const element: HTMLInputElement = this._element.nativeElement;
+    element.disabled = isDisabled;
+    this.closePanel();
   }
 
   ngOnDestroy(): void {

@@ -6,12 +6,11 @@ import { NzTreeNode } from 'ng-zorro-antd';
   template: `
     <nz-tree [(ngModel)]="nodes"
              [nzShowExpand]="false"
-             [nzDraggable]="true"
              (nzClick)="mouseAction('click', $event)"
              (nzDblClick)="mouseAction('dblclick',$event)"
     >
       <ng-template #nzTreeTemplate let-node>
-        <span class="custom-node" draggable="true" aria-grabbed="true" [class.active]="node.isSelected">
+        <span class="custom-node" [class.active]="node.isSelected">
           <span>
             <i class="anticon anticon-smile-o" *ngIf="node.isExpanded"></i>
             <i class="anticon anticon-frown-o" *ngIf="!node.isExpanded"></i> {{node.title}}
@@ -20,25 +19,27 @@ import { NzTreeNode } from 'ng-zorro-antd';
       </ng-template>
     </nz-tree>`,
   styles  : [ `
+    :host ::ng-deep .ant-tree {
+      overflow: hidden;
+      margin: 0 -24px;
+      padding: 0 24px;
+    }
+    
     .custom-node {
-      padding: 2px 8px;
+      cursor: pointer;
+      line-height: 30px;
+      display: inline-block;
+      margin: 0 -1000px;
+      padding: 0 1000px;
     }
 
     .active {
-      background-color: #bae7ff;
+      background: #1890ff;
+      color: #fff;
     }
 
     .anticon {
-      padding-left: 4px;
-      padding-right: 4px;
-    }
-
-    :host ::ng-deep .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
-      width: calc(100% - 8px);
-    }
-
-    :host ::ng-deep .ant-tree li span[draggable], :host ::ng-deep .ant-tree li span[draggable="true"] {
-      width: calc(100% - 8px);
+      padding: 0 4px;
     }
   ` ]
 })
@@ -47,6 +48,7 @@ export class NzDemoTreeCustomizedIconComponent implements OnInit {
     new NzTreeNode({
       title   : 'root1',
       key     : '1001',
+      expanded: true,
       children: [
         {
           title   : 'child1',
@@ -77,36 +79,9 @@ export class NzDemoTreeCustomizedIconComponent implements OnInit {
               ]
             }
           ]
-        },
-        {
-          title: 'child2',
-          key  : '10002'
         }
       ]
-    }),
-    new NzTreeNode({
-      title   : 'root2',
-      key     : '1002',
-      expanded: true,
-      children: [
-        {
-          title   : 'child2.1',
-          key     : '10021',
-          children: []
-        },
-        {
-          title   : 'child2.2',
-          key     : '10022',
-          children: [
-            {
-              title: 'grandchild2.2.1',
-              key  : '100221'
-            }
-          ]
-        }
-      ]
-    }),
-    new NzTreeNode({ title: 'root3', key: '1003' })
+    })
   ];
 
   mouseAction(name: string, e: any): void {

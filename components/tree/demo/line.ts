@@ -25,11 +25,6 @@ export class NzDemoTreeLineComponent {
           key     : '10001',
           children: [
             {
-              title   : 'child1.1',
-              key     : '100011',
-              children: []
-            },
-            {
               title   : 'child1.2',
               key     : '100012',
               children: [
@@ -49,8 +44,20 @@ export class NzDemoTreeLineComponent {
           ]
         },
         {
-          title: 'child2',
-          key  : '10002'
+          title   : 'child2',
+          key     : '10002',
+          children: [
+            {
+              title : 'grandchild2.1',
+              key   : '1000122',
+              isLeaf: true
+            },
+            {
+              title : 'grandchild2.2',
+              key   : '1000123',
+              isLeaf: true
+            }
+          ]
         }
       ]
     }),
@@ -69,14 +76,14 @@ export class NzDemoTreeLineComponent {
           key     : '10022',
           children: [
             {
-              title: 'grandchild2.2.1',
-              key  : '100221'
+              title : 'grandchild2.2.1',
+              key   : '100221',
+              isLeaf: true
             }
           ]
         }
       ]
-    }),
-    new NzTreeNode({ title: 'root3', key: '1003' })
+    })
   ];
 
   mouseAction(name: string, e: any): void {

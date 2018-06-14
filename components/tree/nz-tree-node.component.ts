@@ -12,105 +12,16 @@ import {
   TemplateRef,
   ViewChild
 } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { fromEvent } from 'rxjs/observable/fromEvent';
+import { fromEvent, Observable } from 'rxjs';
 
 import { NzFormatBeforeDropEvent, NzFormatEmitEvent } from './interface';
 import { NzTreeNode } from './nz-tree-node';
 import { NzTreeService } from './nz-tree.service';
 
 @Component({
-  selector  : 'nz-tree-node',
-  template  : `
-    <li #dragElement
-        [class.ant-tree-treenode-disabled]="nzTreeNode.isDisabled"
-        (dblclick)="_dblClickNode($event,nzTreeNode)"
-        (click)="_clickNode($event,nzTreeNode)"
-        (contextmenu)="_contextMenuNode($event,nzTreeNode)"
-    >
-      <ng-container *ngIf="nzShowExpand">
-                <span
-                  class="ant-tree-switcher"
-                  [class.ant-tree-switcher_open]="nzTreeNode.isExpanded && !nzTreeNode.isLeaf && !nzTreeNode.isLoading"
-                  [class.ant-tree-switcher_close]="!nzTreeNode.isExpanded && !nzTreeNode.isLeaf && !nzTreeNode.isLoading"
-                  [class.ant-tree-switcher-noop]="nzTreeNode.isLeaf && !nzTreeNode.isLoading"
-                  [class.ant-tree-switcher-disabled]="nzTreeNode.isDisabled && !nzTreeNode.isLoading"
-                  [class.ant-tree-iconEle]="nzTreeNode.isLoading && !nzTreeNode.isLeaf"
-                  [class.ant-tree-icon_loading]="nzTreeNode.isLoading && !nzTreeNode.isLeaf"
-                  [class.ant-tree-icon__open]="nzTreeNode.isLoading && nzTreeNode.isExpanded && !nzTreeNode.isLeaf"
-                  [class.ant-tree-icon__close]="nzTreeNode.isLoading && !nzTreeNode.isExpanded && !nzTreeNode.isLeaf"
-                  (click)="_clickExpand($event, nzTreeNode)"></span>
-      </ng-container>
-      <ng-container #checkbox *ngIf="nzCheckable">
-                    <span
-                      class="ant-tree-checkbox"
-                      [class.ant-tree-checkbox-checked]="nzTreeNode.isChecked && nzTreeNode.isAllChecked"
-                      [class.ant-tree-checkbox-disabled]="nzTreeNode.isDisabled || nzTreeNode.isDisableCheckbox"
-                      [class.ant-tree-checkbox-indeterminate]="nzTreeNode.isHalfChecked"
-                      (click)="_clickCheckBox($event, nzTreeNode)">
-                        <span class="ant-tree-checkbox-inner"></span>
-                    </span>
-      </ng-container>
-      <ng-container *ngIf="!nzTreeTemplate">
-                <span
-                  title="{{nzTreeNode.title}}"
-                  class="ant-tree-node-content-wrapper"
-                  [class.ant-tree-node-selected]="nzTreeNode.isSelected"
-                  [class.ant-tree-node-content-wrapper-open]="nzTreeNode.isExpanded && nzTreeNode.getChildren().length>0"
-                  [class.ant-tree-node-content-wrapper-close]="!nzTreeNode.isExpanded && nzTreeNode.getChildren().length>0"
-                  [class.ant-tree-node-content-wrapper-normal]="nzTreeNode.getChildren().length>0"
-                  [attr.draggable]="nzDraggable"
-                  [attr.aria-grabbed]="nzDraggable">
-                        <span class="ant-tree-title">
-                            <ng-container *ngIf="matchValue.length==2">
-                                <span>
-                                    {{matchValue[0]}}<span class="font-red">{{nzSearchValue}}</span>{{matchValue[1]}}
-                                </span>
-                            </ng-container>
-                            <ng-container *ngIf="matchValue.length!=2">
-                                {{nzTreeNode.title}}
-                            </ng-container>
-                        </span>
-                    </span>
-      </ng-container>
-      <ng-template
-        [ngTemplateOutlet]="nzTreeTemplate"
-        [ngTemplateOutletContext]="{ $implicit: nzTreeNode }">
-      </ng-template>
-
-      <ul class="ant-tree-child-tree ant-tree-child-tree-open"
-          [attr.data-expanded]="nzTreeNode.isExpanded"
-          [@expandState]="(nzTreeNode.getChildren().length>0 && nzTreeNode.isExpanded)?'active':'inactive'">
-        <nz-tree-node *ngFor="let node of nzTreeNode.children" [nzTreeNode]="node"
-                      [nzShowLine]="nzShowLine"
-                      [nzDraggable]="nzDraggable"
-                      [nzCheckable]="nzCheckable"
-                      [nzShowExpand]="nzShowExpand"
-                      [nzSearchValue]="nzSearchValue"
-                      [nzAsyncData]="nzAsyncData"
-                      [nzMultiple]="nzMultiple"
-                      [nzBeforeDrop]="nzBeforeDrop"
-                      [nzDefaultExpandAll]="nzDefaultExpandAll"
-                      [nzDefaultCheckedKeys]="nzDefaultCheckedKeys"
-                      [nzDefaultExpandedKeys]="nzDefaultExpandedKeys"
-                      [nzDefaultSelectedKeys]="nzDefaultSelectedKeys"
-                      [nzTreeTemplate]="nzTreeTemplate"
-                      (clickNode)="clickNode.emit($event)"
-                      (dblClick)="dblClick.emit($event)"
-                      (contextMenu)="contextMenu.emit($event)"
-                      (clickCheckBox)="clickCheckBox.emit($event)"
-                      (clickExpand)="clickExpand.emit($event)"
-                      (nzDragStart)="nzDragStart.emit($event)"
-                      (nzDragEnter)="nzDragEnter.emit($event)"
-                      (nzDragOver)="nzDragOver.emit($event)"
-                      (nzDragLeave)="nzDragLeave.emit($event)"
-                      (nzDrop)="nzDrop.emit($event)"
-                      (nzDragEnd)="nzDragEnd.emit($event)"
-        ></nz-tree-node>
-      </ul>
-    </li>
-  `,
-  animations: [
+  selector   : 'nz-tree-node',
+  templateUrl: './nz-tree-node.component.html',
+  animations : [
     trigger('expandState', [
       state('inactive', style({
         opacity: '0',
@@ -146,24 +57,13 @@ export class NzTreeNodeComponent implements OnInit, AfterViewInit {
 
   @ViewChild('dragElement') dragElement: ElementRef;
 
-  @Output() clickNode: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() dblClick: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() contextMenu: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() clickCheckBox: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() clickExpand: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() nzDragStart: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() nzDragEnter: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() nzDragOver: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() nzDragLeave: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() nzDrop: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() nzDragEnd: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-
   @Input() nzShowLine: boolean;
   @Input() nzShowExpand: boolean;
   @Input() nzDraggable: boolean;
   @Input() nzMultiple: boolean;
   @Input() nzCheckable: boolean;
   @Input() nzAsyncData;
+  @Input() nzCheckStrictly: boolean;
   @Input() nzTreeTemplate: TemplateRef<void>;
   @Input() nzBeforeDrop: (confirm: NzFormatBeforeDropEvent) => Observable<boolean>;
 
@@ -189,21 +89,6 @@ export class NzTreeNodeComponent implements OnInit, AfterViewInit {
   }
 
   @Input()
-  set nzDefaultCheckedKeys(value: string[]) {
-    this._defaultCheckedKeys = value;
-    if (value && value.indexOf(this.nzTreeNode.key) > -1) {
-      // associate nodes
-      setTimeout(() => {
-        this.nzTreeService.checkTreeNode(this.nzTreeNode, true);
-      });
-    }
-  }
-
-  get nzDefaultCheckedKeys(): string[] {
-    return this._defaultCheckedKeys;
-  }
-
-  @Input()
   set nzDefaultExpandedKeys(value: string[]) {
     this._defaultExpandedKeys = value;
     if (value && value.indexOf(this.nzTreeNode.key) > -1) {
@@ -218,8 +103,9 @@ export class NzTreeNodeComponent implements OnInit, AfterViewInit {
   @Input()
   set nzDefaultSelectedKeys(value: string[]) {
     this._defaultSelectedKeys = value;
-    if (value && !this.nzTreeNode.isDisabled && this.nzMultiple && value.indexOf(this.nzTreeNode.key) > -1) {
+    if (value && !this.nzTreeNode.isDisabled && value.indexOf(this.nzTreeNode.key) > -1) {
       this.nzTreeNode.isSelected = true;
+      this.nzTreeService.setSelectedNodeList(this.nzTreeNode, this.nzMultiple);
     }
   }
 
@@ -248,17 +134,41 @@ export class NzTreeNodeComponent implements OnInit, AfterViewInit {
     return this._searchValue;
   }
 
+  get loadingStyle(): { [ key: string ]: string } {
+    const isLoading = this.nzTreeNode.isLoading && !this.nzTreeNode.isLeaf;
+    return {
+      position : isLoading ? 'relative' : '',
+      transform: isLoading ? 'translateX(0%)' : ''
+    };
+  }
+
+  @Output() clickNode: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() dblClick: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() contextMenu: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() clickCheckBox: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() clickExpand: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() nzDragStart: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() nzDragEnter: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() nzDragOver: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() nzDragLeave: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() nzDrop: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() nzDragEnd: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+
   constructor(private nzTreeService: NzTreeService, private ngZone: NgZone, private renderer: Renderer2) {
   }
 
   ngOnInit(): void {
+    if (this.nzTreeNode.isChecked) {
+      // associate nodes
+      if (this.nzCheckStrictly) {
+        this.nzTreeService.setCheckedNodeListStrict(this.nzTreeNode);
+      } else {
+        this.nzTreeService.setCheckedNodeList(this.nzTreeNode);
+      }
+    }
     // add select list
     if (this.nzTreeNode.isSelected) {
       this.nzTreeService.setSelectedNodeList(this.nzTreeNode, this.nzMultiple);
-    }
-    // add check list
-    if (this.nzTreeNode.isChecked) {
-      this.nzTreeService.setCheckedNodeList(this.nzTreeNode);
     }
   }
 
@@ -390,7 +300,15 @@ export class NzTreeNodeComponent implements OnInit, AfterViewInit {
     if (node.isDisableCheckbox || node.isDisabled) {
       return;
     }
-    this.nzTreeService.checkTreeNode(node);
+    node.isChecked = !node.isChecked;
+    if (this.nzCheckStrictly) {
+      node.isAllChecked = node.isChecked;
+      node.isHalfChecked = false;
+      this.nzTreeService.setCheckedNodeListStrict(this.nzTreeNode);
+    } else {
+      this.nzTreeService.checkTreeNode(node);
+      this.nzTreeService.setCheckedNodeList(this.nzTreeNode);
+    }
     this.clickCheckBox.emit(this.nzTreeService.formatEvent('check', node, $event));
   }
 
