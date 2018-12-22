@@ -16,6 +16,17 @@ and so on.
 
 It is recommended to use the `Component` way to pop up the Modal, so that the component logic of the popup layer can be completely isolated from the outer component, and can be reused at any time. In the popup layer component, you can obtain Modal's component instance by injecting `NzModalRef` to control the behavior of the modal box.
 
+## How To Use
+
+If you want to modify the global default configuration, you can modify the value of provider `NZ_MODAL_CONFIG`.
+(eg, add `{ provide: NZ_MODAL_CONFIG, useValue: { autoBodyPadding: false }}` to `providers` of your module, `NZ_MODAL_CONFIG` can be imported from `ng-zorro-antd`)
+
+The default global configuration is:
+```js
+{
+  autoBodyPadding: true, // Whether to automatically add "padding" and "overflow" the body to hide the scroll bar
+}
+```
 
 ## API
 
@@ -34,6 +45,7 @@ The dialog is currently divided into 2 modes, `normal mode` and `confirm box mod
 | nzCancelLoading   | Whether to apply loading visual effect for Cancel button or not | boolean | false |
 | nzFooter          | Footer content, set as footer=null when you don't need default buttons. <i>1. Only valid in normal mode.<br>2. You can customize the buttons to the maximum extent by passing a `ModalButtonOptions` configuration (see the case or the instructions below).</i> | string<br>TemplateRef<br>ModalButtonOptions | OK and Cancel buttons |
 | nzGetContainer    | The mount node for Modal | HTMLElement / () => HTMLElement| A default container |
+| nzKeyboard        | Whether support press esc to close | boolean | true |
 | nzMask            | Whether show mask or not. | boolean | true |
 | nzMaskClosable    | Whether to close the modal dialog when the mask (area outside the modal) is clicked | boolean | true |
 | nzMaskStyle       | Style for modal's mask element. | object | - |
@@ -43,6 +55,7 @@ The dialog is currently divided into 2 modes, `normal mode` and `confirm box mod
 | nzTitle           | The modal dialog's title. <i>Leave blank to show no title. The usage of TemplateRef can refer to the case</i> | string / TemplateRef | - |
 | nzVisible         | Whether the modal dialog is visible or not. <i>When using the `<nz-modal>` tag, be sure to use two-way binding, for example: `[(nzVisible)]="visible"`.</i> | boolean | false |
 | nzWidth           | Width of the modal dialog. <i>When using numbers, the default unit is `px`</i> | string<br>number | 520 |
+| nzClassName       | The class name of the modal dialog | string | - |
 | nzWrapClassName   | The class name of the container of the modal dialog | string | - |
 | nzZIndex          | The z-index of the Modal | number | 1000 |
 | nzOnCancel        | Specify a function that will be called when a user clicks mask, close button on top right or Cancel button (If nzContent is Component, the Component instance will be put in as an argument). <i>Note: When created with `NzModalService.create`, this parameter should be passed into the type of function (callback function). This function returns a promise, which is automatically closed when the execution is complete or the promise ends (return `false` to prevent closing)</i> | EventEmitter | - |
@@ -54,6 +67,8 @@ The dialog is currently divided into 2 modes, `normal mode` and `confirm box mod
 #### Attentions
 
 > The default state of `<nz-modal>` will not be automatically cleared. If you wish to open new content each time, use the `NzModalService` service to create modals (when created as a service, the `nzAfterClose` event will be listened by default aim to destroy the modal).
+
+> Modals created through the `NzModalService` service need you to manage their own life cycle. For example, when you switch the page route, the modal box created by service will not be destroyed automatically. You need to use the modal box's reference to manually destroy it (`NzModalRef.close()` or `NzModalRef.destroy()`).
 
 #### Using service to create Normal Mode modal
 

@@ -1,7 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CdkConnectedOverlay, ConnectedOverlayPositionChange, ConnectionPositionPair } from '@angular/cdk/overlay';
 import {
-  AfterContentInit,
   ChangeDetectorRef,
   Component,
   ContentChildren,
@@ -18,8 +17,9 @@ import {
   SkipSelf,
   ViewChild
 } from '@angular/core';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { auditTime, combineLatest, map } from 'rxjs/operators';
+
+import { combineLatest, BehaviorSubject, Subject } from 'rxjs';
+import { auditTime, map, takeUntil } from 'rxjs/operators';
 
 import { POSITION_MAP } from '../core/overlay/overlay-position-map';
 import { toBoolean } from '../core/util/convert';
@@ -88,11 +88,12 @@ import { NzMenuDirective } from './nz-menu.directive';
   ]
 })
 
-export class NzSubMenuComponent implements OnInit, OnDestroy, AfterContentInit {
+export class NzSubMenuComponent implements OnInit, OnDestroy {
   private _open = false;
   private _disabled = false;
   private $mouseSubject = new Subject<boolean>();
-  private openSubscription: Subscription;
+  private unsubscribe$ = new Subject<void>();
+
   placement = 'rightTop';
   $subOpen = new BehaviorSubject<boolean>(false);
   isInDropDown = false;
@@ -100,7 +101,7 @@ export class NzSubMenuComponent implements OnInit, OnDestroy, AfterContentInit {
   level = 1;
   triggerWidth = null;
   @ContentChildren(NzSubMenuComponent, { descendants: true }) subMenus: QueryList<NzSubMenuComponent>;
-  @Output() nzOpenChange: EventEmitter<boolean> = new EventEmitter();
+  @Output() readonly nzOpenChange: EventEmitter<boolean> = new EventEmitter();
   @ViewChild(CdkConnectedOverlay) cdkOverlay: CdkConnectedOverlay;
   @ViewChild('trigger') trigger: ElementRef;
 
@@ -300,27 +301,18 @@ export class NzSubMenuComponent implements OnInit, OnDestroy, AfterContentInit {
   }
 
   ngOnInit(): void {
+    if (this.nzSubMenuComponent) {
+      this.level = this.nzSubMenuComponent.level + 1;
+      this.isInSubMenu = true;
+    }
     this.nzMenuDirective.subMenus.push(this);
-    const $combineAll = this.$mouseSubject.asObservable().pipe(combineLatest(this.$subOpen), map(value => value[ 0 ] || value[ 1 ]), auditTime(150));
-    this.openSubscription = $combineAll.subscribe(this.handleOpenEvent);
+    const $combineAll = combineLatest(this.$subOpen, this.$mouseSubject.asObservable()).pipe(map(value => value[ 0 ] || value[ 1 ]), auditTime(150));
+    $combineAll.pipe(takeUntil(this.unsubscribe$)).subscribe(this.handleOpenEvent);
     this.isInDropDown = this.nzMenuDirective.nzInDropDown;
   }
 
-  ngAfterContentInit(): void {
-    if (this.subMenus && this.subMenus.length) {
-      this.subMenus.filter(x => x !== this).forEach(menu => {
-        if (this.subMenuMode === 'inline') {
-          Promise.resolve().then(() => menu.level = this.level + 1);
-        }
-        menu.isInSubMenu = true;
-      });
-    }
-  }
-
   ngOnDestroy(): void {
-    if (this.openSubscription) {
-      this.openSubscription.unsubscribe();
-      this.openSubscription = null;
-    }
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

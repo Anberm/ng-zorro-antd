@@ -6,10 +6,10 @@ import { Component } from '@angular/core';
     <nz-table #nzTable [nzData]="displayData">
       <thead>
         <tr>
-          <th>
+          <th nzCustomFilter>
             Name
-            <nz-dropdown nzTrigger="click" [nzClickHide]="false">
-              <i class="anticon anticon-smile-o ant-table-filter-icon" nz-dropdown></i>
+            <nz-dropdown nzTrigger="click" [nzClickHide]="false" #dropdown>
+              <i nz-icon type="smile-o" class="ant-table-filter-icon" [class.ant-table-filter-open]="dropdown.nzVisible" nz-dropdown></i>
               <div class="custom-filter-dropdown">
                 <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue">
                 <button nz-button [nzType]="'primary'" (click)="search()">Search</button>
@@ -102,7 +102,7 @@ export class NzDemoTableCustomFilterPanelComponent {
 
   search(): void {
     const filterFunc = (item) => {
-      return (this.searchAddress.length ? this.searchAddress.some(address => item.address.indexOf(address.name) !== -1) : true) &&
+      return (this.searchAddress.length ? this.searchAddress.some(address => item.address.indexOf(address) !== -1) : true) &&
         (item.name.indexOf(this.searchValue) !== -1);
     };
     const data = this.data.filter(item => filterFunc(item));

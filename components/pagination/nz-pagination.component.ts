@@ -9,7 +9,9 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { isInteger } from '../core/util/check';
 import { toBoolean } from '../core/util/convert';
 import { NzI18nService } from '../i18n/nz-i18n.service';
@@ -20,7 +22,7 @@ import { NzI18nService } from '../i18n/nz-i18n.service';
   templateUrl        : './nz-pagination.component.html'
 })
 export class NzPaginationComponent implements OnInit, OnDestroy {
-  private i18n$: Subscription;
+  private unsubscribe$ = new Subject<void>();
   // tslint:disable-next-line:no-any
   locale: any = {};
   @ViewChild('renderItemTemplate') private _itemRender: TemplateRef<{ $implicit: 'page' | 'prev' | 'next', page: number }>;
@@ -37,8 +39,8 @@ export class NzPaginationComponent implements OnInit, OnDestroy {
   @Input() nzShowTotal: TemplateRef<{ $implicit: number, range: [ number, number ] }>;
   @Input() nzInTable = false;
   @Input() nzSize: string;
-  @Output() nzPageSizeChange: EventEmitter<number> = new EventEmitter();
-  @Output() nzPageIndexChange: EventEmitter<number> = new EventEmitter();
+  @Output() readonly nzPageSizeChange: EventEmitter<number> = new EventEmitter();
+  @Output() readonly nzPageIndexChange: EventEmitter<number> = new EventEmitter();
 
   @Input()
   set nzItemRender(value: TemplateRef<{ $implicit: 'page' | 'prev' | 'next', page: number }>) {
@@ -262,14 +264,19 @@ export class NzPaginationComponent implements OnInit, OnDestroy {
     return this.nzPageIndex === this.firstIndex;
   }
 
+  min(val1: number, val2: number): number {
+    return Math.min(val1, val2);
+  }
+
   constructor(private i18n: NzI18nService) {
   }
 
   ngOnInit(): void {
-    this.i18n$ = this.i18n.localeChange.subscribe(() => this.locale = this.i18n.getLocaleData('Pagination'));
+    this.i18n.localeChange.pipe(takeUntil(this.unsubscribe$)).subscribe(() => this.locale = this.i18n.getLocaleData('Pagination'));
   }
 
   ngOnDestroy(): void {
-    this.i18n$.unsubscribe();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

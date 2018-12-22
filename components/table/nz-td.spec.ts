@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { createFakeEvent } from '../core/testing';
 import { NzTableModule } from './nz-table.module';
 import { NzTdComponent } from './nz-td.component';
 
@@ -100,6 +101,27 @@ describe('nz-td', () => {
       expect(td.nativeElement.querySelector('.ant-table-row-expand-icon').classList).toContain('ant-table-row-expanded');
       expect(testComponent.expandChange).toHaveBeenCalledTimes(1);
     });
+    it('should click expand event stopPropagation', () => {
+      testComponent.showExpand = true;
+      fixture.detectChanges();
+      const input: HTMLElement = td.nativeElement.querySelector('.ant-table-row-expand-icon');
+      const fakeInputChangeEvent = createFakeEvent('click', true, true);
+      spyOn(fakeInputChangeEvent, 'stopPropagation');
+      input.dispatchEvent(fakeInputChangeEvent);
+      fixture.detectChanges();
+      expect(fakeInputChangeEvent.stopPropagation).toHaveBeenCalled();
+    });
+    it('should be row index when index-size is 0', () => {
+      testComponent.indentSize = 0;
+      fixture.detectChanges();
+      expect(td.nativeElement.querySelector('.ant-table-row-indent')).not.toBeNull();
+    });
+    it('should be keeping space when hidden expand and index-size is not null', () => {
+      testComponent.showExpand = false;
+      testComponent.indentSize = 0;
+      fixture.detectChanges();
+      expect(td.nativeElement.querySelector('.ant-table-row-expand-icon').classList).toContain('ant-table-row-spaced');
+    });
     it('should indentSize work', () => {
       fixture.detectChanges();
       expect(td.nativeElement.querySelector('.ant-table-row-indent')).toBeNull();
@@ -122,6 +144,13 @@ describe('nz-td', () => {
       fixture.detectChanges();
       expect(td.nativeElement.classList).toContain('ant-table-td-right-sticky');
       expect(td.nativeElement.style.right).toBe('20px');
+    });
+    it('should be throw error when use specific class name', () => {
+      expect(() => {
+        TestBed.configureTestingModule({
+          declarations: [ NzTestDisableTdComponent ]
+        }).createComponent(NzTestDisableTdComponent);
+      }).toThrow();
     });
   });
 });
@@ -155,3 +184,11 @@ export class NzTestTdComponent {
   left;
   right;
 }
+
+@Component({
+  selector: 'nz-disable-td',
+  template: `
+    <td class="nz-disable-td" [nzShowCheckbox]="true"></td>
+  `
+})
+export class NzTestDisableTdComponent {}

@@ -1,17 +1,21 @@
 /** get some code from https://github.com/angular/material2 */
 
+import { DOCUMENT } from '@angular/common';
 import {
   AfterContentChecked,
   AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
+  Inject,
   Input,
   OnInit,
+  Optional,
   Output,
   Renderer2,
   TemplateRef,
-  ViewChild
+  ViewChild,
+  ViewEncapsulation
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -40,10 +44,14 @@ export type NzTabType = 'line' | 'card';
 @Component({
   selector           : 'nz-tabset',
   preserveWhitespaces: false,
+  encapsulation      : ViewEncapsulation.None,
   providers          : [ NzUpdateHostClassService ],
   templateUrl        : './nz-tabset.component.html',
+  host               : {
+    '(scroll)': 'onScroll($event)'
+  },
   styles             : [ `
-    :host {
+    nz-tabset {
       display: block;
     }
   ` ]
@@ -55,7 +63,7 @@ export class NzTabSetComponent implements AfterContentChecked, OnInit, AfterView
   private _type: NzTabType = 'line';
   private _size = 'default';
   private _animated: NzAnimatedInterface | boolean = true;
-  el: HTMLElement;
+  el: HTMLElement = this.elementRef.nativeElement;
   prefixCls = 'ant-tabs';
   tabPositionMode: NzTabPositionMode = 'horizontal';
   inkBarAnimated = true;
@@ -69,8 +77,8 @@ export class NzTabSetComponent implements AfterContentChecked, OnInit, AfterView
   @Input() nzHideAll = false;
   @Input() nzTabBarGutter: number;
   @Input() nzTabBarStyle: { [ key: string ]: string };
-  @Output() nzOnNextClick = new EventEmitter<void>();
-  @Output() nzOnPrevClick = new EventEmitter<void>();
+  @Output() readonly nzOnNextClick = new EventEmitter<void>();
+  @Output() readonly nzOnPrevClick = new EventEmitter<void>();
 
   @Input()
   set nzAnimated(value: NzAnimatedInterface | boolean) {
@@ -98,7 +106,7 @@ export class NzTabSetComponent implements AfterContentChecked, OnInit, AfterView
     return this.nzSelectChange.pipe(map(event => event.index));
   }
 
-  @Output() nzSelectChange: EventEmitter<NzTabChangeEvent> = new EventEmitter<NzTabChangeEvent>(true);
+  @Output() readonly nzSelectChange: EventEmitter<NzTabChangeEvent> = new EventEmitter<NzTabChangeEvent>(true);
 
   @Input() set nzSize(value: string) {
     this._size = value;
@@ -227,8 +235,20 @@ export class NzTabSetComponent implements AfterContentChecked, OnInit, AfterView
     this.listOfNzTabComponent.splice(this.listOfNzTabComponent.indexOf(value), 1);
   }
 
-  constructor(private renderer: Renderer2, private nzUpdateHostClassService: NzUpdateHostClassService, private elementRef: ElementRef) {
-    this.el = this.elementRef.nativeElement;
+  // From https://github.com/react-component/tabs/blob/master/src/Tabs.js
+  // Prevent focus to make the Tabs scroll offset
+  onScroll($event: Event): void {
+    const target: Element = $event.target as Element;
+    if (target.scrollLeft > 0) {
+      target.scrollLeft = 0;
+      if (this.document && this.document.activeElement) {
+        (this.document.activeElement as HTMLElement).blur();
+      }
+    }
+  }
+
+  // tslint:disable-next-line:no-any
+  constructor(private renderer: Renderer2, private nzUpdateHostClassService: NzUpdateHostClassService, private elementRef: ElementRef, @Optional() @Inject(DOCUMENT) private document: any) {
   }
 
   ngAfterViewInit(): void {

@@ -6,8 +6,8 @@ import { fakeAsync, inject, tick, ComponentFixture, TestBed } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import * as differenceInDays from 'date-fns/difference_in_days';
-import * as isSameDay from 'date-fns/is_same_day';
+import differenceInDays from 'date-fns/difference_in_days';
+import isSameDay from 'date-fns/is_same_day';
 
 import { dispatchMouseEvent } from '../core/testing';
 import { NzDatePickerModule } from './date-picker.module';
@@ -54,7 +54,7 @@ describe('NzRangePickerComponent', () => {
 
     it('should open by click and close by click at outside', fakeAsync(() => {
       fixture.detectChanges();
-      dispatchMouseEvent(getPickerTrigger(), 'click');
+      dispatchMouseEvent(getPickerTriggerWrapper(), 'click');
       fixture.detectChanges();
       tick(500);
       fixture.detectChanges();
@@ -147,7 +147,7 @@ describe('NzRangePickerComponent', () => {
       fixtureInstance.nzDisabledDate = (current: Date) => isSameDay(current, compareDate);
       fixture.detectChanges();
 
-      dispatchMouseEvent(getPickerTrigger(), 'click');
+      dispatchMouseEvent(getPickerTriggerWrapper(), 'click');
       fixture.detectChanges();
       tick();
       fixture.detectChanges();
@@ -172,7 +172,7 @@ describe('NzRangePickerComponent', () => {
     it('should support nzPopupStyle', fakeAsync(() => {
       fixtureInstance.nzPopupStyle = { color: 'red' };
       fixture.detectChanges();
-      dispatchMouseEvent(getPickerTrigger(), 'click');
+      dispatchMouseEvent(getPickerTriggerWrapper(), 'click');
       fixture.detectChanges();
       tick(500);
       fixture.detectChanges();
@@ -182,7 +182,7 @@ describe('NzRangePickerComponent', () => {
     it('should support nzDropdownClassName', fakeAsync(() => {
       const keyCls = fixtureInstance.nzDropdownClassName = 'my-test-class';
       fixture.detectChanges();
-      dispatchMouseEvent(getPickerTrigger(), 'click');
+      dispatchMouseEvent(getPickerTriggerWrapper(), 'click');
       fixture.detectChanges();
       tick(500);
       fixture.detectChanges();
@@ -208,7 +208,7 @@ describe('NzRangePickerComponent', () => {
     it('should support nzOnOpenChange', fakeAsync(() => {
       const nzOnOpenChange = spyOn(fixtureInstance, 'nzOnOpenChange');
       fixture.detectChanges();
-      dispatchMouseEvent(getPickerTrigger(), 'click');
+      dispatchMouseEvent(getPickerTriggerWrapper(), 'click');
       fixture.detectChanges();
       tick(500);
       fixture.detectChanges();
@@ -466,6 +466,22 @@ describe('NzRangePickerComponent', () => {
       expect(queryFromOverlay('.ant-calendar-range-right .ant-calendar-selected-end-date')).toBeDefined();
     }));
 
+    it('should display expected date when the range values are the same day (include the scenario of timepicker)', fakeAsync(() => {
+      fixtureInstance.modelValue = [ new Date('2018-05-15'), new Date('2018-05-15') ];
+      fixtureInstance.nzShowTime = true;
+      fixture.detectChanges();
+      openPickerByClickTrigger();
+
+      expect(queryFromOverlay('.ant-calendar-range-right .ant-calendar-month-select').textContent).toContain('6');
+
+      // Open time picker panel
+      dispatchMouseEvent(queryFromOverlay('.ant-calendar-time-picker-btn'), 'click');
+      fixture.detectChanges();
+      tick();
+      fixture.detectChanges();
+      expect(queryFromOverlay('.ant-calendar-range-right .ant-calendar-month-select').textContent).toContain('5');
+    }));
+
     it('should support nzRanges', fakeAsync(() => {
       const today = new Date();
       fixtureInstance.nzRanges = { 'Today': [ today, today ] };
@@ -548,6 +564,10 @@ describe('NzRangePickerComponent', () => {
     return debugElement.query(By.css('nz-picker .ant-calendar-picker-input')).nativeElement as HTMLElement;
   }
 
+  function getPickerTriggerWrapper(): HTMLInputElement {
+    return debugElement.query(By.css('nz-picker .ant-calendar-picker')).nativeElement as HTMLInputElement;
+  }
+
   function getPickerContainer(): HTMLElement {
     return queryFromOverlay('.ant-calendar-picker-container') as HTMLElement;
   }
@@ -570,7 +590,7 @@ describe('NzRangePickerComponent', () => {
   }
 
   function openPickerByClickTrigger(): void {
-    dispatchMouseEvent(getPickerTrigger(), 'click');
+    dispatchMouseEvent(getPickerTriggerWrapper(), 'click');
     fixture.detectChanges();
     tick(500);
     fixture.detectChanges();

@@ -1,4 +1,4 @@
-<span class="ant-table-row-indent" *ngIf="nzIndentSize" [style.padding-left.px]="nzIndentSize"></span>
+<span class="ant-table-row-indent" *ngIf="nzIndentSize >= 0" [style.padding-left.px]="nzIndentSize"></span>
 <label
   *ngIf="nzShowCheckbox"
   nz-checkbox
@@ -8,9 +8,12 @@
   (ngModelChange)="nzCheckedChange.emit($event)">
 </label>
 <span
+  *ngIf="!nzShowExpand && nzIndentSize != null"
+  class="ant-table-row-expand-icon ant-table-row-spaced"></span>
+<span
   *ngIf="nzShowExpand"
   class="ant-table-row-expand-icon"
-  (click)="expandChange()"
+  (click)="expandChange($event)"
   [class.ant-table-row-expanded]="nzExpand"
   [class.ant-table-row-collapsed]="!nzExpand"></span>
 <ng-content></ng-content>

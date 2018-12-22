@@ -1,4 +1,3 @@
-import { Overlay } from '@angular/cdk/overlay';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -8,14 +7,19 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  NgZone,
   OnDestroy,
   OnInit,
   Output,
   QueryList,
+  Renderer2,
   TemplateRef,
   ViewChild
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+
+import { fromEvent, merge, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { NzMeasureScrollbarService } from '../core/services/nz-measure-scrollbar.service';
 import { isNotNil } from '../core/util/check';
 import { toBoolean } from '../core/util/convert';
@@ -30,7 +34,7 @@ import { NzTheadComponent } from './nz-thead.component';
   templateUrl        : './nz-table.component.html'
 })
 export class NzTableComponent implements OnInit, AfterViewInit, OnDestroy {
-  private i18n$: Subscription;
+  private unsubscribe$ = new Subject<void>();
   private _bordered = false;
   private _showPagination = true;
   private _loading = false;
@@ -45,14 +49,14 @@ export class NzTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private _pageSize = 10;
   private _widthConfig: string[] = [];
   private _frontPagination = true;
+  private _simple = false;
   /* tslint:disable-next-line:no-any */
   locale: any = {};
   nzTheadComponent: NzTheadComponent;
   isFooterString: boolean;
   isTitleString: boolean;
   isNoResultString: boolean;
-  el: HTMLElement;
-  scrollPosition: string;
+  el: HTMLElement = this.elementRef.nativeElement;
   lastScrollLeft = 0;
   /* tslint:disable-next-line:no-any */
   rawData: any[] = [];
@@ -65,19 +69,29 @@ export class NzTableComponent implements OnInit, AfterViewInit, OnDestroy {
   isWidthConfigSet = false;
   @ViewChild('tableHeaderElement') tableHeaderElement: ElementRef;
   @ViewChild('tableBodyElement') tableBodyElement: ElementRef;
+  @ViewChild('tableMainElement') tableMainElement: ElementRef;
   @ContentChildren(NzThComponent, { descendants: true }) listOfNzThComponent: QueryList<NzThComponent>;
 
-  @Output() nzPageSizeChange: EventEmitter<number> = new EventEmitter();
-  @Output() nzPageIndexChange: EventEmitter<number> = new EventEmitter();
+  @Output() readonly nzPageSizeChange: EventEmitter<number> = new EventEmitter();
+  @Output() readonly nzPageIndexChange: EventEmitter<number> = new EventEmitter();
   @Input() nzShowTotal: TemplateRef<{ $implicit: number, range: [ number, number ] }>;
 
   /* tslint:disable-next-line:no-any */
-  @Output() nzCurrentPageDataChange: EventEmitter<any[]> = new EventEmitter();
+  @Output() readonly nzCurrentPageDataChange: EventEmitter<any[]> = new EventEmitter();
   @Input() nzSize: string = 'default';
   /** page size changer select values */
   @Input() nzPageSizeOptions = [ 10, 20, 30, 40, 50 ];
   @Input() nzLoadingDelay = 0;
   @Input() nzTotal: number;
+
+  @Input()
+  set nzSimple(value: boolean) {
+    this._simple = toBoolean(value);
+  }
+
+  get nzSimple(): boolean {
+    return this._simple;
+  }
 
   @Input()
   set nzFrontPagination(value: boolean) {
@@ -296,14 +310,25 @@ export class NzTableComponent implements OnInit, AfterViewInit, OnDestroy {
   setScrollPositionClassName(): void {
     if (this.tableBodyElement && this.nzScroll && this.nzScroll.x) {
       if ((this.tableBodyElement.nativeElement.scrollWidth === this.tableBodyElement.nativeElement.clientWidth) && (this.tableBodyElement.nativeElement.scrollWidth !== 0)) {
-        this.scrollPosition = 'default';
+        this.setScrollName();
       } else if (this.tableBodyElement.nativeElement.scrollLeft === 0) {
-        this.scrollPosition = 'left';
+        this.setScrollName('left');
       } else if (this.tableBodyElement.nativeElement.scrollWidth === (this.tableBodyElement.nativeElement.scrollLeft + this.tableBodyElement.nativeElement.clientWidth)) {
-        this.scrollPosition = 'right';
+        this.setScrollName('right');
       } else {
-        this.scrollPosition = 'middle';
+        this.setScrollName('middle');
       }
+    }
+  }
+
+  setScrollName(position?: string): void {
+    const prefix = 'ant-table-scroll-position';
+    const classList = [ 'left', 'right', 'middle' ];
+    classList.forEach(name => {
+      this.renderer.removeClass(this.tableMainElement.nativeElement, `${prefix}-${name}`);
+    });
+    if (position) {
+      this.renderer.addClass(this.tableMainElement.nativeElement, `${prefix}-${position}`);
     }
   }
 
@@ -324,24 +349,32 @@ export class NzTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.i18n$ = this.i18n.localeChange.subscribe(() => this.locale = this.i18n.getLocaleData('Table'));
+    this.i18n.localeChange.pipe(takeUntil(this.unsubscribe$)).subscribe(() => this.locale = this.i18n.getLocaleData('Table'));
     this.fitScrollBar();
-    if (this.nzScroll && this.nzScroll.x && this.nzScroll.y) {
-      /** magic code to sync scroll **/
-      const overlay = this.overlay.create();
-      overlay.dispose();
-    }
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.setScrollPositionClassName());
+    this.ngZone.runOutsideAngular(() => {
+      if (this.tableHeaderElement
+        && this.tableHeaderElement.nativeElement
+        && this.tableBodyElement
+        && this.tableBodyElement.nativeElement) {
+        merge<MouseEvent>(
+          fromEvent<MouseEvent>(this.tableHeaderElement.nativeElement, 'scroll'),
+          fromEvent<MouseEvent>(this.tableBodyElement.nativeElement, 'scroll')
+        ).pipe(takeUntil(this.unsubscribe$)).subscribe((data: MouseEvent) => {
+          this.syncScrollTable(data);
+        });
+      }
+    });
   }
 
   ngOnDestroy(): void {
-    this.i18n$.unsubscribe();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
-  constructor(private elementRef: ElementRef, private cdr: ChangeDetectorRef, private overlay: Overlay, private nzMeasureScrollbarService: NzMeasureScrollbarService, private i18n: NzI18nService) {
-    this.el = this.elementRef.nativeElement;
+  constructor(private renderer: Renderer2, private ngZone: NgZone, private elementRef: ElementRef, private cdr: ChangeDetectorRef, private nzMeasureScrollbarService: NzMeasureScrollbarService, private i18n: NzI18nService) {
   }
 }

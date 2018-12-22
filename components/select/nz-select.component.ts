@@ -5,6 +5,7 @@ import {
   transition,
   trigger
 } from '@angular/animations';
+import { DOWN_ARROW, SPACE, TAB } from '@angular/cdk/keycodes';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedOverlayPositionChange } from '@angular/cdk/overlay';
 import {
   forwardRef,
@@ -139,9 +140,9 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
   /** should move to nz-option-container when https://github.com/angular/angular/issues/20810 resolved **/
   @ContentChildren(NzOptionComponent) listOfNzOptionComponent: QueryList<NzOptionComponent>;
   @ContentChildren(NzOptionGroupComponent) listOfNzOptionGroupComponent: QueryList<NzOptionGroupComponent>;
-  @Output() nzOnSearch = new EventEmitter<string>();
-  @Output() nzScrollToBottom = new EventEmitter<void>();
-  @Output() nzOpenChange = new EventEmitter<boolean>();
+  @Output() readonly nzOnSearch = new EventEmitter<string>();
+  @Output() readonly nzScrollToBottom = new EventEmitter<void>();
+  @Output() readonly nzOpenChange = new EventEmitter<boolean>();
   @Input() nzSize = 'default';
   @Input() nzServerSearch = false;
   @Input() nzMode: 'default' | 'multiple' | 'tags' = 'default';
@@ -151,7 +152,7 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
   @Input() nzDropdownStyle: { [ key: string ]: string; };
   @Input() nzNotFoundContent: string;
   /** https://github.com/angular/angular/pull/13349/files **/
-           // tslint:disable-next-line:no-any
+    // tslint:disable-next-line:no-any
   @Input() compareWith = (o1: any, o2: any) => o1 === o2;
 
   @Input()
@@ -190,6 +191,11 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
       }
       if (this.cdkConnectedOverlay && this.cdkConnectedOverlay.overlayRef) {
         this.cdkConnectedOverlay.overlayRef.updatePosition();
+        const backdropElement = this.cdkConnectedOverlay.overlayRef.backdropElement;
+        const parentNode = this.renderer.parentNode(backdropElement);
+        const hostElement = this.cdkConnectedOverlay.overlayRef.hostElement;
+        this.renderer.appendChild(parentNode, backdropElement);
+        this.renderer.appendChild(parentNode, hostElement);
       }
     } else {
       if (this.nzSelectTopControlComponent) {
@@ -252,6 +258,28 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
     }
   }
 
+  @HostListener('keydown', [ '$event' ])
+  _handleKeydown(event: KeyboardEvent): void {
+    if (this._disabled) { return; }
+
+    const keyCode = event.keyCode;
+
+    if (!this._open) {
+      if (keyCode === SPACE || keyCode === DOWN_ARROW) {
+        this.nzOpen = true;
+        this.nzOpenChange.emit(this.nzOpen);
+        event.preventDefault();
+      }
+    } else {
+      if (keyCode === TAB) {
+      // if (keyCode === SPACE || keyCode === TAB) { // #2201
+        this.nzOpen = false;
+        this.nzOpenChange.emit(this.nzOpen);
+        event.preventDefault();
+      }
+    }
+  }
+
   updateAutoFocus(): void {
     if (this.isInit && this.nzSelectTopControlComponent.inputElement) {
       if (this.nzAutoFocus) {
@@ -293,6 +321,7 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
       this.onTouched();
       this.nzOpen = false;
       this.nzOpenChange.emit(this.nzOpen);
+      this.blur();
     }
   }
 

@@ -12,8 +12,9 @@ import {
   Renderer2,
   ViewChild
 } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
-import { combineLatest, debounceTime, distinctUntilChanged, map, mapTo, merge } from 'rxjs/operators';
+
+import { combineLatest, merge, BehaviorSubject, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, mapTo, takeUntil } from 'rxjs/operators';
 
 import { dropDownAnimation } from '../core/animation/dropdown-animations';
 import { DEFAULT_DROPDOWN_POSITIONS, POSITION_MAP } from '../core/overlay/overlay-position-map';
@@ -33,11 +34,6 @@ export type NzPlacement = 'bottomLeft' | 'bottomCenter' | 'bottomRight' | 'topLe
   templateUrl        : './nz-dropdown.component.html',
   styles             : [
     `
-      :host {
-        position: relative;
-        display: inline-block;
-      }
-
       .ant-dropdown {
         top: 100%;
         left: 0;
@@ -54,18 +50,21 @@ export class NzDropDownComponent implements OnInit, OnDestroy, AfterViewInit {
   private _clickHide = true;
   private _visible = false;
   private _disabled = false;
+  private unsubscribe$ = new Subject<void>();
+
   @Input() hasFilterButton = false;
   triggerWidth = 0;
   placement: NzPlacement = 'bottomLeft';
   dropDownPosition: 'top' | 'center' | 'bottom' = 'bottom';
   positions: ConnectionPositionPair[] = [ ...DEFAULT_DROPDOWN_POSITIONS ];
-  visibleSubscription: Subscription;
   $subOpen = new BehaviorSubject<boolean>(false);
   $visibleChange = new Subject<boolean>();
   @ContentChild(NzDropDownDirective) nzOrigin: NzDropDownDirective;
   @ContentChild(NzMenuDirective) nzMenu: NzMenuDirective;
   @Input() nzTrigger: 'click' | 'hover' = 'hover';
-  @Output() nzVisibleChange: EventEmitter<boolean> = new EventEmitter();
+  @Input() nzOverlayClassName = '';
+  @Input() nzOverlayStyle: { [ key: string ]: string } = {};
+  @Output() readonly nzVisibleChange: EventEmitter<boolean> = new EventEmitter();
   @ViewChild(CdkConnectedOverlay) cdkOverlay: CdkConnectedOverlay;
 
   @Input()
@@ -157,10 +156,10 @@ export class NzDropDownComponent implements OnInit, OnDestroy, AfterViewInit {
     let $pre = observable$;
     if (this.nzClickHide && this.nzMenu) {
       const $menuItemClick = this.nzMenu.nzClick.asObservable().pipe(mapTo(false));
-      $pre = $pre.pipe(merge($menuItemClick));
+      $pre = merge($pre, $menuItemClick);
     }
-    const final$ = $pre.pipe(combineLatest(this.$subOpen), map(value => value[ 0 ] || value[ 1 ]), debounceTime(50), distinctUntilChanged());
-    this.visibleSubscription = final$.subscribe(this.onVisibleChange);
+    const final$ = combineLatest($pre, this.$subOpen).pipe(map(value => value[ 0 ] || value[ 1 ]), debounceTime(50), distinctUntilChanged());
+    final$.pipe(takeUntil(this.unsubscribe$)).subscribe(this.onVisibleChange);
   }
 
   onVisibleChange = (visible: boolean) => {
@@ -181,10 +180,8 @@ export class NzDropDownComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    if (this.visibleSubscription) {
-      this.visibleSubscription.unsubscribe();
-      this.visibleSubscription = null;
-    }
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   ngAfterViewInit(): void {
@@ -192,12 +189,12 @@ export class NzDropDownComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.nzTrigger === 'hover') {
       const mouseEnterOrigin$ = this.nzOrigin.$mouseenter.pipe(mapTo(true));
       const mouseLeaveOrigin$ = this.nzOrigin.$mouseleave.pipe(mapTo(false));
-      mouse$ = mouseEnterOrigin$.pipe(merge(mouseLeaveOrigin$));
+      mouse$ = merge(mouseLeaveOrigin$, mouseEnterOrigin$);
     }
     if (this.nzTrigger === 'click') {
       mouse$ = this.nzOrigin.$click.pipe(mapTo(true));
     }
-    const observable$ = mouse$.pipe(merge(this.$visibleChange));
+    const observable$ = merge(this.$visibleChange, mouse$);
     this.startSubscribe(observable$);
   }
 

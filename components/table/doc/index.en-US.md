@@ -77,8 +77,9 @@ The data passed to `[nzData]` will be export with [Template Context](https://ang
 | `[nzPageSizeOptions]` | Specify the sizeChanger options | `number[]` | `[10, 20, 30, 40]` |
 | `[nzShowQuickJumper]` | Determine whether you can jump to pages directly | boolean | false |
 | `[nzShowSizeChanger]` | Determine whether `nzPageSize` can be changed | boolean | false |
-| `[nzShowTotal]` | To display the total number and range	 | `TemplateRef<{ $implicit: number, range: [ number, number ] }>` | - |
+| `[nzShowTotal]` | To display the total number and range, same as Pagination	 | `TemplateRef<{ $implicit: number, range: [ number, number ] }>` | - |
 | `[nzHideOnSinglePage]` | Whether to hide pager on single page | boolean | false |
+| `[nzSimple]` | whether to use simple mode | boolean | - |
 | `(nzPageIndexChange)` | pageIndex change callback | `EventEmitter<number>` | - |
 | `(nzPageSizeChange)` | pageSize change callback | `EventEmitter<number>` | - |
 | `(nzCurrentPageDataChange)` | current pageData change callback | `EventEmitter<any[]>` | - |
@@ -108,7 +109,7 @@ Filter property
 | Property | Description | Type | Default |
 | -------- | ----------- | ---- | ------- |
 | `[nzShowFilter]` | Whether show filter | boolean | - |
-| `[nzFilters]` | Filter options,  `text`，and `value` for callback | `Array<{ text: string; value: any }>` | - |
+| `[nzFilters]` | Filter options,  `text`, and `value` for callback, `byDefault` to enable filter by default | `Array<{ text: string; value: any; byDefault?: boolean }>` | - |
 | `[nzFilterMultiple]` | Whether filter multiple mode | boolean | true |
 | `(nzFilterChange)` | Filter change callback `value` | `EventEmitter<any[] 丨 any>` | - |
 

@@ -4,6 +4,7 @@ import { fakeAsync, inject, tick, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { dispatchMouseEvent } from '../core/testing';
+import { NzIconModule } from '../icon/nz-icon.module';
 import { NzToolTipModule } from '../tooltip/nz-tooltip.module';
 import { NzPopconfirmModule } from './nz-popconfirm.module';
 
@@ -15,7 +16,7 @@ describe('NzPopconfirm', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      imports     : [ NzPopconfirmModule, NoopAnimationsModule, NzToolTipModule ],
+      imports     : [ NzPopconfirmModule, NoopAnimationsModule, NzToolTipModule, NzIconModule ],
       declarations: [ NzpopconfirmTestWrapperComponent, NzpopconfirmTestNewComponent ]
     });
 
@@ -239,6 +240,11 @@ describe('NzPopconfirm', () => {
       tick();
       expect(overlayContainerElement.querySelector('.ant-popover-message-title')).toBeNull();
     }));
+    it('should not create element', fakeAsync(() => {
+      fixture.detectChanges();
+      const triggerElement = component.inBtnGroup.nativeElement;
+      expect(triggerElement.nextSibling.tagName).toBe('BUTTON');
+    }));
   });
 });
 
@@ -248,6 +254,11 @@ describe('NzPopconfirm', () => {
     <a nz-popconfirm #stringTemplate nzTitle="title-string" nzOkText="ok-text" nzCancelText="cancel-text" nzOkType="default" [nzCondition]="condition" (nzOnConfirm)="confirm()" (nzOnCancel)="cancel()">Delete</a>
     <a nz-popconfirm #templateTemplate [nzTitle]="titleTemplate" (nzOnConfirm)="confirm()" (nzOnCancel)="cancel()">Delete</a>
     <ng-template #titleTemplate>title-template</ng-template>
+    <div>
+      <button>A</button>
+      <button #inBtnGroup nz-popconfirm nzTitle="title-string" >B</button>
+      <button>C</button>
+    </div>
   `
 })
 export class NzpopconfirmTestNewComponent {
@@ -256,6 +267,7 @@ export class NzpopconfirmTestNewComponent {
   condition = false;
   @ViewChild('stringTemplate') stringTemplate: ElementRef;
   @ViewChild('templateTemplate') templateTemplate: ElementRef;
+  @ViewChild('inBtnGroup') inBtnGroup: ElementRef;
 
 }
 
@@ -268,7 +280,7 @@ export class NzpopconfirmTestNewComponent {
     <nz-popconfirm [nzTrigger]="'hover'">
       <button #templateTrigger nz-popconfirm>Show</button>
       <ng-template #nzTemplate>
-        <i class="anticon anticon-file"></i> <span>Show with icon</span>
+        <i nz-icon type="file"></i> <span>Show with icon</span>
       </ng-template>
     </nz-popconfirm>
 

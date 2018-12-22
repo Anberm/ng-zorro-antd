@@ -2,7 +2,11 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { fakeAsync, inject, tick, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { FileOutline } from '@ant-design/icons-angular/icons';
+
 import { dispatchMouseEvent } from '../core/testing';
+import { NzIconModule } from '../icon/nz-icon.module';
+import { NZ_ICONS } from '../icon/nz-icon.service';
 import { NzToolTipModule } from '../tooltip/nz-tooltip.module';
 import { NzPopoverDirective } from './nz-popover.directive';
 import { NzPopoverModule } from './nz-popover.module';
@@ -15,8 +19,9 @@ describe('NzPopover', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      imports     : [ NzPopoverModule, NoopAnimationsModule, NzToolTipModule ],
-      declarations: [ NzPopoverTestWrapperComponent, NzPopoverTestNewComponent ]
+      imports     : [ NzPopoverModule, NoopAnimationsModule, NzToolTipModule, NzIconModule ],
+      declarations: [ NzPopoverTestWrapperComponent, NzPopoverTestNewComponent ],
+      providers   : [ { provide: NZ_ICONS, useValue: [ FileOutline ] } ]
     });
 
     TestBed.compileComponents();
@@ -171,6 +176,12 @@ describe('NzPopover', () => {
       expect(overlayContainerElement.querySelector('.ant-popover-title')).toBeNull();
       expect(overlayContainerElement.querySelector('.ant-popover-inner-content')).toBeNull();
     }));
+
+    it('should not create element', fakeAsync(() => {
+      fixture.detectChanges();
+      const triggerElement = component.inBtnGroup.nativeElement;
+      expect(triggerElement.nextSibling.tagName).toBe('BUTTON');
+    }));
   });
 });
 
@@ -185,6 +196,11 @@ describe('NzPopover', () => {
     <ng-template #templateContent>
       content-template
     </ng-template>
+    <div>
+      <button>A</button>
+      <button #inBtnGroup nz-popover nzTitle="title-string">B</button>
+      <button>C</button>
+    </div>
   `
 })
 export class NzPopoverTestNewComponent {
@@ -192,6 +208,7 @@ export class NzPopoverTestNewComponent {
   @ViewChild('stringPopover', { read: NzPopoverDirective }) stringPopoverNzPopoverDirective: NzPopoverDirective;
   @ViewChild('templatePopover') templatePopover: ElementRef;
   @ViewChild('templatePopover', { read: NzPopoverDirective }) templatePopoverNzPopoverDirective: NzPopoverDirective;
+  @ViewChild('inBtnGroup') inBtnGroup: ElementRef;
 }
 
 @Component({
@@ -202,7 +219,7 @@ export class NzPopoverTestNewComponent {
     <nz-popover>
       <button #templateTrigger nz-popover>Show</button>
       <ng-template #nzTemplate>
-        <i class="anticon anticon-file"></i> <span>Show with icon</span>
+        <i nz-icon type="file"></i> <span>Show with icon</span>
       </ng-template>
     </nz-popover>
 

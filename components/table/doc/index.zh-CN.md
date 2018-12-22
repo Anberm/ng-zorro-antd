@@ -78,8 +78,9 @@ Table 组件同时具备了易用性和高度可定制性
 | `[nzPageSizeOptions]` | 页数选择器可选值 | number[] | [ 10, 20, 30, 40, 50 ] |
 | `[nzShowQuickJumper]` | 是否可以快速跳转至某页 | boolean | false |
 | `[nzShowSizeChanger]` | 是否可以改变 `nzPageSize` | boolean | false |
-| `[nzShowTotal]` | 用于显示数据总量和当前数据范围 | `TemplateRef<{ $implicit: number, range: [ number, number ] }>` | - |
+| `[nzShowTotal]` | 用于显示数据总量和当前数据范围，与 Pagination 用法相同 | `TemplateRef<{ $implicit: number, range: [ number, number ] }>` | - |
 | `[nzHideOnSinglePage]` | 只有一页时是否隐藏分页器 | boolean | false |
+| `[nzSimple]` | 当添加该属性时，显示为简单分页 | boolean | - |
 | `(nzPageIndexChange)` | 当前页码改版时的回调函数 | `EventEmitter<number>` | - |
 | `(nzPageSizeChange)` | 页数改变时的回调函数 | `EventEmitter<number>` | - |
 | `(nzCurrentPageDataChange)` | 当前页面展示数据改变的回调函数 | `EventEmitter<any[]>` | - |
@@ -117,7 +118,7 @@ Table 组件同时具备了易用性和高度可定制性
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
 | `[nzShowFilter]` | 是否显示过滤 | boolean | - |
-| `[nzFilters]` | 过滤器内容, 显示数据 `text`，回调函数传出 `value` | `Array<{ text: string; value: any }>` | - |
+| `[nzFilters]` | 过滤器内容, 显示数据 `text`，回调函数传出 `value`，设置 `byDefault` 以默认应用过滤规则 | `Array<{ text: string; value: any; byDefault?: boolean }>` | - |
 | `[nzFilterMultiple]` | 是否为多选过滤器 | boolean | true |
 | `(nzFilterChange)` | 过滤器内容选择的 value 数据回调 | `EventEmitter<any[]丨 any>` | - |
 

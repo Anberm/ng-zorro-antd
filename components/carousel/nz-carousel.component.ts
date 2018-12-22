@@ -1,3 +1,4 @@
+import { LEFT_ARROW, RIGHT_ARROW } from '@angular/cdk/keycodes';
 import {
   AfterContentInit,
   AfterViewInit,
@@ -6,17 +7,21 @@ import {
   ElementRef,
   EventEmitter,
   HostBinding,
+  HostListener,
   Input,
   OnDestroy,
   Output,
   QueryList,
   Renderer2,
+  TemplateRef,
   ViewChild
 } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { toBoolean } from '../core/util/convert';
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { toBoolean, toNumber } from '../core/util/convert';
 import { NzCarouselContentDirective } from './nz-carousel-content.directive';
+
+export type SwipeDirection = 'swipeleft' | 'swiperight';
 
 @Component({
   selector           : 'nz-carousel',
@@ -53,10 +58,12 @@ import { NzCarouselContentDirective } from './nz-carousel-content.directive';
 })
 export class NzCarouselComponent implements AfterViewInit, OnDestroy, AfterContentInit {
   private _autoPlay = false;
+  private _autoPlaySpeed = 3000;
   private _dots = true;
   private _vertical = false;
   private _effect = 'scrollx';
-  slideContentsSubscription: Subscription;
+  private unsubscribe$ = new Subject<void>();
+
   activeIndex = 0;
   transform = 'translate3d(0px, 0px, 0px)';
   timeout;
@@ -64,8 +71,14 @@ export class NzCarouselComponent implements AfterViewInit, OnDestroy, AfterConte
   @ContentChildren(NzCarouselContentDirective) slideContents: QueryList<NzCarouselContentDirective>;
   @ViewChild('slickList') slickList: ElementRef;
   @ViewChild('slickTrack') slickTrack: ElementRef;
-  @Output() nzAfterChange: EventEmitter<number> = new EventEmitter();
-  @Output() nzBeforeChange: EventEmitter<{ from: number; to: number }> = new EventEmitter();
+  @Output() readonly nzAfterChange: EventEmitter<number> = new EventEmitter();
+  @Output() readonly nzBeforeChange: EventEmitter<{ from: number; to: number }> = new EventEmitter();
+  @Input() nzEnableSwipe = true;
+
+  @HostListener('window:resize', [ '$event' ])
+  onWindowResize(e: UIEvent): void {
+    this.renderContent();
+  }
 
   get nextIndex(): number {
     return this.activeIndex < this.slideContents.length - 1 ? (this.activeIndex + 1) : 0;
@@ -74,6 +87,8 @@ export class NzCarouselComponent implements AfterViewInit, OnDestroy, AfterConte
   get prevIndex(): number {
     return this.activeIndex > 0 ? (this.activeIndex - 1) : (this.slideContents.length - 1);
   }
+
+  @Input() nzDotRender: TemplateRef<{ $implicit: number }>;
 
   @Input()
   set nzDots(value: boolean) {
@@ -102,6 +117,16 @@ export class NzCarouselComponent implements AfterViewInit, OnDestroy, AfterConte
 
   get nzAutoPlay(): boolean {
     return this._autoPlay;
+  }
+
+  @Input()
+  set nzAutoPlaySpeed(value: number) {
+    this._autoPlaySpeed = toNumber(value, null);
+    this.setUpAutoPlay();
+  }
+
+  get nzAutoPlaySpeed(): number {
+    return this._autoPlaySpeed;
   }
 
   @Input()
@@ -171,10 +196,10 @@ export class NzCarouselComponent implements AfterViewInit, OnDestroy, AfterConte
 
   setUpAutoPlay(): void {
     this.clearTimeout();
-    if (this.nzAutoPlay) {
+    if (this.nzAutoPlay && this.nzAutoPlaySpeed > 0) {
       this.timeout = setTimeout(_ => {
         this.setActive(this.slideContents.toArray()[ this.nextIndex ], this.nextIndex);
-      }, 3000);
+      }, this.nzAutoPlaySpeed);
     }
   }
 
@@ -207,12 +232,40 @@ export class NzCarouselComponent implements AfterViewInit, OnDestroy, AfterConte
   }
 
   onKeyDown(e: KeyboardEvent): void {
-    if (e.keyCode === 37) { // Left
+    if (e.keyCode === LEFT_ARROW) { // Left
       this.pre();
       e.preventDefault();
-    } else if (e.keyCode === 39) { // Right
+    } else if (e.keyCode === RIGHT_ARROW) { // Right
       this.next();
       e.preventDefault();
+    }
+  }
+
+  swipe(action: SwipeDirection = 'swipeleft'): void {
+    if (!this.nzEnableSwipe) { return; }
+    if (action === 'swipeleft') { this.next(); }
+    if (action === 'swiperight') { this.pre(); }
+  }
+
+  /* tslint:disable:no-any */
+  swipeInProgress(e: any): void {
+    if (this.nzEffect === 'scrollx') {
+      const final = e.isFinal;
+      const scrollWidth = final ? 0 : e.deltaX * 1.2;
+      const totalWidth = this.elementRef.nativeElement.offsetWidth;
+      if (this.nzVertical) {
+        const totalHeight = this.elementRef.nativeElement.offsetHeight;
+        const scrollPercent = scrollWidth / totalWidth;
+        const scrollHeight =  scrollPercent * totalHeight;
+        this.transform = `translate3d(0px, ${-this.activeIndex * totalHeight + scrollHeight}px, 0px)`;
+      } else {
+        this.transform = `translate3d(${-this.activeIndex * totalWidth + scrollWidth}px, 0px, 0px)`;
+      }
+    }
+    if (e.isFinal) {
+      this.setUpAutoPlay();
+    } else {
+      this.clearTimeout();
     }
   }
 
@@ -226,17 +279,17 @@ export class NzCarouselComponent implements AfterViewInit, OnDestroy, AfterConte
   }
 
   ngAfterViewInit(): void {
-    this.slideContentsSubscription = this.slideContents.changes.subscribe(() => {
+    this.slideContents.changes
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe(() => {
       this.renderContent();
     });
     this.renderContent();
   }
 
   ngOnDestroy(): void {
-    if (this.slideContentsSubscription) {
-      this.slideContentsSubscription.unsubscribe();
-      this.slideContentsSubscription = null;
-    }
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
     this.clearTimeout();
   }
 

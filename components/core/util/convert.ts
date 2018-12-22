@@ -1,4 +1,4 @@
-import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
+import { coerceBooleanProperty, coerceCssPixelValue, coerceNumberProperty } from '@angular/cdk/coercion';
 import { FunctionProp } from '../types/common-wrap';
 
 export function toBoolean(value: boolean | string): boolean {
@@ -9,9 +9,43 @@ export function toNumber<D>(value: number | string, fallback: D): number | D {
   return coerceNumberProperty(value, fallback);
 }
 
+export function toCssPixel(value: number | string): string {
+  return coerceCssPixelValue(value);
+}
+
 // Get the funciton-property type's value
 export function valueFunctionProp<T>(prop: FunctionProp<T>, ...args: any[]): T { // tslint:disable-line: no-any
   return typeof prop === 'function' ? prop(...args) : prop;
+}
+
+// tslint:disable-next-line: no-any
+function propDecoratorFactory<T, D>(name: string, fallback: (v: T) => D): (target: any, propName: string) => void {
+
+  // tslint:disable-next-line: no-any
+  function propDecorator(target: any, propName: string): void {
+    const privatePropName = `$$__${propName}`;
+
+    if (Object.prototype.hasOwnProperty.call(target, privatePropName)) {
+      console.warn(`The prop "${privatePropName}" is already exist, it will be overrided by ${name} decorator.`);
+    }
+
+    Object.defineProperty(target, privatePropName, {
+      configurable: true,
+      writable    : true
+    });
+
+    Object.defineProperty(target, propName, {
+      get(): string {
+        return this[ privatePropName ]; // tslint:disable-line:no-invalid-this
+      },
+      set(value: T): void {
+        this[ privatePropName ] = fallback(value); // tslint:disable-line:no-invalid-this
+      }
+    });
+  }
+
+  return propDecorator;
+
 }
 
 /**
@@ -30,31 +64,10 @@ export function valueFunctionProp<T>(prop: FunctionProp<T>, ...args: any[]): T {
  * // __visible = false;
  * ```
  */
-export function InputBoolean(): any { // tslint:disable-line:no-any
-  return function InputBooleanPropDecorator (target: object, name: string): void {
-    // Add our own private prop
-    const privatePropName = `$$__${name}`;
+export function InputBoolean(): any { // tslint:disable-line: no-any
+  return propDecoratorFactory('InputBoolean', toBoolean);
+}
 
-    if (Object.prototype.hasOwnProperty.call(target, privatePropName)) {
-      console.warn(`The prop "${privatePropName}" is already exist, it will be overrided by InputBoolean decorator.`);
-    }
-
-    Object.defineProperty(target, privatePropName, {
-      configurable: true,
-      writable: true
-    });
-
-    Object.defineProperty(target, name, {
-      get(): boolean {
-        return this[ privatePropName ]; // tslint:disable-line:no-invalid-this
-      },
-      set(value: boolean | string): void {
-        this[ privatePropName ] = toBoolean(value); // tslint:disable-line:no-invalid-this
-      }
-    });
-
-    // // Do rest things for input decorator
-    // const inputDecorator = Input();
-    // inputDecorator(target, name);
-  };
+export function InputCssPixel(): any { // tslint:disable-line: no-any
+  return propDecoratorFactory('InputCssPixel', toCssPixel);
 }

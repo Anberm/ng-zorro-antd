@@ -213,6 +213,23 @@ describe('auto-complete', () => {
       .toEqual('');
     }));
 
+    it('should close the panel when an option is tap', fakeAsync(() => {
+      dispatchFakeEvent(input, 'focusin');
+      fixture.detectChanges();
+      flush();
+
+      const option = overlayContainerElement.querySelector('nz-auto-option') as HTMLElement;
+      dispatchFakeEvent(option, 'touchend');
+      dispatchFakeEvent(option, 'click');
+      fixture.detectChanges();
+
+      tick(500);
+      expect(fixture.componentInstance.trigger.panelOpen)
+      .toBe(false);
+      expect(overlayContainerElement.textContent)
+      .toEqual('');
+    }));
+
     it('should hide the panel when the options list is empty', fakeAsync(() => {
       dispatchFakeEvent(input, 'focusin');
       fixture.detectChanges();
@@ -347,6 +364,19 @@ describe('auto-complete', () => {
 
     }));
 
+    it('should overlayClassName & overlayStyle work', () => {
+      fixture.componentInstance.overlayClassName = 'testClass';
+      fixture.componentInstance.overlayStyle = { color: 'rgb(1, 2, 3)' };
+      fixture.detectChanges();
+
+      fixture.componentInstance.trigger.openPanel();
+      fixture.detectChanges();
+
+      const dropdown = overlayContainerElement.querySelector('.ant-select-dropdown') as HTMLElement;
+      expect(dropdown.classList.contains(`testClass`)).toBe(true);
+      expect(dropdown.style.color).toBe(`rgb(1, 2, 3)`);
+    });
+
   });
 
   describe('value', () => {
@@ -371,7 +401,7 @@ describe('auto-complete', () => {
       flush();
       fixture.detectChanges();
 
-      expect(fixture.componentInstance.inputValue)
+      expect(fixture.componentInstance.inputControl.value)
       .toEqual('Downing Street');
     }));
 
@@ -402,7 +432,7 @@ describe('auto-complete', () => {
       fixture.detectChanges();
       flush();
 
-      expect(fixture.componentInstance.inputValue).toBe(200);
+      expect(fixture.componentInstance.inputControl.value).toBe(200);
     }));
 
     it('should mark the autocomplete control as touched on blur', fakeAsync(() => {
@@ -720,7 +750,7 @@ describe('auto-complete', () => {
       fixture.detectChanges();
       flush();
 
-      expect(componentInstance.inputValue)
+      expect(componentInstance.inputControl.value)
       .toContain('Downing Street');
 
       expect(input.value)
@@ -879,7 +909,6 @@ describe('auto-complete', () => {
   <div>
       <input class="input"
              nz-input
-             [(ngModel)]="inputValue"
              [formControl]="inputControl"
              [nzAutocomplete]="auto"
              (input)="onInput($event.target?.value)">
@@ -913,7 +942,7 @@ class NzTestSimpleAutocompleteComponent {
   <div>
       <input [(ngModel)]="inputValue"
              [nzAutocomplete]="auto">
-      <nz-autocomplete [nzWidth]="width" [nzDataSource]="options" [nzDefaultActiveFirstOption]="false" nzBackfill #auto>
+      <nz-autocomplete [nzWidth]="width" [nzOverlayClassName]="overlayClassName" [nzOverlayStyle]="overlayStyle" [nzDataSource]="options" [nzDefaultActiveFirstOption]="false" nzBackfill #auto>
       </nz-autocomplete>
   </div>
   `
@@ -921,6 +950,8 @@ class NzTestSimpleAutocompleteComponent {
 class NzTestAutocompletePropertyComponent {
   inputValue: string;
   width: number;
+  overlayClassName = '';
+  overlayStyle = {};
   options = ['Burns Bay Road', 'Downing Street', 'Wall Street'];
   @ViewChild(NzAutocompleteComponent) panel: NzAutocompleteComponent;
   @ViewChild(NzAutocompleteTriggerDirective) trigger: NzAutocompleteTriggerDirective;

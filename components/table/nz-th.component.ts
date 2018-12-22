@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostBinding,
   Input,
   Output,
   Renderer2,
@@ -14,7 +15,7 @@ import { toBoolean } from '../core/util/convert';
 import { NzDropDownComponent } from '../dropdown/nz-dropdown.component';
 
 /* tslint:disable-next-line:no-any */
-export type NzThFilterType = Array<{ text: string; value: any }>;
+export type NzThFilterType = Array<{ text: string; value: any; byDefault?: boolean }>;
 
 export interface NzThItemInterface {
   text: string;
@@ -25,7 +26,7 @@ export interface NzThItemInterface {
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector           : 'th',
+  selector           : 'th:not(.nz-disable-th)',
   preserveWhitespaces: false,
   templateUrl        : './nz-th.component.html'
 })
@@ -36,10 +37,14 @@ export class NzThComponent {
   private _showFilter = false;
   private _showCheckbox = false;
   private _showRowSelection = false;
-  el: HTMLElement;
+  private _hasDefaultFilter = false;
+  private _customFilter = false;
+  el: HTMLElement = this.elementRef.nativeElement;
   hasFilterValue = false;
+  filterVisible = false;
   multipleFilterList: NzThItemInterface[] = [];
   singleFilterList: NzThItemInterface[] = [];
+  @ViewChild(NzDropDownComponent) nzDropDownComponent: NzDropDownComponent;
   /* tslint:disable-next-line:no-any */
   @Input() nzSelections: Array<{ text: string, onSelect: any }> = [];
   @Input() nzChecked = false;
@@ -48,12 +53,47 @@ export class NzThComponent {
   @Input() nzSortKey: string;
   @Input() nzFilterMultiple = true;
   @Input() nzWidth: string;
-  @Output() nzCheckedChange = new EventEmitter<boolean>();
-  @ViewChild(NzDropDownComponent) nzDropDownComponent: NzDropDownComponent;
-  @Output() nzSortChange = new EventEmitter<string>();
-  @Output() nzSortChangeWithKey = new EventEmitter<{ key: string, value: string }>();
+  @Output() readonly nzCheckedChange = new EventEmitter<boolean>();
+  @Output() readonly nzSortChange = new EventEmitter<string>();
+  @Output() readonly nzSortChangeWithKey = new EventEmitter<{ key: string, value: string }>();
   /* tslint:disable-next-line:no-any */
-  @Output() nzFilterChange = new EventEmitter<any[] | any>();
+  @Output() readonly nzFilterChange = new EventEmitter<any[] | any>();
+
+  @HostBinding('class.ant-table-column-has-actions')
+  get hasActionsClass(): boolean {
+    return this.nzShowFilter || this.nzShowSort || this.nzCustomFilter;
+  }
+
+  @HostBinding('class.ant-table-column-has-filters')
+  get hasFiltersClass(): boolean {
+    return this.nzShowFilter || this.nzCustomFilter;
+  }
+
+  @HostBinding('class.ant-table-column-has-sorters')
+  get hasSortersClass(): boolean {
+    return this.nzShowSort;
+  }
+
+  updateSortValue(): void {
+    if (this.nzShowSort) {
+      if (this.nzSort === 'descend') {
+        this.setSortValue('ascend');
+      } else if (this.nzSort === 'ascend') {
+        this.setSortValue(null);
+      } else {
+        this.setSortValue('descend');
+      }
+    }
+  }
+
+  @Input()
+  set nzCustomFilter(value: boolean) {
+    this._customFilter = toBoolean(value);
+  }
+
+  get nzCustomFilter(): boolean {
+    return this._customFilter;
+  }
 
   @Input()
   set nzShowSort(value: boolean) {
@@ -148,32 +188,42 @@ export class NzThComponent {
   }
 
   setSortValue(value: string): void {
-    if (this.nzSort === value) {
-      this.nzSort = null;
-    } else {
-      this.nzSort = value;
-    }
+    this.nzSort = value;
     this.nzSortChangeWithKey.emit({ key: this.nzSortKey, value: this.nzSort });
     this.nzSortChange.emit(this.nzSort);
   }
 
-  search(): void {
+  get filterList(): NzThItemInterface[] {
+    return this.multipleFilterList.filter(item => item.checked).map(item => item.value);
+  }
+
+  /* tslint:disable-next-line:no-any */
+  get filterValue(): any {
+    const checkedFilter = this.singleFilterList.find(item => item.checked);
+    return checkedFilter ? checkedFilter.value : null;
+  }
+
+  updateFilterStatus(): void {
     if (this.nzFilterMultiple) {
-      const filterList = this.multipleFilterList.filter(item => item.checked).map(item => item.value);
-      this.hasFilterValue = filterList.length > 0;
-      this.nzFilterChange.emit(filterList);
+      this.hasFilterValue = this.filterList.length > 0;
     } else {
-      const checkedFilter = this.singleFilterList.find(item => item.checked);
-      const filterValue = checkedFilter ? checkedFilter.value : null;
-      this.hasFilterValue = isNotNil(filterValue);
-      this.nzFilterChange.emit(filterValue);
+      this.hasFilterValue = isNotNil(this.filterValue);
+    }
+  }
+
+  search(): void {
+    this.updateFilterStatus();
+    if (this.nzFilterMultiple) {
+      this.nzFilterChange.emit(this.filterList);
+    } else {
+      this.nzFilterChange.emit(this.filterValue);
     }
     this.hideDropDown();
   }
 
   reset(): void {
-    this.initMultipleFilterList();
-    this.initSingleFilterList();
+    this.initMultipleFilterList(true);
+    this.initSingleFilterList(true);
     this.search();
     this.hideDropDown();
     this.hasFilterValue = false;
@@ -190,9 +240,11 @@ export class NzThComponent {
   hideDropDown(): void {
     this.nzDropDownComponent.nzVisible = false;
     this.nzDropDownComponent.hide();
+    this.filterVisible = false;
   }
 
   dropDownVisibleChange(value: boolean): void {
+    this.filterVisible = value;
     if (!value) {
       this.search();
     }
@@ -204,6 +256,7 @@ export class NzThComponent {
       this._filters = value;
       this.initMultipleFilterList();
       this.initSingleFilterList();
+      this.updateFilterStatus();
     } else {
       console.warn('nzFilters only accept type of Array<{ text: string; value: any }>');
     }
@@ -213,19 +266,35 @@ export class NzThComponent {
     return this._filters;
   }
 
-  initMultipleFilterList(): void {
+  initMultipleFilterList(force?: boolean): void {
     this.multipleFilterList = this.nzFilters.map(item => {
-      return { text: item.text, value: item.value, checked: false };
+      const checked = force ? false : !!item.byDefault;
+      if (checked) {
+        this._hasDefaultFilter = true;
+      }
+      return { text: item.text, value: item.value, checked };
     });
+    this.checkDefaultFilters();
   }
 
-  initSingleFilterList(): void {
+  initSingleFilterList(force?: boolean): void {
     this.singleFilterList = this.nzFilters.map(item => {
-      return { text: item.text, value: item.value, checked: false };
+      const checked = force ? false : !!item.byDefault;
+      if (checked) {
+        this._hasDefaultFilter = true;
+      }
+      return { text: item.text, value: item.value, checked };
     });
+    this.checkDefaultFilters();
+  }
+
+  checkDefaultFilters(): void {
+    if (!this.nzFilters || this.nzFilters.length === 0 || !this._hasDefaultFilter) {
+      return;
+    }
+    this.updateFilterStatus();
   }
 
   constructor(private elementRef: ElementRef, private renderer: Renderer2) {
-    this.el = this.elementRef.nativeElement;
   }
 }
