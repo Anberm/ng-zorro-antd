@@ -37,7 +37,7 @@ import {
 import { filter, tap } from 'rxjs/operators';
 
 import { selectDropDownAnimation } from '../core/animation/select-dropdown-animations';
-import { selectTagAnimation } from '../core/animation/select-tag-animations';
+import { zoomMotion } from '../core/animation/zoom';
 import { InputBoolean } from '../core/util/convert';
 import { NzFormatEmitEvent } from '../tree/interface';
 import { NzTreeNode } from '../tree/nz-tree-node';
@@ -45,7 +45,7 @@ import { NzTreeComponent } from '../tree/nz-tree.component';
 
 @Component({
   selector   : 'nz-tree-select',
-  animations : [ selectDropDownAnimation, selectTagAnimation ],
+  animations : [ selectDropDownAnimation, zoomMotion ],
   templateUrl: './nz-tree-select.component.html',
   providers  : [
     {
@@ -55,7 +55,6 @@ import { NzTreeComponent } from '../tree/nz-tree.component';
     }
   ],
   host       : {
-    '[class.ant-select]'            : 'true',
     '[class.ant-select-lg]'         : 'nzSize==="large"',
     '[class.ant-select-sm]'         : 'nzSize==="small"',
     '[class.ant-select-enabled]'    : '!nzDisabled',
@@ -87,6 +86,7 @@ export class NzTreeSelectComponent implements ControlValueAccessor, OnInit, Afte
   @Input() @InputBoolean() nzAsyncData = false;
   @Input() @InputBoolean() nzMultiple = false;
   @Input() @InputBoolean() nzDefaultExpandAll = false;
+  @Input() nzNotFoundContent: string;
   @Input() nzNodes: NzTreeNode[] = [];
   @Input() nzOpen = false;
   @Input() nzSize = 'default';
@@ -108,6 +108,7 @@ export class NzTreeSelectComponent implements ControlValueAccessor, OnInit, Afte
 
   isComposing = false;
   isDestroy = true;
+  isNotFound = false;
   inputValue = '';
   dropDownClassMap: { [ className: string ]: boolean };
   dropDownPosition: 'top' | 'center' | 'bottom' = 'bottom';
@@ -159,7 +160,9 @@ export class NzTreeSelectComponent implements ControlValueAccessor, OnInit, Afte
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
     private overlay: Overlay,
-    private viewContainerRef: ViewContainerRef) {
+    private viewContainerRef: ViewContainerRef,
+    elementRef: ElementRef) {
+    renderer.addClass(elementRef.nativeElement, 'ant-select');
   }
 
   ngOnInit(): void {
@@ -217,13 +220,14 @@ export class NzTreeSelectComponent implements ControlValueAccessor, OnInit, Afte
 
   registerOnTouched(fn: () => void): void {
   }
+
   @HostListener('click')
   trigger(): void {
     if (this.nzDisabled || (!this.nzDisabled && this.nzOpen)) {
       this.closeDropDown();
     } else {
       this.openDropdown();
-      if (this.nzShowSearch) {
+      if (this.nzShowSearch || this.isMultiple) {
         this.focusOnInput();
       }
     }
@@ -236,6 +240,7 @@ export class NzTreeSelectComponent implements ControlValueAccessor, OnInit, Afte
       this.updateCdkConnectedOverlayStatus();
       this.updatePosition();
       this.updateDropDownClassMap();
+      this.updateStackingOrder();
     }
   }
 
@@ -305,6 +310,14 @@ export class NzTreeSelectComponent implements ControlValueAccessor, OnInit, Afte
     });
   }
 
+  updateStackingOrder(): void {
+    if (this.renderer.nextSibling(this.overlayRef.hostElement)) {
+      const parentNode = this.renderer.parentNode(this.overlayRef.hostElement);
+      this.renderer.appendChild(parentNode, this.overlayRef.backdropElement);
+      this.renderer.appendChild(parentNode, this.overlayRef.hostElement);
+    }
+  }
+
   attachOverlay(): void {
     this.portal = new TemplatePortal(this.dropdownTemplate, this.viewContainerRef);
     this.overlayRef = this.overlay.create(this.getOverlayConfig());
@@ -368,14 +381,13 @@ export class NzTreeSelectComponent implements ControlValueAccessor, OnInit, Afte
       this.updateSelectedNodes();
       const value = this.selectedNodes.map(node => node.key);
       this.value = [ ...value ];
-      if (this.nzShowSearch) {
+      if (this.nzShowSearch || this.isMultiple) {
         this.inputValue = '';
+        this.isNotFound = false;
       }
       if (this.isMultiple) {
         this.onChange(value);
-        if (this.nzShowSearch) {
-          this.focusOnInput();
-        }
+        this.focusOnInput();
       } else {
         this.closeDropDown();
         this.onChange(value.length ? value[ 0 ] : null);
@@ -410,6 +422,14 @@ export class NzTreeSelectComponent implements ControlValueAccessor, OnInit, Afte
     });
     this.nzCleared.emit();
     this.closeDropDown();
+  }
+
+  setSearchValues($event: NzFormatEmitEvent): void {
+    Promise.resolve().then(() => {
+      this.isNotFound = (this.nzShowSearch || this.isMultiple)
+        && this.inputValue
+        && $event.matchedKeys.length === 0;
+    });
   }
 
   updateDropDownClassMap(): void {
