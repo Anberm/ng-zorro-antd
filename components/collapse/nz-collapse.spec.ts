@@ -131,14 +131,10 @@ describe('collapse', () => {
   });
   describe('collapse template', () => {
     let fixture;
-    let testComponent;
-    let collapse;
     let panels;
     beforeEach(() => {
       fixture = TestBed.createComponent(NzTestCollapseTemplateComponent);
       fixture.detectChanges();
-      testComponent = fixture.debugElement.componentInstance;
-      collapse = fixture.debugElement.query(By.directive(NzCollapseComponent));
       panels = fixture.debugElement.queryAll(By.directive(NzCollapsePanelComponent));
     });
     it('should header work', () => {
@@ -185,6 +181,7 @@ export class NzTestCollapseBasicComponent {
   active01 = false;
   active02 = false;
   showArrow = true;
+  // showExtra = '';
   header = 'string';
   active01Change = jasmine.createSpy('active01 callback');
   active02Change = jasmine.createSpy('active02 callback');
