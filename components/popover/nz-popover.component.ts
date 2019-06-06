@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -10,13 +18,12 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { zoomBigMotion } from '../core/animation/zoom';
-import { NzNoAnimationDirective } from '../core/no-animation/nz-no-animation.directive';
-import { isNotNil } from '../core/util';
-import { NzToolTipComponent } from '../tooltip/nz-tooltip.component';
+import { isNotNil, zoomBigMotion, NzNoAnimationDirective } from 'ng-zorro-antd/core';
+import { NzToolTipComponent } from 'ng-zorro-antd/tooltip';
 
 @Component({
   selector: 'nz-popover',
+  exportAs: 'nzPopoverComponent',
   animations: [zoomBigMotion],
   templateUrl: './nz-popover.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

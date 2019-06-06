@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { DOWN_ARROW, ENTER, ESCAPE, TAB, UP_ARROW } from '@angular/cdk/keycodes';
 import {
   ConnectedOverlayPositionChange,
@@ -46,6 +54,7 @@ export function getNzAutocompleteMissingPanelError(): Error {
 
 @Directive({
   selector: `input[nzAutocomplete], textarea[nzAutocomplete]`,
+  exportAs: 'nzAutocompleteTrigger',
   providers: [NZ_AUTOCOMPLETE_VALUE_ACCESSOR],
   host: {
     autocomplete: 'off',
@@ -113,6 +122,7 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
   }
 
   openPanel(): void {
+    this.previousValue = this.elementRef.nativeElement.value;
     this.attachOverlay();
   }
 
@@ -147,12 +157,13 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
       }
       this.closePanel();
     } else if (this.panelOpen && keyCode === ENTER) {
-      event.preventDefault();
       if (this.nzAutocomplete.showPanel && this.activeOption) {
+        event.preventDefault();
         this.activeOption.selectViaInteraction();
       }
     } else if (this.panelOpen && isArrowKey && this.nzAutocomplete.showPanel) {
       event.stopPropagation();
+      event.preventDefault();
       if (keyCode === UP_ARROW) {
         this.nzAutocomplete.setPreviousItemActive();
       } else {
@@ -168,11 +179,12 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
   handleInput(event: KeyboardEvent): void {
     const target = event.target as HTMLInputElement;
     let value: number | string | null = target.value;
-    if (target.type === 'number') {
-      value = value === '' ? null : parseFloat(value);
-    }
-    if (this.canOpen() && document.activeElement === event.target && this.previousValue !== value) {
-      this.previousValue = value;
+
+    if (this.canOpen() && document.activeElement === target && this.previousValue !== value) {
+      if (target.type === 'number') {
+        value = value === '' ? null : parseFloat(value);
+      }
+
       this._onChange(value);
       this.openPanel();
     }
@@ -180,7 +192,6 @@ export class NzAutocompleteTriggerDirective implements ControlValueAccessor, OnD
 
   handleFocus(): void {
     if (this.canOpen()) {
-      this.previousValue = this.elementRef.nativeElement.value;
       this.openPanel();
     }
   }

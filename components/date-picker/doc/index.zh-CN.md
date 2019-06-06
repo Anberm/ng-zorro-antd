@@ -30,6 +30,14 @@ registerLocaleData(zh);
 
 **注意：** 所有输入输出日期对象均为 [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)，你可以通过 [date-fns](https://date-fns.org/) 工具库获得你需要的数据。
 
+### 单独引入此组件
+
+想要了解更多关于单独引入组件的内容，可以在[快速上手](/docs/getting-started/zh#单独引入某个组件)页面进行查看。
+
+```ts
+import { NzDatePickerModule } from 'ng-zorro-antd';
+```
+
 ### 共同的 API
 
 以下 API 为 nz-date-picker、nz-month-picker、nz-range-picker, nz-week-picker 共享的 API。
@@ -100,7 +108,7 @@ registerLocaleData(zh);
 | `[ngModel]` | 日期 | `Date[]` | - |
 | `[nzDisabledTime]` | 不可选择的时间 | `(current: Date, partial: 'start'｜'end') => { nzDisabledHours, nzDisabledMinutes, nzDisabledSeconds }` | - |
 | `[nzFormat]` | 展示的日期格式，见`nzFormat特别说明` | `string` | `"yyyy-MM-dd"` |
-| `[nzRanges]`       | 预设时间范围快捷选择 | `{ [ key: string ]: Date[] }` | - |
+| `[nzRanges]` | 预设时间范围快捷选择 | `{ [ key: string ]: Date[] } ｜ { [ key: string ]: () => Date[] }` | - |
 | `[nzRenderExtraFooter]` | 在面板中添加额外的页脚 | `TemplateRef｜string｜(() => TemplateRef｜string)` | - |
 | `[nzShowTime]` | 增加时间选择功能 | `object｜boolean` | [TimePicker Options](/components/time-picker/zh#api) |
 | `[nzPlaceHolder]` | 输入框提示文字 | `string[]` | - |

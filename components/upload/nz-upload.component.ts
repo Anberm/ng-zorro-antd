@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -16,8 +24,8 @@ import {
 import { of, Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { toBoolean, InputBoolean, InputNumber } from '../core/util/convert';
-import { NzI18nService } from '../i18n/nz-i18n.service';
+import { toBoolean, InputBoolean, InputNumber } from 'ng-zorro-antd/core';
+import { NzI18nService } from 'ng-zorro-antd/i18n';
 
 import {
   ShowUploadListInterface,
@@ -34,6 +42,7 @@ import { NzUploadListComponent } from './nz-upload-list.component';
 
 @Component({
   selector: 'nz-upload',
+  exportAs: 'nzUpload',
   templateUrl: './nz-upload.component.html',
   preserveWhitespaces: false,
   encapsulation: ViewEncapsulation.None,

@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -16,6 +24,7 @@ import { NzStatisticValueType } from './nz-statistic-definitions';
   encapsulation: ViewEncapsulation.None,
   preserveWhitespaces: false,
   selector: 'nz-statistic-number',
+  exportAs: 'nzStatisticNumber',
   templateUrl: './nz-statistic-number.component.html',
   host: {
     class: 'ant-statistic-content-value'

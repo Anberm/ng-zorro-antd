@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,8 +16,7 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { InputNumber } from '../core/util';
-import { isNotNil } from '../core/util/check';
+import { isNotNil, InputNumber } from 'ng-zorro-antd/core';
 
 export type NzProgressGapPositionType = 'top' | 'bottom' | 'left' | 'right';
 export type NzProgressStatusType = 'success' | 'exception' | 'active' | 'normal';
@@ -20,6 +27,7 @@ export type NzProgressStrokeLinecapType = 'round' | 'square';
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   selector: 'nz-progress',
+  exportAs: 'nzProgress',
   preserveWhitespaces: false,
   templateUrl: './nz-progress.component.html'
 })
@@ -169,9 +177,10 @@ export class NzProgressComponent implements OnInit, OnChanges {
       transition: 'stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s'
     };
     this.strokePathStyle = {
+      stroke: this.nzStrokeColor || (null as any), // tslint:disable-line:no-any
       strokeDasharray: `${(this.nzPercent / 100) * (len - gapDegree)}px ${len}px`,
       strokeDashoffset: `-${gapDegree / 2}px`,
-      transition: 'stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s, stroke-width .06s ease .3s' // eslint-disable-line
+      transition: 'stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s, stroke-width .06s ease .3s'
     };
   }
 

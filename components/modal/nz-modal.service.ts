@@ -1,10 +1,17 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ComponentRef, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IndexableObject } from '../core/types/indexable';
 
-import { LoggerService } from '../core/util/logger/logger.service';
+import { IndexableObject, LoggerService } from 'ng-zorro-antd/core';
 
 import { NzModalControlService } from './nz-modal-control.service';
 import { NzModalRef } from './nz-modal-ref.class';
@@ -25,6 +32,7 @@ export class ModalBuilderForService {
     }
 
     this.changeProps(options);
+    this.modalRef!.instance.setOverlayRef(this.overlayRef);
     this.modalRef!.instance.open();
     this.modalRef!.instance.nzAfterClose.subscribe(() => this.destroyModal()); // [NOTE] By default, close equals destroy when using as Service
   }

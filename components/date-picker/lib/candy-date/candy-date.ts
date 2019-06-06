@@ -1,9 +1,17 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import addMonths from 'date-fns/add_months';
 import addYears from 'date-fns/add_years';
 import endOfMonth from 'date-fns/end_of_month';
 import setDay from 'date-fns/set_day';
 import setMonth from 'date-fns/set_month';
-import { IndexableObject } from '../../../core/types/indexable';
+import { IndexableObject } from 'ng-zorro-antd/core';
 
 /**
  * Wrapping kind APIs for date operating and unify

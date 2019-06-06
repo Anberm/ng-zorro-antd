@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,7 +15,9 @@ import {
   OnInit,
   ViewEncapsulation
 } from '@angular/core';
-import { moveUpMotion } from '../core/animation/move';
+
+import { moveUpMotion } from 'ng-zorro-antd/core';
+
 import { NzMessageContainerComponent } from './nz-message-container.component';
 import { NzMessageDataFilled, NzMessageDataOptions } from './nz-message.definitions';
 
@@ -15,6 +25,7 @@ import { NzMessageDataFilled, NzMessageDataOptions } from './nz-message.definiti
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   selector: 'nz-message',
+  exportAs: 'nzMessage',
   preserveWhitespaces: false,
   animations: [moveUpMotion],
   templateUrl: './nz-message.component.html'

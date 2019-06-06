@@ -15,6 +15,14 @@ A Drawer is a panel that is typically overlaid on top of a page and slides in fr
 
 ## API
 
+### Import this Component Individually
+
+You can get more detail [here](/docs/getting-started/en#import-a-component-individually).
+
+```ts
+import { NzDrawerModule } from 'ng-zorro-antd';
+```
+
 ### nz-drawer
 
 | Props | Description | Type | Default |
@@ -48,6 +56,7 @@ A Drawer is a panel that is typically overlaid on top of a page and slides in fr
 | nzContent |  The drawer body content. | `TemplateRef<{ $implicit: D, drawerRef: NzDrawerRef }>｜Type<T>` | - |
 | nzContentParams | The component inputs the param / The Template context. | `D` | - |
 | nzClosable | Whether a close (x) button is visible on top right of the Drawer dialog or not. | `boolean` | `true` |
+| nzOnCancel | Execute when click on the mask or the upper cancel button, This function returns a promise, which is automatically closed when the execution is complete or the promise ends (return false to prevent closing) | `() => Promise<any>` | - |
 | nzMaskClosable | Clicking on the mask (area outside the Drawer) to close the Drawer or not. | `boolean` | `true` |
 | nzMask | Whether to show mask or not. | `boolean` | `true` |
 | nzMaskStyle | Style for Drawer's mask element. | `object` | `{}` |

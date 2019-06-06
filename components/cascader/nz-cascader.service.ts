@@ -1,6 +1,15 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { arraysEqual } from '../core/util/array';
+
+import { arraysEqual } from 'ng-zorro-antd/core';
 
 import {
   isShowSearchObject,
@@ -121,6 +130,8 @@ export class NzCascaderService implements OnDestroy {
     this.selectedOptions = [];
 
     if (first && this.cascaderComponent.nzLoadData && !hasValue) {
+      // Should also notify the component that value changes. Fix #3480.
+      this.$redraw.next();
       return;
     } else {
       initColumnWithIndex(0);

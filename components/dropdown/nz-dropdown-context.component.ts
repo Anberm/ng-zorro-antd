@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { ConnectedOverlayPositionChange } from '@angular/cdk/overlay';
 import {
   ChangeDetectionStrategy,
@@ -9,12 +17,15 @@ import {
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { slideMotion } from '../core/animation/slide';
+
+import { slideMotion } from 'ng-zorro-antd/core';
+
 import { NzDropdownService } from './nz-dropdown.service';
 import { NzMenuDropdownService } from './nz-menu-dropdown.service';
 
 @Component({
   selector: 'nz-dropdown-context',
+  exportAs: 'nzDropdownContext',
   animations: [slideMotion],
   preserveWhitespaces: false,
   templateUrl: './nz-dropdown-context.component.html',

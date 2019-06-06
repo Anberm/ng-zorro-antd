@@ -1,4 +1,12 @@
-import { DatePipe } from '@angular/common';
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
+import { formatDate } from '@angular/common';
 import { Inject, Injectable, Injector, Optional } from '@angular/core';
 import fnsFormat from 'date-fns/format';
 import fnsGetISOWeek from 'date-fns/get_iso_week';
@@ -6,15 +14,9 @@ import fnsParse from 'date-fns/parse';
 import { mergeDateConfig, NzDateConfig, NZ_DATE_CONFIG } from './date-config';
 import { NzI18nService } from './nz-i18n.service';
 
-export function DATE_HELPER_SERVICE_FACTORY(
-  injector: Injector,
-  config: NzDateConfig,
-  datePipe: DatePipe
-): DateHelperService {
+export function DATE_HELPER_SERVICE_FACTORY(injector: Injector, config: NzDateConfig): DateHelperService {
   const i18n = injector.get(NzI18nService);
-  return i18n.getDateLocale()
-    ? new DateHelperByDateFns(i18n, config)
-    : new DateHelperByDatePipe(i18n, config, datePipe);
+  return i18n.getDateLocale() ? new DateHelperByDateFns(i18n, config) : new DateHelperByDatePipe(i18n, config);
 }
 
 /**
@@ -24,7 +26,7 @@ export function DATE_HELPER_SERVICE_FACTORY(
 @Injectable({
   providedIn: 'root',
   useFactory: DATE_HELPER_SERVICE_FACTORY,
-  deps: [Injector, [new Optional(), NZ_DATE_CONFIG], DatePipe]
+  deps: [Injector, [new Optional(), NZ_DATE_CONFIG]]
 })
 export abstract class DateHelperService {
   relyOnDatePipe: boolean = this instanceof DateHelperByDatePipe; // Indicate whether this service is rely on DatePipe
@@ -84,11 +86,7 @@ export class DateHelperByDateFns extends DateHelperService {
  * @deprecated Maybe removed in next major version due to this serious bug
  */
 export class DateHelperByDatePipe extends DateHelperService {
-  constructor(
-    i18n: NzI18nService,
-    @Optional() @Inject(NZ_DATE_CONFIG) config: NzDateConfig,
-    private datePipe: DatePipe
-  ) {
+  constructor(i18n: NzI18nService, @Optional() @Inject(NZ_DATE_CONFIG) config: NzDateConfig) {
     super(i18n, config);
   }
 
@@ -105,7 +103,7 @@ export class DateHelperByDatePipe extends DateHelperService {
   }
 
   format(date: Date, formatStr: string): string {
-    return date ? this.datePipe.transform(date, formatStr, undefined, this.i18n.getLocaleId())! : '';
+    return date ? formatDate(date, formatStr, this.i18n.getLocaleId())! : '';
   }
 
   /**

@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { BACKSPACE, DOWN_ARROW, ENTER, ESCAPE, LEFT_ARROW, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
 import { CdkConnectedOverlay, ConnectedOverlayPositionChange, ConnectionPositionPair } from '@angular/cdk/overlay';
 import {
@@ -25,12 +33,14 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { slideMotion } from '../core/animation/slide';
-import { NzNoAnimationDirective } from '../core/no-animation/nz-no-animation.directive';
-import { DEFAULT_CASCADER_POSITIONS } from '../core/overlay/overlay-position';
-import { NgClassType } from '../core/types/ng-class';
-import { toArray } from '../core/util/array';
-import { InputBoolean } from '../core/util/convert';
+import {
+  slideMotion,
+  toArray,
+  DEFAULT_DROPDOWN_POSITIONS,
+  InputBoolean,
+  NgClassType,
+  NzNoAnimationDirective
+} from 'ng-zorro-antd/core';
 
 import {
   CascaderOption,
@@ -50,6 +60,7 @@ const defaultDisplayRender = (labels: string[]) => labels.join(' / ');
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   selector: 'nz-cascader,[nz-cascader]',
+  exportAs: 'nzCascader',
   preserveWhitespaces: false,
   templateUrl: './nz-cascader.component.html',
   animations: [slideMotion],
@@ -135,7 +146,7 @@ export class NzCascaderComponent implements NzCascaderComponentAsSource, OnInit,
   labelRenderContext = {};
   onChange = Function.prototype;
   onTouched = Function.prototype;
-  positions: ConnectionPositionPair[] = [...DEFAULT_CASCADER_POSITIONS];
+  positions: ConnectionPositionPair[] = [...DEFAULT_DROPDOWN_POSITIONS];
   dropdownWidthStyle: string;
   isFocused = false;
 
@@ -238,6 +249,8 @@ export class NzCascaderComponent implements NzCascaderComponentAsSource, OnInit,
   }
 
   ngOnDestroy(): void {
+    this.$destroy.next();
+    this.$destroy.complete();
     this.clearDelayMenuTimer();
     this.clearDelaySelectTimer();
   }

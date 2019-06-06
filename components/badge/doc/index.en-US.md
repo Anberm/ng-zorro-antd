@@ -22,6 +22,14 @@ Badge normally appears in proximity to notifications or user avatars with eye-ca
 <nz-badge [nzCount]="5"></nz-badge>
 ```
 
+### Import this Component Individually
+
+You can get more detail [here](/docs/getting-started/en#import-a-component-individually).
+
+```ts
+import { NzBadgeModule } from 'ng-zorro-antd';
+```
+
 ### nz-badge
 
 | Property | Description | Type | Default |

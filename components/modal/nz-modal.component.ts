@@ -1,7 +1,15 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { FocusTrap, FocusTrapFactory } from '@angular/cdk/a11y';
 
 import { ESCAPE } from '@angular/cdk/keycodes';
-import { BlockScrollStrategy, Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { BlockScrollStrategy, Overlay, OverlayKeyboardDispatcher, OverlayRef } from '@angular/cdk/overlay';
 import { DOCUMENT } from '@angular/common';
 import {
   AfterViewInit,
@@ -18,6 +26,7 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
+  Optional,
   Output,
   SimpleChanges,
   TemplateRef,
@@ -29,11 +38,10 @@ import {
 import { fromEvent, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { InputBoolean } from '../core/util/convert';
-import { isPromise } from '../core/util/is-promise';
-import { NzI18nService } from '../i18n/nz-i18n.service';
-import ModalUtil from './modal-util';
-import { NzModalConfig, NZ_MODAL_CONFIG, NZ_MODAL_DEFAULT_CONFIG } from './nz-modal-config';
+import { getElementOffset, isPromise, InputBoolean } from 'ng-zorro-antd/core';
+import { NzI18nService } from 'ng-zorro-antd/i18n';
+
+import { NzModalConfig, NZ_MODAL_CONFIG } from './nz-modal-config';
 import { NzModalControlService } from './nz-modal-control.service';
 import { NzModalRef } from './nz-modal-ref.class';
 import { ModalButtonOptions, ModalOptions, ModalType, OnClickCallback } from './nz-modal.type';
@@ -41,9 +49,11 @@ import { ModalButtonOptions, ModalOptions, ModalType, OnClickCallback } from './
 export const MODAL_ANIMATE_DURATION = 200; // Duration when perform animations (ms)
 
 type AnimationState = 'enter' | 'leave' | null;
+export const WRAP_CLASS_NAME = 'ant-modal-wrap';
 
 @Component({
   selector: 'nz-modal',
+  exportAs: 'nzModal',
   templateUrl: './nz-modal.component.html',
   // Using OnPush for modal caused footer can not to detect changes. we can fix it when 8.x.
   changeDetection: ChangeDetectionStrategy.Default
@@ -54,14 +64,14 @@ export class NzModalComponent<T = any, R = any> extends NzModalRef<T, R>
   implements OnInit, OnChanges, AfterViewInit, OnDestroy, ModalOptions<T> {
   @Input() @InputBoolean() nzVisible: boolean = false;
   @Input() @InputBoolean() nzClosable: boolean = true;
-  @Input() @InputBoolean() nzMask: boolean = true;
-  @Input() @InputBoolean() nzMaskClosable: boolean = true;
   @Input() @InputBoolean() nzOkLoading: boolean = false;
   @Input() @InputBoolean() nzOkDisabled: boolean = false;
   @Input() @InputBoolean() nzCancelDisabled: boolean = false;
   @Input() @InputBoolean() nzCancelLoading: boolean = false;
   @Input() @InputBoolean() nzKeyboard: boolean = true;
   @Input() @InputBoolean() nzNoAnimation = false;
+  @Input() @InputBoolean() nzMask: boolean;
+  @Input() @InputBoolean() nzMaskClosable: boolean;
   @Input() nzContent: string | TemplateRef<{}> | Type<T>; // [STATIC] If not specified, will use <ng-content>
   @Input() nzComponentParams: T; // [STATIC] ONLY avaliable when nzContent is a component
   @Input() nzFooter: string | TemplateRef<{}> | Array<ModalButtonOptions<T>> | null; // [STATIC] Default Modal ONLY
@@ -113,6 +123,40 @@ export class NzModalComponent<T = any, R = any> extends NzModalRef<T, R>
     return !this.nzVisible && !this.animationState;
   } // Indicate whether this dialog should hidden
 
+  /**
+   * @description
+   * The calculated highest weight of mask value
+   *
+   * Weight of different mask input:
+   * component default value < global configuration < component input value
+   */
+  get mask(): boolean {
+    if (this.nzMask != null) {
+      return this.nzMask;
+    } else if (this.nzModalGlobalConfig && this.nzModalGlobalConfig.nzMask != null) {
+      return this.nzModalGlobalConfig.nzMask;
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * @description
+   * The calculated highest weight of maskClosable value
+   *
+   * Weight of different maskClosable input:
+   * component default value < global configuration < component input value
+   */
+  get maskClosable(): boolean {
+    if (this.nzMaskClosable != null) {
+      return this.nzMaskClosable;
+    } else if (this.nzModalGlobalConfig && this.nzModalGlobalConfig.nzMaskClosable != null) {
+      return this.nzModalGlobalConfig.nzMaskClosable;
+    } else {
+      return true;
+    }
+  }
+
   locale: { okText?: string; cancelText?: string } = {};
   maskAnimationClassMap: object | null;
   modalAnimationClassMap: object | null;
@@ -125,11 +169,15 @@ export class NzModalComponent<T = any, R = any> extends NzModalRef<T, R>
   private previouslyFocusedElement: HTMLElement;
   private focusTrap: FocusTrap;
   private scrollStrategy: BlockScrollStrategy;
+  private overlayRef: OverlayRef;
+  private dialogMouseDown = false;
+  private timeoutId: number;
 
   [key: string]: any; // tslint:disable-line:no-any
 
   constructor(
     private overlay: Overlay,
+    private overlayKeyboardDispatcher: OverlayKeyboardDispatcher,
     private i18n: NzI18nService,
     private cfr: ComponentFactoryResolver,
     private elementRef: ElementRef,
@@ -137,11 +185,10 @@ export class NzModalComponent<T = any, R = any> extends NzModalRef<T, R>
     private modalControl: NzModalControlService,
     private focusTrapFactory: FocusTrapFactory,
     private cdr: ChangeDetectorRef,
-    @Inject(NZ_MODAL_CONFIG) private config: NzModalConfig,
+    @Optional() @Inject(NZ_MODAL_CONFIG) private nzModalGlobalConfig: NzModalConfig,
     @Inject(DOCUMENT) private document: any // tslint:disable-line:no-any
   ) {
     super();
-    this.config = this.mergeDefaultConfig(this.config);
     this.scrollStrategy = this.overlay.scrollStrategies.block();
   }
 
@@ -149,10 +196,6 @@ export class NzModalComponent<T = any, R = any> extends NzModalRef<T, R>
     this.i18n.localeChange.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       this.locale = this.i18n.getLocaleData('Modal') as { okText: string; cancelText: string };
     });
-
-    fromEvent<KeyboardEvent>(this.document.body, 'keydown')
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(e => this.keydownListener(e));
 
     if (this.isComponent(this.nzContent)) {
       this.createDynamicComponent(this.nzContent as Type<T>); // Create component along without View
@@ -167,9 +210,20 @@ export class NzModalComponent<T = any, R = any> extends NzModalRef<T, R>
     this.container = typeof this.nzGetContainer === 'function' ? this.nzGetContainer() : this.nzGetContainer;
     if (this.container instanceof HTMLElement) {
       this.container.appendChild(this.elementRef.nativeElement);
+      fromEvent<KeyboardEvent>(this.document.body, 'keydown')
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(e => this.keydownListener(e));
     } else if (this.container instanceof OverlayRef) {
       // NOTE: only attach the dom to overlay, the view container is not changed actually
+      this.setOverlayRef(this.container);
       this.container.overlayElement.appendChild(this.elementRef.nativeElement);
+    }
+
+    if (this.overlayRef) {
+      this.overlayRef
+        .keydownEvents()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(e => this.keydownListener(e));
     }
 
     // Register modal when afterOpen/afterClose is stable
@@ -209,6 +263,11 @@ export class NzModalComponent<T = any, R = any> extends NzModalRef<T, R>
       this.unsubscribe$.next();
       this.unsubscribe$.complete();
     });
+    clearTimeout(this.timeoutId);
+  }
+
+  setOverlayRef(overlayRef: OverlayRef): void {
+    this.overlayRef = overlayRef;
   }
 
   keydownListener(event: KeyboardEvent): void {
@@ -254,12 +313,25 @@ export class NzModalComponent<T = any, R = any> extends NzModalRef<T, R>
     return this.elementRef && this.elementRef.nativeElement;
   }
 
+  onMaskDialogDown(): void {
+    this.dialogMouseDown = true;
+  }
+
+  onDialogUp(): void {
+    if (this.dialogMouseDown) {
+      this.timeoutId = setTimeout(() => {
+        this.dialogMouseDown = false;
+      }, 0);
+    }
+  }
+
   onClickMask($event: MouseEvent): void {
     if (
-      this.nzMask &&
-      this.nzMaskClosable &&
-      ($event.target as HTMLElement).classList.contains('ant-modal-wrap') &&
-      this.nzVisible
+      this.mask &&
+      this.maskClosable &&
+      ($event.target as HTMLElement).classList.contains(WRAP_CLASS_NAME) &&
+      this.nzVisible &&
+      !this.dialogMouseDown
     ) {
       this.onClickOkCancel('cancel');
     }
@@ -319,6 +391,13 @@ export class NzModalComponent<T = any, R = any> extends NzModalRef<T, R>
       this.scrollStrategy.enable();
       this.savePreviouslyFocusedElement();
       this.trapFocus();
+      if (this.container instanceof OverlayRef) {
+        this.overlayKeyboardDispatcher.add(this.overlayRef);
+      }
+    } else {
+      if (this.container instanceof OverlayRef) {
+        this.overlayKeyboardDispatcher.remove(this.overlayRef);
+      }
     }
 
     return Promise.resolve(animation ? this.animateTo(visible) : undefined).then(() => {
@@ -437,15 +516,13 @@ export class NzModalComponent<T = any, R = any> extends NzModalRef<T, R>
   // Update transform-origin to the last click position on document
   private updateTransformOrigin(): void {
     const modalElement = this.modalContainer.nativeElement as HTMLElement;
-    const lastPosition = ModalUtil.getLastClickPosition();
-    if (lastPosition) {
-      this.transformOrigin = `${lastPosition.x - modalElement.offsetLeft}px ${lastPosition.y -
-        modalElement.offsetTop}px 0px`;
+    if (this.previouslyFocusedElement) {
+      const previouslyDOMRect = this.previouslyFocusedElement.getBoundingClientRect();
+      const lastPosition = getElementOffset(this.previouslyFocusedElement);
+      const x = lastPosition.left + previouslyDOMRect.width / 2;
+      const y = lastPosition.top + previouslyDOMRect.height / 2;
+      this.transformOrigin = `${x - modalElement.offsetLeft}px ${y - modalElement.offsetTop}px 0px`;
     }
-  }
-
-  private mergeDefaultConfig(config: NzModalConfig): NzModalConfig {
-    return { ...NZ_MODAL_DEFAULT_CONFIG, ...config };
   }
 
   private savePreviouslyFocusedElement(): void {

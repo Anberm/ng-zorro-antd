@@ -14,6 +14,14 @@ When a numeric value needs to be provided.
 
 ## API
 
+### Import this Component Individually
+
+You can get more detail [here](/docs/getting-started/en#import-a-component-individually).
+
+```ts
+import { NzInputNumberModule } from 'ng-zorro-antd';
+```
+
 ### nz-input-number
 
 | property | description | type | default |
@@ -21,7 +29,7 @@ When a numeric value needs to be provided.
 | `[ngModel]` | current value, double binding | `number｜string` ｜ `string` | - |
 | `[nzAutoFocus]` | get focus when component mounted | `boolean` | `false` |
 | `[nzDisabled]` | disable the input | `boolean` | `false` |
-| `[nzMax]` | max vale | `number` | `Infinity` |
+| `[nzMax]` | max value | `number` | `Infinity` |
 | `[nzMin]` | min value | `number` | `-Infinity` |
 | `[nzFormatter]` | Specifies the format of the value presented | `(value: number｜string) => string｜number` | - |
 | `[nzParser]` | Specifies the value extracted from nzFormatter | `(value: string) => string｜number` | - |

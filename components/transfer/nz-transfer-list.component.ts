@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -13,12 +21,13 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { NzUpdateHostClassService } from '../core/services/update-host-class.service';
+import { NzUpdateHostClassService } from 'ng-zorro-antd/core';
 
 import { TransferItem } from './interface';
 
 @Component({
   selector: 'nz-transfer-list',
+  exportAs: 'nzTransferList',
   preserveWhitespaces: false,
   providers: [NzUpdateHostClassService],
   templateUrl: './nz-transfer-list.component.html',

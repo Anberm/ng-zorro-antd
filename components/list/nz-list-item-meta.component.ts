@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,6 +18,7 @@ import {
 
 @Component({
   selector: 'nz-list-item-meta',
+  exportAs: 'nzListItemMeta',
   templateUrl: './nz-list-item-meta.component.html',
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush,

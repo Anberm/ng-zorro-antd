@@ -1,7 +1,17 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { Injectable, Optional, SkipSelf } from '@angular/core';
 import { combineLatest, BehaviorSubject, Subject } from 'rxjs';
 import { auditTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
-import { NzDirectionVHIType } from '../core/types/direction';
+
+import { NzDirectionVHIType } from 'ng-zorro-antd/core';
+
 import { NzMenuService } from './nz-menu.service';
 
 @Injectable()

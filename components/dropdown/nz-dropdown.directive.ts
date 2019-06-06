@@ -1,9 +1,18 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { Directive, ElementRef, Renderer2 } from '@angular/core';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { mapTo, tap } from 'rxjs/operators';
 
 @Directive({
-  selector: '[nz-dropdown]'
+  selector: '[nz-dropdown]',
+  exportAs: 'nzDropdown'
 })
 export class NzDropDownDirective {
   el: HTMLElement = this.elementRef.nativeElement;

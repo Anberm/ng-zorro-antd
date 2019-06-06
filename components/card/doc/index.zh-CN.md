@@ -18,6 +18,14 @@ cols: 1
 <nz-card nzTitle="卡片标题">卡片内容</nz-card>
 ```
 
+### 单独引入此组件
+
+想要了解更多关于单独引入组件的内容，可以在[快速上手](/docs/getting-started/zh#单独引入某个组件)页面进行查看。
+
+```ts
+import { NzCardModule } from 'ng-zorro-antd';
+```
+
 ### nz-card
 
 | 参数 | 说明 | 类型 | 默认值 |
@@ -31,6 +39,7 @@ cols: 1
 | `[nzLoading]` | 当卡片内容还在加载中时，可以用 loading 展示一个占位 | `boolean` | `false` |
 | `[nzTitle]` | 卡片标题 | `string｜TemplateRef<void>` | - |
 | `[nzType]` | 卡片类型，可设置为 `inner` 或 不设置 | `'inner'` | - |
+| `[nzSize]` | 卡片的尺寸 | `'default'｜'small'` | `'default'` |
 
 ### nz-card-meta
 

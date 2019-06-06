@@ -1,3 +1,12 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
+import { Platform } from '@angular/cdk/platform';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -11,8 +20,7 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { NzUpdateHostClassService } from '../core/services/update-host-class.service';
-import { NzSizeLDSType, NzSizeMap } from '../core/types/size';
+import { NzSizeLDSType, NzSizeMap, NzUpdateHostClassService } from 'ng-zorro-antd/core';
 
 export type NzAvatarShape = 'square' | 'circle';
 export type NzAvatarSize = NzSizeLDSType | number;
@@ -23,6 +31,7 @@ export interface NzAvatarSizeMap {
 
 @Component({
   selector: 'nz-avatar',
+  exportAs: 'nzAvatar',
   templateUrl: './nz-avatar.component.html',
   providers: [NzUpdateHostClassService],
   preserveWhitespaces: false,
@@ -52,7 +61,8 @@ export class NzAvatarComponent implements OnChanges {
     private elementRef: ElementRef,
     private cd: ChangeDetectorRef,
     private updateHostClassService: NzUpdateHostClassService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private platform: Platform
   ) {}
 
   setClass(): this {
@@ -114,9 +124,11 @@ export class NzAvatarComponent implements OnChanges {
 
   private notifyCalc(): this {
     // If use ngAfterViewChecked, always demands more computations, so......
-    setTimeout(() => {
-      this.calcStringSize();
-    });
+    if (this.platform.isBrowser) {
+      setTimeout(() => {
+        this.calcStringSize();
+      });
+    }
     return this;
   }
 

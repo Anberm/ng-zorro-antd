@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import {
   forwardRef,
@@ -29,8 +37,9 @@ import setYear from 'date-fns/set_year';
 import startOfMonth from 'date-fns/start_of_month';
 import startOfWeek from 'date-fns/start_of_week';
 import startOfYear from 'date-fns/start_of_year';
-import { DateHelperService } from '../i18n/date-helper.service';
-import { NzI18nService } from '../i18n/nz-i18n.service';
+
+import { DateHelperService, NzI18nService } from 'ng-zorro-antd/i18n';
+
 import {
   NzDateCellDirective as DateCell,
   NzDateFullCellDirective as DateFullCell,
@@ -44,6 +53,7 @@ export type ModeType = 'month' | 'year';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'nz-calendar',
+  exportAs: 'nzCalendar',
   templateUrl: './nz-calendar.component.html',
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => NzCalendarComponent), multi: true }]
 })

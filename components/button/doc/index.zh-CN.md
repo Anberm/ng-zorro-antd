@@ -13,6 +13,14 @@ subtitle: 按钮
 
 ## API
 
+### 单独引入此组件
+
+想要了解更多关于单独引入组件的内容，可以在[快速上手](/docs/getting-started/zh#单独引入某个组件)页面进行查看。
+
+```ts
+import { NzButtonModule } from 'ng-zorro-antd';
+```
+
 ### [nz-button]
 
 通过设置 Button 的属性来产生不同的按钮样式，推荐顺序为：`nzType` -> `nzShape` -> `nzSize` -> `nzLoading` -> `disabled`
@@ -26,5 +34,5 @@ subtitle: 按钮
 | `[nzLoading]` | 设置按钮载入状态 | `boolean` | `false` |
 | `[nzShape]` | 设置按钮形状，可选值为 `circle` `round` 或者不设 | `'circle'｜'round'` | - |
 | `[nzSize]` | 设置按钮大小，可选值为 `small` `large` 或者不设 | `'large'｜'small'｜'default'` | `'default'` |
-| `[nzType]` | 设置按钮类型，可选值为 `primary` `dashed` `danger` 或者不设 | `'primary'｜'dashed'｜'danger'｜'default'` | `'default'` |
+| `[nzType]` | 设置按钮类型，可选值为 `primary` `dashed` `danger` 或者不设 | `'primary'｜'dashed'｜'danger'｜'default'｜'link'` | `'default'` |
 | `[nzBlock]` | 将按钮宽度调整为其父宽度的选项 | `boolean` | `false` |

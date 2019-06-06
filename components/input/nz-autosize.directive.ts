@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { Platform } from '@angular/cdk/platform';
 import { AfterViewInit, Directive, DoCheck, ElementRef, Input, NgZone, OnDestroy } from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
@@ -14,6 +22,7 @@ export function isAutoSizeType(value: string | boolean | AutoSizeType): value is
 
 @Directive({
   selector: 'textarea[nzAutosize]',
+  exportAs: 'nzAutosize',
   host: {
     // Textarea elements that have the directive applied should have a single row by default.
     // Browsers normally show two rows by default and therefore this limits the minRows binding.

@@ -17,6 +17,14 @@ A card can be used to display content related to a single subject. The content c
 <nz-card nzTitle="卡片标题">卡片内容</nz-card>
 ```
 
+### Import this Component Individually
+
+You can get more detail [here](/docs/getting-started/en#import-a-component-individually).
+
+```ts
+import { NzCardModule } from 'ng-zorro-antd';
+```
+
 ### nz-card
 
 | Property | Description | Type | Default |
@@ -30,6 +38,7 @@ A card can be used to display content related to a single subject. The content c
 | `[nzLoading]` | Shows a loading indicator while the contents of the card are being fetched | `boolean` | `false` |
 | `[nzTitle]` | Card title | `string｜TemplateRef<void>` | - |
 | `[nzType]` | Card style type, can be set to `inner` or not set | `'inner'` | - |
+| `[nzSize]` | Size of card | `'default'｜'small'` | `'default'` |
 
 
 ### nz-card-meta

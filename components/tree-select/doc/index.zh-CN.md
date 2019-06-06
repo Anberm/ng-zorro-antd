@@ -13,6 +13,14 @@ title: TreeSelect
 
 ## API
 
+### 单独引入此组件
+
+想要了解更多关于单独引入组件的内容，可以在[快速上手](/docs/getting-started/zh#单独引入某个组件)页面进行查看。
+
+```ts
+import { NzTreeSelectModule } from 'ng-zorro-antd';
+```
+
 ### nz-tree-select
 
 | 参数 | 说明 | 类型 | 默认值 |
@@ -20,6 +28,7 @@ title: TreeSelect
 | `[nzAllowClear]` | 显示清除按钮 | `boolean` | `false` |
 | `[nzPlaceHolder]` | 选择框默认文字 | `string` | - |
 | `[nzDisabled]` | 禁用选择器 | `boolean` | `false` |
+| `[nzShowIcon]` | 是否展示 TreeNode title 前的图标，没有默认样式 | `boolean` | `false` |
 | `[nzShowSearch]` | 显示搜索框 | `boolean` | `false` |
 | `[nzNotFoundContent]` | 当下拉列表为空时显示的内容 | `string` | - |
 | `[nzDropdownMatchSelectWidth]` | 下拉菜单和选择器同宽 | `boolean` | `true` |
@@ -37,3 +46,15 @@ title: TreeSelect
 | `[nzMaxTagCount]` | 最多显示多少个 tag | number | - |
 | `[nzMaxTagPlaceholder]` | 隐藏 tag 时显示的内容 | TemplateRef<{ $implicit: NzTreeNode[] }> | - |
 | `(nzExpandChange)` | 点击展开树节点图标调用 | `EventEmitter<NzFormatEmitEvent>` | - |
+
+#### 方法
+
+| 方法名 | 说明 | 返回值
+| --- | --- | --- |
+| getTreeNodes | 获取组件 NzTreeNode 节点 | `NzTreeNode[]` |
+| getTreeNodeByKey | 按 key 获取 NzTreeNode 节点 | `NzTreeNode` |
+| getCheckedNodeList | 获取组件 checkBox 被点击选中的节点 | `NzTreeNode[]` |
+| getSelectedNodeList | 获取组件被选中的节点 | `NzTreeNode[]` |
+| getHalfCheckedNodeList | 获取组件半选状态节点 | `NzTreeNode[]` |
+| getExpandedNodeList | 获取组件展开状态节点 | `NzTreeNode[]` |
+| getMatchedNodeList | 获取组搜索匹配到的节点 | `NzTreeNode[]` |

@@ -1,9 +1,16 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 export type NzCascaderExpandTrigger = 'click' | 'hover';
 export type NzCascaderTriggerType = 'click' | 'hover';
 export type NzCascaderSize = 'small' | 'large' | 'default';
 
 export type NzCascaderFilter = (searchValue: string, path: CascaderOption[]) => boolean;
-
 export type NzCascaderSorter = (a: CascaderOption[], b: CascaderOption[], inputValue: string) => number;
 
 export interface CascaderOption {

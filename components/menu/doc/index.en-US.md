@@ -27,6 +27,14 @@ More layouts with navigation: [layout](/components/layout/en).
 </ul>
 ```
 
+### Import this Component Individually
+
+You can get more detail [here](/docs/getting-started/en#import-a-component-individually).
+
+```ts
+import { NzMenuModule } from 'ng-zorro-antd';
+```
+
 ### [nz-menu]
 
 | Param | Description | Type | Default value |

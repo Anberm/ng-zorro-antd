@@ -1,4 +1,13 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { animate, style, transition, trigger } from '@angular/animations';
+import { Platform } from '@angular/cdk/platform';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,12 +18,13 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { NzUpdateHostClassService } from '../core/services/update-host-class.service';
+import { NzUpdateHostClassService } from 'ng-zorro-antd/core';
 
 import { ShowUploadListInterface, UploadFile, UploadListType } from './interface';
 
 @Component({
   selector: 'nz-upload-list',
+  exportAs: 'nzUploadList',
   templateUrl: './nz-upload-list.component.html',
   providers: [NzUpdateHostClassService],
   animations: [
@@ -114,6 +124,9 @@ export class NzUploadListComponent implements OnChanges {
   }
 
   private genThumb(): void {
+    if (!this.platform.isBrowser) {
+      return;
+    }
     // tslint:disable-next-line:no-any
     const win = window as any;
     if (
@@ -166,7 +179,8 @@ export class NzUploadListComponent implements OnChanges {
   constructor(
     private el: ElementRef,
     private cdr: ChangeDetectorRef,
-    private updateHostClassService: NzUpdateHostClassService
+    private updateHostClassService: NzUpdateHostClassService,
+    private platform: Platform
   ) {}
 
   detectChanges(): void {

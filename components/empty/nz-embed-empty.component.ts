@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { ComponentPortal, Portal, PortalInjector, TemplatePortal } from '@angular/cdk/portal';
 import {
   ChangeDetectionStrategy,
@@ -24,6 +32,7 @@ import { NzEmptyService } from './nz-empty.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   selector: 'nz-embed-empty',
+  exportAs: 'nzEmbedEmpty',
   templateUrl: './nz-embed-empty.component.html'
 })
 export class NzEmbedEmptyComponent implements OnChanges, OnInit, OnDestroy {

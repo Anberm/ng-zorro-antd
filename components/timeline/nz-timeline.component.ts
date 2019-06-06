@@ -1,3 +1,12 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
+import { Platform } from '@angular/cdk/platform';
 import {
   AfterContentInit,
   ChangeDetectionStrategy,
@@ -18,7 +27,8 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { reverseChildNodes } from '../core/util/dom';
+import { reverseChildNodes } from 'ng-zorro-antd/core';
+
 import { NzTimelineItemComponent } from './nz-timeline-item.component';
 
 export type NzTimelineMode = 'left' | 'alternate' | 'right';
@@ -28,6 +38,7 @@ export type NzTimelineMode = 'left' | 'alternate' | 'right';
   encapsulation: ViewEncapsulation.None,
   preserveWhitespaces: false,
   selector: 'nz-timeline',
+  exportAs: 'nzTimeline',
   templateUrl: './nz-timeline.component.html'
 })
 export class NzTimelineComponent implements AfterContentInit, OnChanges, OnDestroy {
@@ -44,7 +55,7 @@ export class NzTimelineComponent implements AfterContentInit, OnChanges, OnDestr
 
   private destroy$ = new Subject<void>();
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef, private platform: Platform) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     const modeChanges = changes.nzMode;
@@ -100,7 +111,9 @@ export class NzTimelineComponent implements AfterContentInit, OnChanges, OnDestr
   }
 
   private reverseChildTimelineDots(): void {
-    reverseChildNodes(this.timeline.nativeElement as HTMLElement);
-    this.updateChildren();
+    if (this.platform.isBrowser) {
+      reverseChildNodes(this.timeline.nativeElement as HTMLElement);
+      this.updateChildren();
+    }
   }
 }

@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   AfterContentInit,
   ChangeDetectionStrategy,
@@ -15,9 +23,7 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { NgClassType } from '../core/types/ng-class';
-import { NzSizeDSType } from '../core/types/size';
-import { toBoolean } from '../core/util/convert';
+import { toBoolean, NgClassType, NzSizeDSType } from 'ng-zorro-antd/core';
 
 import { NzStepComponent } from './nz-step.component';
 
@@ -29,6 +35,7 @@ export type NzStatusType = 'wait' | 'process' | 'finish' | 'error';
   encapsulation: ViewEncapsulation.None,
   preserveWhitespaces: false,
   selector: 'nz-steps',
+  exportAs: 'nzSteps',
   templateUrl: './nz-steps.component.html'
 })
 export class NzStepsComponent implements OnChanges, OnInit, OnDestroy, AfterContentInit {

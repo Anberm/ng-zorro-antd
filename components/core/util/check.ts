@@ -1,4 +1,13 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { TemplateRef, Type } from '@angular/core';
+
 import { IndexableObject } from '../types/indexable';
 
 // tslint:disable-next-line:no-any
@@ -74,17 +83,17 @@ export function filterNotEmptyNode(node: Node): Node | null {
   return null;
 }
 
+// tslint:disable-next-line:no-any
 export function isNonEmptyString(value: any): boolean {
-  // tslint:disable-line:no-any
   return typeof value === 'string' && value !== '';
 }
 
+// tslint:disable-next-line:no-any
 export function isTemplateRef(value: any): boolean {
-  // tslint:disable-line:no-any
   return value instanceof TemplateRef;
 }
 
+// tslint:disable-next-line:no-any
 export function isComponent(value: any): boolean {
-  // tslint:disable-line:no-any
   return value instanceof Type;
 }

@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -12,12 +20,15 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { isNotNil } from '../core/util/check';
+
+import { isNotNil } from 'ng-zorro-antd/core';
+
 import { NzOptionComponent } from './nz-option.component';
 import { NzSelectService } from './nz-select.service';
 
 @Component({
   selector: '[nz-option-li]',
+  exportAs: 'nzOptionLi',
   templateUrl: './nz-option-li.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,

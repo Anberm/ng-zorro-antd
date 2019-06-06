@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -20,6 +28,7 @@ import { NzTimelineMode } from './nz-timeline.component';
   encapsulation: ViewEncapsulation.None,
   preserveWhitespaces: false,
   selector: 'nz-timeline-item, [nz-timeline-item]',
+  exportAs: 'nzTimelineItem',
   templateUrl: './nz-timeline-item.component.html'
 })
 export class NzTimelineItemComponent implements OnInit, OnChanges {

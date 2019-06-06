@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,11 +17,11 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { NzUpdateHostClassService } from '../core/services/update-host-class.service';
-import { InputBoolean } from '../core/util';
+import { InputBoolean, NzUpdateHostClassService } from 'ng-zorro-antd/core';
 
 @Component({
   selector: 'nz-divider',
+  exportAs: 'nzDivider',
   templateUrl: './nz-divider.component.html',
   preserveWhitespaces: false,
   providers: [NzUpdateHostClassService],

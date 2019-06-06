@@ -80,6 +80,8 @@ import 'zone.js/dist/zone'; // Included with Angular CLI.
   const appModuleCode = `
   import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
@@ -100,7 +102,7 @@ const antDesignIcons = AllIcons as {
 const icons: IconDefinition[] = Object.keys(antDesignIcons).map(key => antDesignIcons[key])
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule, HttpClientModule, HttpClientJsonpModule, ReactiveFormsModule, NgZorroAntdModule, BrowserAnimationsModule ],
+  imports:      [ BrowserModule, FormsModule, HttpClientModule, HttpClientJsonpModule, ReactiveFormsModule, NgZorroAntdModule, BrowserAnimationsModule, ScrollingModule, DragDropModule ],
   declarations: [ ${componentName} ],
   bootstrap:    [ ${componentName} ],
   providers   : [ { provide: NZ_I18N, useValue: en_US }, { provide: NZ_ICONS, useValue: icons } ]
@@ -245,6 +247,7 @@ export class AppModule { }`;
     dependencies: {
       rxjs                               : '^6.3.3',
       '@angular/cdk'                     : '^7.0.0',
+      '@angular/compiler'                : '^7.0.0',
       '@angular/core'                    : '^7.0.0',
       '@angular/forms'                   : '^7.0.0',
       '@angular/http'                    : '^7.0.0',
@@ -258,7 +261,7 @@ export class AppModule { }`;
       'date-fns'                         : '^1.29.0',
       tslib                              : '^1.9.3',
       typescript                         : '~3.1.1',
-      'ng-zorro-antd'                    : '^7.2.0'
+      'ng-zorro-antd': '^7.5.0'
     },
     tags        : [ 'stackblitz', 'sdk' ]
   };

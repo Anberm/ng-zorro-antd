@@ -1,5 +1,5 @@
 ---
-order: 9
+order: 11
 title: 更新日志
 toc: false
 timeline: true
@@ -13,6 +13,119 @@ timeline: true
 * 主版本号：含有破坏性更新和新特性，不在发布周期内。
 
 ---
+## 7.5.0
+`2019-06-05`
+
+### Bug Fixes
+
+* **cascader:** 修复使用 nzLoadData 后无法未更新值问题 ([#3481](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3481)) ([7c0e30c](https://github.com/NG-ZORRO/ng-zorro-antd/commit/7c0e30c)), closes [#3480](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3480)
+* **date-picker:** 使用 formatDate 方法替换 DatePipe ([#3500](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3500)) ([19ad7fd](https://github.com/NG-ZORRO/ng-zorro-antd/commit/19ad7fd)), closes [#3487](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3487)
+* **layout:** 修复宽度支持类型 ([#3525](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3525)) ([fd803bd](https://github.com/NG-ZORRO/ng-zorro-antd/commit/fd803bd))
+* **select:** 修复 tags 模式对象显示错误问题 ([#3442](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3442)) ([a05f5a5](https://github.com/NG-ZORRO/ng-zorro-antd/commit/a05f5a5)), closes [#3424](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3424)
+
+
+### Features
+
+* **button:** 支持 link 类型 ([#3503](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3503)) ([050f141](https://github.com/NG-ZORRO/ng-zorro-antd/commit/050f141)), closes [#3479](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3479)
+* **carousel:** 支持自定义过渡策略 ([#3501](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3501)) ([a53a43a](https://github.com/NG-ZORRO/ng-zorro-antd/commit/a53a43a))
+* **descriptions:** 新增描述列表组件 ([#3327](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3327)) ([11bf89e](https://github.com/NG-ZORRO/ng-zorro-antd/commit/11bf89e)), closes [#2847](https://github.com/NG-ZORRO/ng-zorro-antd/issues/2847)
+* **drawer:** 支持 ESC 关闭 ([#3488](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3488)) ([2928f84](https://github.com/NG-ZORRO/ng-zorro-antd/commit/2928f84))
+* **dropdown:** 支持自定义 icon ([#3517](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3517)) ([4329b51](https://github.com/NG-ZORRO/ng-zorro-antd/commit/4329b51))
+
+## 7.4.1
+`2019-05-21`
+
+### Bug Fixes
+
+* **build:** 修复引入二级模块的打包问题 ([#3266](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3266))
+
+## 7.4.0
+`2019-05-19`
+
+### Bug Fixes
+
+* **breadcrumb:** 修复路由事件监听问题 ([#3185](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3185)) ([fd43ec5](https://github.com/NG-ZORRO/ng-zorro-antd/commit/fd43ec5)), closes [#3186](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3186)
+* **carousel:** 修复集成问题 ([#3367](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3367)) ([9d495fc](https://github.com/NG-ZORRO/ng-zorro-antd/commit/9d495fc))
+* **cascader,checkbox,switch,tooltip:** 修复内存泄漏问题 ([#3416](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3416)) ([c63849f](https://github.com/NG-ZORRO/ng-zorro-antd/commit/c63849f))
+* **drawer:** 修复 z-index ([#3405](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3405)) ([663f6c1](https://github.com/NG-ZORRO/ng-zorro-antd/commit/663f6c1)), closes [#3402](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3402)
+* **menu:** 修复子菜单高亮显示问题 ([#3455](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3455)) ([fd47605](https://github.com/NG-ZORRO/ng-zorro-antd/commit/fd47605))
+* **modal:** 修复 esc 不能按顺序关闭模态框 ([#3339](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3339)) ([0533c32](https://github.com/NG-ZORRO/ng-zorro-antd/commit/0533c32)), closes [#3338](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3338)
+* **modal:** 修复确认框模式下 `nzContent` 为组件不生效的问题 ([#3415](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3415)) ([6458c57](https://github.com/NG-ZORRO/ng-zorro-antd/commit/6458c57)), closes [#3407](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3407)
+* **modal:** 修复在模态框外释放鼠标意外关闭的问题 ([#3400](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3400)) ([82e488a](https://github.com/NG-ZORRO/ng-zorro-antd/commit/82e488a)), closes [#3394](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3394)
+* **progress:** 修复 `nzStrokeColor` 设置无效的问题 ([#3445](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3445)) ([80c6ed4](https://github.com/NG-ZORRO/ng-zorro-antd/commit/80c6ed4)), closes [#3441](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3441)
+* **tree,tree-select:** 修复连接线样式 ([#3385](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3385)) ([f7e9a7c](https://github.com/NG-ZORRO/ng-zorro-antd/commit/f7e9a7c)), closes [#3382](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3382)
+
+
+### Features
+
+* **card:** 支持 `nzSize` 选项 ([#3429](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3429)) ([2015021](https://github.com/NG-ZORRO/ng-zorro-antd/commit/2015021))
+* **drawer:** 支持调用服务下的 `nzOnCancel` 选项 ([#3376](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3376)) ([3742eda](https://github.com/NG-ZORRO/ng-zorro-antd/commit/3742eda)), closes [#3372](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3372)
+* **tree-select:** 支持自定义图标 ([#3395](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3395)) ([0deda73](https://github.com/NG-ZORRO/ng-zorro-antd/commit/0deda73))
+
+## 7.3.3
+`2019-04-25`
+
+### Bug Fixes
+
+* **auto-complete:** 打开面板时应该阻止 <kbd>Enter</kbd> ([#3342](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3342)) ([414b428](https://github.com/NG-ZORRO/ng-zorro-antd/commit/414b428)), closes [#3340](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3340)
+* **radio, tab:** 修复内存泄露的问题 ([#3354](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3354)) ([7d18fef](https://github.com/NG-ZORRO/ng-zorro-antd/commit/7d18fef))
+* **table:** 修复过滤器位置和虚拟滚动样式问题 ([#3365](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3365)) ([6435ee5](https://github.com/NG-ZORRO/ng-zorro-antd/commit/6435ee5)), closes [#3357](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3357) [#3348](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3348) [#3359](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3359)
+* **tree-select:** 添加缺少的公有方法 ([#3335](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3335)) ([ee6d18b](https://github.com/NG-ZORRO/ng-zorro-antd/commit/ee6d18b))
+
+## 7.3.2
+`2019-04-22`
+
+### Bug Fixes
+
+* **build:** 修复 components.less 的打包错误 ([#3331](https://github.com/NG-ZORRO/ng-zorro-antd/pull/3331)) ([fb19921](https://github.com/NG-ZORRO/ng-zorro-antd/commit/fb19921))
+
+## 7.3.1
+`2019-04-22`
+
+### Bug Fixes
+
+* **tree:** 修复数据渲染问题 ([#3326](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3326)) ([6d759a8](https://github.com/NG-ZORRO/ng-zorro-antd/commit/6d759a8)), closes [#3320](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3320)
+* **select:** 修复 nzShowSearch 时搜索无效的问题 ([#3324](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3324)) ([d91af03](https://github.com/NG-ZORRO/ng-zorro-antd/commit/d91af03)), closes [#3322](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3322)
+
+## 7.3.0
+`2019-04-21`
+
+### Features
+
+* 支持服务端渲染 ([#3295](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3295)) ([2088459](https://github.com/NG-ZORRO/ng-zorro-antd/commit/2088459)), closes [#3222](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3222) [#43](https://github.com/NG-ZORRO/ng-zorro-antd/issues/43) [#2025](https://github.com/NG-ZORRO/ng-zorro-antd/issues/2025) [#2474](https://github.com/NG-ZORRO/ng-zorro-antd/issues/2474)
+* 支持子模块单独使用 ([#3234](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3234))
+* **modal:** 支持 `nzMask` 与 `nzMaskClosable` 全局配置 ([#3033](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3033)) ([12cac9e](https://github.com/NG-ZORRO/ng-zorro-antd/commit/12cac9e))
+* **tree:** 支持 nzBlockNode 选项 ([#3270](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3270)) ([5129f73](https://github.com/NG-ZORRO/ng-zorro-antd/commit/5129f73))
+* **date-picker:** `nzRanges` 支持回调函数 ([#3304](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3304)) ([a231cb5](https://github.com/NG-ZORRO/ng-zorro-antd/commit/a231cb5)), closes [#1629](https://github.com/NG-ZORRO/ng-zorro-antd/issues/1629)
+* **date-picker:** 支持 `nzOnCalendarChange` 功能 ([#3169](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3169)) ([4446005](https://github.com/NG-ZORRO/ng-zorro-antd/commit/4446005))
+* **form:** 支持隐藏 label 的冒号 ([#3136](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3136)) ([663169f](https://github.com/NG-ZORRO/ng-zorro-antd/commit/663169f))
+* **table:** 导出 CdkVirtualScrollViewport ([#3297](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3297)) ([a942312](https://github.com/NG-ZORRO/ng-zorro-antd/commit/a942312)), closes [#3144](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3144) [#3073](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3073) [#2886](https://github.com/NG-ZORRO/ng-zorro-antd/issues/2886)
+* **table:** 支持 `nzLoadingIndicator` 配置 ([#3299](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3299)) ([1f339b3](https://github.com/NG-ZORRO/ng-zorro-antd/commit/1f339b3)), closes [#3008](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3008)
+* **time-picker:** 支持 12-hour 制 `nzUse12Hours` ([#3127](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3127)) ([7c52774](https://github.com/NG-ZORRO/ng-zorro-antd/commit/7c52774))
+* **tree, tree-select:** 支持定制 icons ([#2933](https://github.com/NG-ZORRO/ng-zorro-antd/issues/2933)) ([a77f6c9](https://github.com/NG-ZORRO/ng-zorro-antd/commit/a77f6c9))
+* **schematics:** 增强 component 生成器 ([#3265](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3265)) ([c22eae5](https://github.com/NG-ZORRO/ng-zorro-antd/commit/c22eae5))
+
+### Bug Fixes
+
+* **anchor:** 修复 scrollbar 的问题 ([#3242](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3242)) ([37ac541](https://github.com/NG-ZORRO/ng-zorro-antd/commit/37ac541))
+* **drawer:** 修复 `nzVisible` 默认值为 true 的问题 ([#3203](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3203)) ([327ceca](https://github.com/NG-ZORRO/ng-zorro-antd/commit/327ceca)), closes [#3200](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3200)
+* **dropdown:** 修复展开时超出边界的问题 ([#3289](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3289)) ([47f0aef](https://github.com/NG-ZORRO/ng-zorro-antd/commit/47f0aef)), closes [#3288](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3288)
+* **dropdown:** 修复与 material design 的样式冲突 ([#3290](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3290)) ([e30a9be](https://github.com/NG-ZORRO/ng-zorro-antd/commit/e30a9be)), closes [#3241](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3241)
+* **dropdown:** 修复 ul 的样式问题 ([#3284](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3284)) ([2845b57](https://github.com/NG-ZORRO/ng-zorro-antd/commit/2845b57)), closes [#3268](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3268)
+* **form:** 修复模板驱动时 form 表单自动校验的问题 ([#3305](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3305)) ([032d193](https://github.com/NG-ZORRO/ng-zorro-antd/commit/032d193)), closes [#3211](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3211)
+* **i18n:** 修复 catalan 语言包 ([#3080](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3080)) ([81f917a](https://github.com/NG-ZORRO/ng-zorro-antd/commit/81f917a)), closes [#2569](https://github.com/NG-ZORRO/ng-zorro-antd/issues/2569)
+* **input-number:** 修复 blur 事件不能正确获得校验数值的问题 ([#3315](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3315)) ([ee3d94c](https://github.com/NG-ZORRO/ng-zorro-antd/commit/ee3d94c)), closes [#3134](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3134)
+* **modal:** 修复 modal 收起时的闪烁问题 ([#3245](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3245)) ([3da4b68](https://github.com/NG-ZORRO/ng-zorro-antd/commit/3da4b68)), closes [#3213](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3213)
+* **select:** 修复 disable 状态下的样式问题 ([#3287](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3287)) ([f5528d9](https://github.com/NG-ZORRO/ng-zorro-antd/commit/f5528d9)), closes [#3246](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3246)
+* **select:** 修复当 option 值发生改变时 select 未响应的问题 ([#3313](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3313)) ([74d996b](https://github.com/NG-ZORRO/ng-zorro-antd/commit/74d996b)), closes [#3029](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3029)
+* **select:** 修复 scroll 事件多次触发的问题 ([#3285](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3285)) ([1478e59](https://github.com/NG-ZORRO/ng-zorro-antd/commit/1478e59)), closes [#3258](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3258)
+* **steps:** 修复 steps 动态更新问题  ([#3194](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3194)) ([8198b23](https://github.com/NG-ZORRO/ng-zorro-antd/commit/8198b23)), closes [#3193](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3193)
+* **table:** 修复 firefox 等浏览器下边框显示问题 ([#3294](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3294)) ([82407e7](https://github.com/NG-ZORRO/ng-zorro-antd/commit/82407e7)), closes [#3164](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3164)
+* **tree:** 修复重复导入问题 ([#3286](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3286)) ([5c8b923](https://github.com/NG-ZORRO/ng-zorro-antd/commit/5c8b923))
+* **tree, tree-select:** 修复 key 校验的问题 ([#3247](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3247)) ([87f2386](https://github.com/NG-ZORRO/ng-zorro-antd/commit/87f2386)), closes [#3163](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3163)
+* **upload:** 移除部分 icon 旧版本用法 ([#3230](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3230)) ([bc4e7da](https://github.com/NG-ZORRO/ng-zorro-antd/commit/bc4e7da)), closes [#3228](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3228)
+* **rate** 修复 click 事件问题 ([#3262](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3262)) ([2b4bde4](https://github.com/NG-ZORRO/ng-zorro-antd/commit/2b4bde4)), closes [#3252](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3252)
+* **style** 修复部分样式未导出问题 ([#3317](https://github.com/NG-ZORRO/ng-zorro-antd/issues/3317)) ([5b02e48](https://github.com/NG-ZORRO/ng-zorro-antd/commit/5b02e48))
 
 ## 7.2.0
 `2019-03-27`

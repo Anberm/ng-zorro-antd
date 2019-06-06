@@ -1,7 +1,7 @@
 <ng-template #tplOriginContent><ng-content></ng-content></ng-template> <!-- Compatible: the <ng-content> can appear only once -->
 
 <div [nzNoAnimation]="nzNoAnimation">
-  <div *ngIf="nzMask"
+  <div *ngIf="mask"
     class="ant-modal-mask"
     [ngClass]="maskAnimationClassMap"
     [class.ant-modal-mask-hidden]="hidden"
@@ -10,6 +10,7 @@
   ></div>
   <div
     (click)="onClickMask($event)"
+    (mouseup)="onDialogUp()"
     class="ant-modal-wrap {{ nzWrapClassName }}"
     [style.zIndex]="nzZIndex"
     [style.visibility]="hidden ? 'hidden' : null"
@@ -18,6 +19,7 @@
   >
     <div #modalContainer
       class="ant-modal {{ nzClassName }}"
+      (mousedown)="onMaskDialogDown()"
       [ngClass]="modalAnimationClassMap"
       [ngStyle]="nzStyle"
       [style.width]="nzWidth | toCssUnit"
@@ -30,7 +32,7 @@
             <i nz-icon type="close" class="ant-modal-close-icon"></i>
           </span>
         </button>
-        <ng-container [ngSwitch]="!hidden">
+        <ng-container *ngIf="!hidden" [ngSwitch]="true">
           <ng-container *ngSwitchCase="isModalType('default')" [ngTemplateOutlet]="tplContentDefault"></ng-container>
           <ng-container *ngSwitchCase="isModalType('confirm')" [ngTemplateOutlet]="tplContentConfirm"></ng-container>
         </ng-container>

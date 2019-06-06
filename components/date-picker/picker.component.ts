@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   CdkConnectedOverlay,
   CdkOverlayOrigin,
@@ -18,13 +26,15 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { slideMotion } from '../core/animation/slide';
-import { DateHelperService } from '../i18n/date-helper.service';
-import { CandyDate } from './lib/candy-date';
+import { slideMotion } from 'ng-zorro-antd/core';
+import { DateHelperService } from 'ng-zorro-antd/i18n';
+
+import { CandyDate } from './lib/candy-date/candy-date';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
   selector: 'nz-picker',
+  exportAs: 'nzPicker',
   templateUrl: './picker.component.html',
   animations: [slideMotion],
   changeDetection: ChangeDetectionStrategy.OnPush

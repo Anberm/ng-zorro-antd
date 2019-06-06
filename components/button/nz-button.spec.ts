@@ -2,7 +2,7 @@ import { Component, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, fakeAsync, tick, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { NzIconTestModule } from '../icon/nz-icon-test.module';
+import { NzIconTestModule } from 'ng-zorro-antd/icon/testing';
 
 import { NzDemoButtonBasicComponent } from './demo/basic';
 import { NzDemoButtonBlockComponent } from './demo/block';
@@ -40,6 +40,7 @@ describe('button', () => {
       expect(buttons[1].nativeElement.classList.contains('ant-btn-default')).toBe(true);
       expect(buttons[2].nativeElement.classList.contains('ant-btn-dashed')).toBe(true);
       expect(buttons[3].nativeElement.classList.contains('ant-btn-danger')).toBe(true);
+      expect(buttons[4].nativeElement.classList.contains('ant-btn-link')).toBe(true);
     });
   });
 
@@ -115,10 +116,7 @@ describe('button', () => {
 
     it('should have correct style', () => {
       fixture.detectChanges();
-      expect(buttons[0].nativeElement.classList.contains('ant-btn-background-ghost')).toBe(true);
-      expect(buttons[1].nativeElement.classList.contains('ant-btn-background-ghost')).toBe(true);
-      expect(buttons[2].nativeElement.classList.contains('ant-btn-background-ghost')).toBe(true);
-      expect(buttons[3].nativeElement.classList.contains('ant-btn-background-ghost')).toBe(true);
+      expect(buttons.every(button => button.nativeElement.classList.contains('ant-btn-background-ghost'))).toBe(true);
     });
   });
 
@@ -299,11 +297,9 @@ describe('button', () => {
       expect(buttons[1].nativeElement.classList.contains('ant-btn-default')).toBe(true);
       expect(buttons[2].nativeElement.classList.contains('ant-btn-dashed')).toBe(true);
       expect(buttons[3].nativeElement.classList.contains('ant-btn-danger')).toBe(true);
+      expect(buttons[4].nativeElement.classList.contains('ant-btn-link')).toBe(true);
 
-      expect(buttons[0].nativeElement.classList.contains('ant-btn-block')).toBe(true);
-      expect(buttons[1].nativeElement.classList.contains('ant-btn-block')).toBe(true);
-      expect(buttons[2].nativeElement.classList.contains('ant-btn-block')).toBe(true);
-      expect(buttons[3].nativeElement.classList.contains('ant-btn-block')).toBe(true);
+      expect(buttons.every(button => button.nativeElement.classList.contains('ant-btn-block'))).toBe(true);
     });
   });
 

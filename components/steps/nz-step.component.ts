@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -10,12 +18,13 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { NgClassType } from '../core/types/ng-class';
+import { NgClassType } from 'ng-zorro-antd/core';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   selector: 'nz-step',
+  exportAs: 'nzStep',
   preserveWhitespaces: false,
   templateUrl: './nz-step.component.html',
   host: {

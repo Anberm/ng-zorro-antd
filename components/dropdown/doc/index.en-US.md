@@ -12,6 +12,14 @@ If there are too many operations to display, you can wrap them in a `Dropdown`. 
 
 ## API
 
+### Import this Component Individually
+
+You can get more detail [here](/docs/getting-started/en#import-a-component-individually).
+
+```ts
+import { NzDropDownModule } from 'ng-zorro-antd';
+```
+
 ### nz-dropdown
 
 > You should add  `[nz-dropdown]` to the element that trigger dropdown
@@ -46,6 +54,7 @@ mark the element that trigger dropdown
 | `[nzTrigger]` | the trigger mode which executes the drop-down action | `'click'｜'hover'` | `'hover'` |
 | `[nzClickHide]` | whether hide menu when click | `boolean` | `true` |
 | `[nzVisible]` | whether the dropdown menu is visible | `boolean` | - |
+| `[nzIcon]` | icon of right side  | `string｜TemplateRef<void>` | `'ellipsis'` |
 | `(nzVisibleChange)` | a callback function takes an argument: `nzVisible`, is executed when the visible state is changed | `EventEmitter<boolean>` | - |
 | `(nzClick)` | a callback function which will be executed when you click the button on the left | `EventEmitter<MouseEvent>` | - |
 

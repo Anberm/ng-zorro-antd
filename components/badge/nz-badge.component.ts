@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -12,14 +20,13 @@ import {
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import { zoomBadgeMotion } from '../core/animation/zoom';
-import { isEmpty } from '../core/util/check';
-import { InputBoolean } from '../core/util/convert';
+import { isEmpty, zoomBadgeMotion, InputBoolean } from 'ng-zorro-antd/core';
 
 export type NzBadgeStatusType = 'success' | 'processing' | 'default' | 'error' | 'warning';
 
 @Component({
   selector: 'nz-badge',
+  exportAs: 'nzBadge',
   preserveWhitespaces: false,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,

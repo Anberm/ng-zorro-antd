@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectorRef,
   Component,
@@ -10,14 +18,11 @@ import {
   TemplateRef
 } from '@angular/core';
 
-import { NzNoAnimationDirective } from '../core/no-animation/nz-no-animation.directive';
-import { FunctionProp } from '../core/types/common-wrap';
-import { toBoolean, valueFunctionProp, InputBoolean } from '../core/util/convert';
-import { NzI18nService } from '../i18n/nz-i18n.service';
-import { CandyDate } from './lib/candy-date';
+import { toBoolean, valueFunctionProp, FunctionProp, InputBoolean, NzNoAnimationDirective } from 'ng-zorro-antd/core';
+import { DateHelperService, NzI18nService } from 'ng-zorro-antd/i18n';
 
-import { DateHelperService } from '../i18n/date-helper.service';
 import { AbstractPickerComponent, CompatibleDate } from './abstract-picker.component';
+import { CandyDate } from './lib/candy-date/candy-date';
 import { DisabledTimeFn, PanelMode, PresetRanges } from './standard-types';
 
 @Component({
@@ -31,7 +36,7 @@ export class DateRangePickerComponent extends AbstractPickerComponent implements
   @Input() nzRenderExtraFooter: FunctionProp<TemplateRef<void> | string>;
   @Input() @InputBoolean() nzShowToday: boolean = true;
   @Input() nzMode: PanelMode | PanelMode[];
-  @Input() nzRanges: FunctionProp<PresetRanges>;
+  @Input() nzRanges: PresetRanges;
   @Output() readonly nzOnPanelChange = new EventEmitter<PanelMode | PanelMode[]>();
   @Output() readonly nzOnCalendarChange = new EventEmitter<Date[]>();
 

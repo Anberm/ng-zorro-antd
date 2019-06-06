@@ -1,3 +1,16 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
+/**
+ * This module provides utility functions to query DOM information or
+ * set properties.
+ */
+
 import { Observable } from 'rxjs';
 
 import { filterNotEmptyNode } from './check';
@@ -55,6 +68,13 @@ export function reverseChildNodes(parent: HTMLElement): void {
       parent.appendChild(nodes[length]);
     }
   }
+}
+
+/**
+ * Investigate if an event is a `TouchEvent`.
+ */
+export function isTouchEvent(event: MouseEvent | TouchEvent): event is TouchEvent {
+  return event.type.startsWith('touch');
 }
 
 export interface MouseTouchObserverConfig {

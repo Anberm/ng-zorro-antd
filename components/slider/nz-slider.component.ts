@@ -1,3 +1,12 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
+import { Platform } from '@angular/cdk/platform';
 import {
   forwardRef,
   ChangeDetectionStrategy,
@@ -18,11 +27,17 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { fromEvent, merge, Observable, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, map, pluck, takeUntil, tap } from 'rxjs/operators';
 
-import { InputBoolean } from '../core/util/convert';
-import { getElementOffset, silentEvent, MouseTouchObserverConfig } from '../core/util/dom';
-
-import { arraysEqual, shallowCopyArray } from '../core/util/array';
-import { ensureNumberInRange, getPercent, getPrecision } from '../core/util/number';
+import {
+  arraysEqual,
+  ensureNumberInRange,
+  getElementOffset,
+  getPercent,
+  getPrecision,
+  shallowCopyArray,
+  silentEvent,
+  InputBoolean,
+  MouseTouchObserverConfig
+} from 'ng-zorro-antd/core';
 
 import {
   isValueARange,
@@ -38,6 +53,7 @@ import { getValueTypeNotMatchError } from './nz-slider-error';
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   selector: 'nz-slider',
+  exportAs: 'nzSlider',
   preserveWhitespaces: false,
   providers: [
     {
@@ -84,13 +100,15 @@ export class NzSliderComponent implements ControlValueAccessor, OnInit, OnChange
   private dragMove_: Subscription | null;
   private dragEnd_: Subscription | null;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef, private platform: Platform) {}
 
   ngOnInit(): void {
     this.handles = this.generateHandles(this.nzRange ? 2 : 1);
     this.sliderDOM = this.slider.nativeElement;
     this.marksArray = this.nzMarks ? this.generateMarkItems(this.nzMarks) : null;
-    this.createDraggingObservables();
+    if (this.platform.isBrowser) {
+      this.createDraggingObservables();
+    }
     this.toggleDragDisabled(this.nzDisabled);
 
     if (this.getValue() === null) {

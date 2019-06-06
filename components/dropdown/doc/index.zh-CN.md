@@ -13,6 +13,13 @@ title: Dropdown
 
 ## API
 
+### 单独引入此组件
+
+想要了解更多关于单独引入组件的内容，可以在[快速上手](/docs/getting-started/zh#单独引入某个组件)页面进行查看。
+
+```ts
+import { NzDropDownModule } from 'ng-zorro-antd';
+```
 
 ### nz-dropdown
 
@@ -48,6 +55,7 @@ title: Dropdown
 | `[nzTrigger]` | 触发下拉的行为 | `'click'｜'hover'` | `'hover'` |
 | `[nzClickHide]` | 点击后是否隐藏菜单 | `boolean` | `true` |
 | `[nzVisible]` | 菜单是否显示 | `boolean` | - |
+| `[nzIcon]` | 右侧的 icon  | `string｜TemplateRef<void>` | `'ellipsis'` |
 | `(nzVisibleChange)` | 菜单显示状态改变时调用，参数为 nzVisible | `EventEmitter<boolean>` | - |
 | `(nzClick)` | 点击左侧按钮的回调 | `EventEmitter<MouseEvent>` | - |
 

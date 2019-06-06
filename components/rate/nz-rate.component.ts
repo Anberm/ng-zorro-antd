@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { LEFT_ARROW, RIGHT_ARROW } from '@angular/cdk/keycodes';
 import {
   forwardRef,
@@ -18,14 +26,14 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { NgClassType } from '../core/types/ng-class';
 
-import { InputBoolean } from '../core/util/convert';
+import { InputBoolean, NgClassType } from 'ng-zorro-antd/core';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   selector: 'nz-rate',
+  exportAs: 'nzRate',
   preserveWhitespaces: false,
   templateUrl: './nz-rate.component.html',
   providers: [

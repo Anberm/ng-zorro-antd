@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ComponentFactory,
   ComponentFactoryResolver,
@@ -16,13 +24,14 @@ import {
 
 import { distinctUntilChanged } from 'rxjs/operators';
 
-import { NzNoAnimationDirective } from '../core/no-animation/nz-no-animation.directive';
-import { InputBoolean } from '../core/util/convert';
-import { NzTooltipDirective } from '../tooltip/nz-tooltip.directive';
+import { InputBoolean, NzNoAnimationDirective } from 'ng-zorro-antd/core';
+import { NzTooltipDirective } from 'ng-zorro-antd/tooltip';
+
 import { NzPopconfirmComponent } from './nz-popconfirm.component';
 
 @Directive({
   selector: '[nz-popconfirm]',
+  exportAs: 'nzPopconfirm',
   host: {
     '[class.ant-popover-open]': 'isTooltipOpen'
   }

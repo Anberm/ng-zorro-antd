@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   AfterContentInit,
   ChangeDetectionStrategy,
@@ -5,28 +13,39 @@ import {
   Component,
   EventEmitter,
   Host,
+  Injector,
   Input,
   OnChanges,
   OnDestroy,
   Optional,
   Output,
+  Self,
+  TemplateRef,
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
 
-import { slideMotion } from '../core/animation/slide';
-import { NzNoAnimationDirective } from '../core/no-animation/nz-no-animation.directive';
-import { NzDropDownComponent } from './nz-dropdown.component';
+import { slideMotion, NzDropdownHigherOrderServiceToken, NzNoAnimationDirective } from 'ng-zorro-antd/core';
+
+import { menuServiceFactory, NzDropDownComponent } from './nz-dropdown.component';
 import { NzDropDownDirective } from './nz-dropdown.directive';
 import { NzMenuDropdownService } from './nz-menu-dropdown.service';
 
 @Component({
   selector: 'nz-dropdown-button',
+  exportAs: 'nzDropdownButton',
   preserveWhitespaces: false,
   animations: [slideMotion],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [NzMenuDropdownService],
+  providers: [
+    NzMenuDropdownService,
+    {
+      provide: NzDropdownHigherOrderServiceToken,
+      useFactory: menuServiceFactory,
+      deps: [[new Self(), Injector]]
+    }
+  ],
   templateUrl: './nz-dropdown-button.component.html',
   styles: [
     `
@@ -49,6 +68,7 @@ import { NzMenuDropdownService } from './nz-menu-dropdown.service';
 export class NzDropDownButtonComponent extends NzDropDownComponent implements OnDestroy, AfterContentInit, OnChanges {
   @Input() nzSize = 'default';
   @Input() nzType = 'default';
+  @Input() nzIcon: string | TemplateRef<void> = 'ellipsis';
   @Output() readonly nzClick = new EventEmitter<MouseEvent>();
   @ViewChild(NzDropDownDirective) nzDropDownDirective: NzDropDownDirective;
 

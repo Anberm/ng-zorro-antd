@@ -1,10 +1,17 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { NzNoAnimationModule } from '../core/no-animation/nz-no-animation.module';
-import { NzOverlayModule } from '../core/overlay/nz-overlay.module';
-import { NzIconModule } from '../icon/nz-icon.module';
+import { NzNoAnimationModule, NzOverlayModule } from 'ng-zorro-antd/core';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 import { LibPackerModule } from './lib/lib-packer.module';
 

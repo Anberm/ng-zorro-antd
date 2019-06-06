@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,8 +16,8 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { toCssPixel } from '../core/util';
-import { NzMessageContainerComponent } from '../message/nz-message-container.component';
+import { toCssPixel } from 'ng-zorro-antd/core';
+import { NzMessageContainerComponent } from 'ng-zorro-antd/message';
 
 import { NzNotificationConfig, NZ_NOTIFICATION_CONFIG, NZ_NOTIFICATION_DEFAULT_CONFIG } from './nz-notification-config';
 import { NzNotificationDataFilled, NzNotificationDataOptions } from './nz-notification.definitions';
@@ -18,6 +26,7 @@ import { NzNotificationDataFilled, NzNotificationDataOptions } from './nz-notifi
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   selector: 'nz-notification-container',
+  exportAs: 'nzNotificationContainer',
   preserveWhitespaces: false,
   templateUrl: './nz-notification-container.component.html'
 })

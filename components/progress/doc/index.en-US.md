@@ -15,6 +15,14 @@ If it will take a long time to complete an operation, you can use `Progress` to 
 
 ## API
 
+### Import this Component Individually
+
+You can get more detail [here](/docs/getting-started/en#import-a-component-individually).
+
+```ts
+import { NzProgressModule } from 'ng-zorro-antd';
+```
+
 ### nz-progress
 
 | Property | Description | Type | Default |
@@ -24,7 +32,7 @@ If it will take a long time to complete an operation, you can use `Progress` to 
 | `[nzGapPosition]` `(nzType=circle)` | the gap position | `'top'｜'right'｜'bottom'｜'left'` | `'top'` |
 | `[nzPercent]` | to set the completion percentage | `number` | `0` |
 | `[nzShowInfo]` | whether to display the progress value and the status icon | `boolean` | `true` |
-| `[nzStatus]` | to set the status of the Progress | `'success'｜'exception'｜'active'` | - |
+| `[nzStatus]` | to set the status of the Progress | `'success'｜'exception'｜'active'｜'normal'` | - |
 | `[nzStrokeWidth]` `(nzType=line)` | to set the width of the progress bar, unit: `px` | `number` | `8` |
 | `[nzStrokeWidth]` `(nzType=circle)` | to set the width of the circular progress bar, unit: percentage of the canvas width | `number` | `6` |
 | `[nzType]` | to set the type | `'line'｜'circle'｜'dashboard'` | `'line'` |

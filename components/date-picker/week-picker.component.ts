@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   forwardRef,
   ChangeDetectionStrategy,
@@ -11,16 +19,16 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { NzNoAnimationDirective } from '../core/no-animation/nz-no-animation.directive';
-import { NzI18nService } from '../i18n/nz-i18n.service';
+import { NzNoAnimationDirective } from 'ng-zorro-antd/core';
+import { DateHelperService, NzI18nService } from 'ng-zorro-antd/i18n';
 
-import { DateHelperService } from '../i18n/date-helper.service';
 import { DateRangePickerComponent } from './date-range-picker.component';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'nz-week-picker',
+  exportAs: 'nzWeekPicker',
   templateUrl: './date-range-picker.component.html',
   providers: [
     {

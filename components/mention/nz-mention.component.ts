@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { DOWN_ARROW, ENTER, ESCAPE, LEFT_ARROW, RIGHT_ARROW, TAB, UP_ARROW } from '@angular/cdk/keycodes';
 import {
   ConnectionPositionPair,
@@ -30,10 +38,7 @@ import {
 } from '@angular/core';
 import { fromEvent, merge, Subscription } from 'rxjs';
 
-import { DEFAULT_MENTION_POSITIONS } from '../core/overlay/overlay-position';
-import { InputBoolean } from '../core/util';
-import { getMentions } from '../core/util/getMentions';
-import { getCaretCoordinates } from '../core/util/textarea-caret-position';
+import { getCaretCoordinates, getMentions, DEFAULT_MENTION_POSITIONS, InputBoolean } from 'ng-zorro-antd/core';
 
 import { NzMentionSuggestionDirective } from './nz-mention-suggestions';
 import { NzMentionTriggerDirective } from './nz-mention-trigger';
@@ -53,6 +58,7 @@ export type MentionPlacement = 'top' | 'bottom';
 
 @Component({
   selector: 'nz-mention',
+  exportAs: 'nzMention',
   templateUrl: './nz-mention.component.html',
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   AfterContentInit,
   ContentChildren,
@@ -14,30 +22,33 @@ import {
   SimpleChanges,
   SkipSelf
 } from '@angular/core';
+
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { NzUpdateHostClassService } from '../core/services/update-host-class.service';
-import { NzDirectionVHIType } from '../core/types/direction';
-import { InputBoolean } from '../core/util/convert';
-import { NzMenuDropdownService } from '../dropdown/nz-menu-dropdown.service';
+
+import {
+  InputBoolean,
+  NzDirectionVHIType,
+  NzDropdownHigherOrderServiceToken,
+  NzMenuBaseService,
+  NzUpdateHostClassService
+} from 'ng-zorro-antd/core';
+
 import { NzMenuItemDirective } from './nz-menu-item.directive';
-import { NzMenuMenuService } from './nz-menu-menu.service';
+import { NzMenuServiceFactory } from './nz-menu.resolver';
 import { NzMenuService } from './nz-menu.service';
 import { NzSubMenuComponent } from './nz-submenu.component';
 
-export function NzMenuFactory(dropService: NzMenuDropdownService, menuService: NzMenuMenuService): NzMenuService {
-  return dropService ? dropService : menuService;
-}
-
 @Directive({
   selector: '[nz-menu]',
+  exportAs: 'nzMenu',
   providers: [
     NzUpdateHostClassService,
-    NzMenuMenuService,
+    NzMenuService,
     {
-      provide: NzMenuService,
-      useFactory: NzMenuFactory,
-      deps: [[new SkipSelf(), new Optional(), NzMenuDropdownService], NzMenuMenuService]
+      provide: NzMenuBaseService,
+      useFactory: NzMenuServiceFactory,
+      deps: [[new SkipSelf(), new Optional(), NzDropdownHigherOrderServiceToken], NzMenuService]
     }
   ]
 })
@@ -85,7 +96,7 @@ export class NzMenuDirective implements AfterContentInit, OnInit, OnChanges, OnD
 
   constructor(
     public elementRef: ElementRef,
-    private nzMenuService: NzMenuService,
+    private nzMenuService: NzMenuBaseService,
     private nzUpdateHostClassService: NzUpdateHostClassService
   ) {}
 

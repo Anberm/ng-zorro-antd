@@ -1,10 +1,18 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { Directive, ElementRef, Input, Optional, Renderer2, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
-import { NzSizeLDSType } from '../core/types/size';
-import { toBoolean } from '../core/util/convert';
+import { toBoolean, NzSizeLDSType } from 'ng-zorro-antd/core';
 
 @Directive({
   selector: '[nz-input]',
+  exportAs: 'nzInput',
   host: {
     '[class.ant-input-disabled]': 'disabled',
     '[class.ant-input-lg]': `nzSize === 'large'`,

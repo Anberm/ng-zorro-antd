@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   Directive,
   ElementRef,
@@ -30,13 +38,22 @@ export function NZ_WAVE_GLOBAL_CONFIG_FACTORY(): NzWaveConfig {
 }
 
 @Directive({
-  selector: '[nz-wave]'
+  selector: '[nz-wave]',
+  exportAs: 'nzWave'
 })
 export class NzWaveDirective implements OnInit, OnDestroy {
   @Input() nzWaveExtraNode = false;
 
   private waveRenderer: NzWaveRenderer;
   private waveDisabled: boolean = false;
+
+  get disabled(): boolean {
+    return this.waveDisabled;
+  }
+
+  get rendererRef(): NzWaveRenderer {
+    return this.waveRenderer;
+  }
 
   constructor(
     private ngZone: NgZone,
@@ -65,6 +82,23 @@ export class NzWaveDirective implements OnInit, OnDestroy {
   renderWaveIfEnabled(): void {
     if (!this.waveDisabled && this.elementRef.nativeElement) {
       this.waveRenderer = new NzWaveRenderer(this.elementRef.nativeElement, this.ngZone, this.nzWaveExtraNode);
+    }
+  }
+
+  disable(): void {
+    this.waveDisabled = true;
+    if (this.waveRenderer) {
+      this.waveRenderer.removeTriggerEvent();
+      this.waveRenderer.removeStyleAndExtraNode();
+    }
+  }
+
+  enable(): void {
+    this.waveDisabled = false;
+    if (this.waveRenderer) {
+      this.waveRenderer.bindTriggerEvent();
+    } else {
+      this.renderWaveIfEnabled();
     }
   }
 }

@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,12 +17,11 @@ import {
   TemplateRef,
   ViewEncapsulation
 } from '@angular/core';
-import { slideAlertMotion } from '../core/animation/slide';
-import { NgClassType } from '../core/types/ng-class';
-import { InputBoolean } from '../core/util/convert';
+import { slideAlertMotion, InputBoolean, NgClassType } from 'ng-zorro-antd/core';
 
 @Component({
   selector: 'nz-alert',
+  exportAs: 'nzAlert',
   animations: [slideAlertMotion],
   templateUrl: './nz-alert.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

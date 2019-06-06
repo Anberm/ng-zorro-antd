@@ -11,6 +11,14 @@ subtitle: 树形控件
 
 ## API
 
+### 单独引入此组件
+
+想要了解更多关于单独引入组件的内容，可以在[快速上手](/docs/getting-started/zh#单独引入某个组件)页面进行查看。
+
+```ts
+import { NzTreeModule } from 'ng-zorro-antd';
+```
+
 ### nz-tree
 
 | 参数 | 说明 | 类型 | 默认值 |

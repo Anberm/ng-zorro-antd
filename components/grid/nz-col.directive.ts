@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   AfterViewInit,
   Directive,
@@ -13,9 +21,7 @@ import {
 import { Subject } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
 
-import { NzUpdateHostClassService } from '../core/services/update-host-class.service';
-import { NgClassInterface } from '../core/types/ng-class';
-import { isNotNil } from '../core/util/check';
+import { isNotNil, NgClassInterface, NzUpdateHostClassService } from 'ng-zorro-antd/core';
 
 import { NzRowDirective } from './nz-row.directive';
 
@@ -29,6 +35,7 @@ export interface EmbeddedProperty {
 
 @Directive({
   selector: '[nz-col],nz-col',
+  exportAs: 'nzCol',
   providers: [NzUpdateHostClassService]
 })
 export class NzColDirective implements OnInit, OnChanges, AfterViewInit, OnDestroy {

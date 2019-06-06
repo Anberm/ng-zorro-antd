@@ -1,5 +1,13 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { animate, state, style, transition, trigger, AnimationTriggerMetadata } from '@angular/animations';
-import { AnimationCurves, AnimationDuration } from './animation';
+import { AnimationCurves, AnimationDuration } from './animation-consts';
 
 const ANIMATION_TRANSITION_IN = `${AnimationDuration.BASE} ${AnimationCurves.EASE_OUT_QUINT}`;
 const ANIMATION_TRANSITION_OUT = `${AnimationDuration.BASE} ${AnimationCurves.EASE_IN_QUINT}`;

@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -15,13 +23,15 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { zoomMotion } from '../core/animation/zoom';
-import { NzNoAnimationDirective } from '../core/no-animation/nz-no-animation.directive';
+
+import { zoomMotion, NzNoAnimationDirective } from 'ng-zorro-antd/core';
+
 import { NzOptionComponent } from './nz-option.component';
 import { NzSelectService } from './nz-select.service';
 
 @Component({
   selector: '[nz-select-top-control]',
+  exportAs: 'nzSelectTopControl',
   preserveWhitespaces: false,
   animations: [zoomMotion],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -106,7 +116,7 @@ export class NzSelectTopControlComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeSelectedValue(option: NzOptionComponent, e: KeyboardEvent): void {
+  removeSelectedValue(option: NzOptionComponent, e: MouseEvent): void {
     this.nzSelectService.removeValueFormSelected(option);
     e.stopPropagation();
   }
@@ -121,7 +131,7 @@ export class NzSelectTopControlComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.nzSelectService.open$.pipe(takeUntil(this.destroy$)).subscribe(open => {
       if (this.inputElement && open) {
-        this.inputElement.nativeElement.focus();
+        setTimeout(() => this.inputElement.nativeElement.focus());
       }
     });
     this.nzSelectService.clearInput$.pipe(takeUntil(this.destroy$)).subscribe(() => {

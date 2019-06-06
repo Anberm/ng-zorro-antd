@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -14,13 +22,14 @@ import {
   TemplateRef,
   ViewEncapsulation
 } from '@angular/core';
-import { collapseMotion } from '../core/animation/collapse';
 
-import { InputBoolean } from '../core/util/convert';
+import { collapseMotion, InputBoolean } from 'ng-zorro-antd/core';
+
 import { NzCollapseComponent } from './nz-collapse.component';
 
 @Component({
   selector: 'nz-collapse-panel',
+  exportAs: 'nzCollapsePanel',
   templateUrl: './nz-collapse-panel.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,

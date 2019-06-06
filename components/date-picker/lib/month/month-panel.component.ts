@@ -1,12 +1,21 @@
+/**
+ * @license
+ * Copyright Alibaba.com All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 
-import { NzCalendarI18nInterface } from '../../../i18n/nz-i18n.interface';
-import { CandyDate } from '../candy-date';
+import { NzCalendarI18nInterface } from 'ng-zorro-antd/i18n';
+import { CandyDate } from '../candy-date/candy-date';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'month-panel', // tslint:disable-line:component-selector
+  exportAs: 'monthPanel',
   templateUrl: 'month-panel.component.html'
 })
 export class MonthPanelComponent {
