@@ -186,7 +186,6 @@ describe('NzMessage', () => {
 });
 
 @Component({
-  selector: 'nz-demo-app-component',
   template: `
     <ng-template #contentTemplate>
       Content in template
@@ -194,5 +193,5 @@ describe('NzMessage', () => {
   `
 })
 export class NzTestMessageBasicComponent {
-  @ViewChild('contentTemplate') template: TemplateRef<void>;
+  @ViewChild('contentTemplate', { static: true }) template: TemplateRef<void>;
 }

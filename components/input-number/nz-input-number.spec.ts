@@ -446,7 +446,6 @@ describe('input number', () => {
 });
 
 @Component({
-  selector: 'nz-test-input-number-basic',
   template: `
     <nz-input-number
       [(ngModel)]="value"
@@ -466,7 +465,7 @@ describe('input number', () => {
   `
 })
 export class NzTestInputNumberBasicComponent {
-  @ViewChild(NzInputNumberComponent) nzInputNumberComponent: NzInputNumberComponent;
+  @ViewChild(NzInputNumberComponent, { static: false }) nzInputNumberComponent: NzInputNumberComponent;
   value?: number | string;
   autofocus = false;
   disabled = false;
@@ -482,7 +481,6 @@ export class NzTestInputNumberBasicComponent {
 }
 
 @Component({
-  selector: 'nz-test-input-number-form',
   template: `
     <form [formGroup]="formGroup">
       <nz-input-number formControlName="inputNumber" nzMax="10" nzMin="-10"></nz-input-number>

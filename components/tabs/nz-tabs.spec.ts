@@ -1,7 +1,7 @@
 import { Component, DebugElement, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fakeAsync, tick, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { NGStyleInterface } from 'ng-zorro-antd/core';
+import { NgStyleInterface } from 'ng-zorro-antd/core';
 
 import { NzTabsModule } from './nz-tabs.module';
 import { NzAnimatedInterface, NzTabSetComponent } from './nz-tabset.component';
@@ -124,12 +124,13 @@ describe('tabs', () => {
       expect(titles[1].innerText).toBe('template');
     });
 
-    it('should content work', () => {
+    it('should content work', fakeAsync(() => {
+      fixture.detectChanges();
+      tick();
       fixture.detectChanges();
       const contents = tabs.nativeElement.querySelectorAll('.ant-tabs-tabpane');
       expect(contents[0].innerText).toBe('Content 1');
-      expect(contents[1].innerText).toBe('Content 2');
-    });
+    }));
 
     it('should selectedIndex work', fakeAsync(() => {
       fixture.detectChanges();
@@ -481,7 +482,6 @@ describe('tabs', () => {
 });
 
 @Component({
-  selector: 'nz-test-tabs-basic',
   encapsulation: ViewEncapsulation.None,
   styleUrls: ['../style/index.less', './style/index.less'],
   template: `
@@ -536,15 +536,15 @@ describe('tabs', () => {
 })
 export class NzTestTabsBasicComponent {
   add = false;
-  @ViewChild('extraTemplate') extraTemplate: TemplateRef<void>;
-  @ViewChild(NzTabSetComponent) nzTabSetComponent: NzTabSetComponent;
+  @ViewChild('extraTemplate', { static: false }) extraTemplate: TemplateRef<void>;
+  @ViewChild(NzTabSetComponent, { static: false }) nzTabSetComponent: NzTabSetComponent;
   selectedIndex = 0;
   selectedIndexChange = jasmine.createSpy('selectedIndex callback');
   selectChange = jasmine.createSpy('selectedIndex callback');
   animated: NzAnimatedInterface | boolean = true;
   size = 'default';
   tabBarExtraContent: TemplateRef<void>;
-  tabBarStyle: NGStyleInterface;
+  tabBarStyle: NgStyleInterface;
   tabPosition = 'top';
   type = 'line';
   tabBarGutter: number;
@@ -566,7 +566,6 @@ export class NzTestTabsBasicComponent {
 
 /** https://github.com/NG-ZORRO/ng-zorro-antd/issues/1964 **/
 @Component({
-  selector: 'nz-test-tabs-tab-position-left',
   template: `
     <nz-tabset nzTabPosition="left">
       <nz-tab *ngFor="let tab of tabs" [nzTitle]="'Tab' + tab"> Content of tab {{ tab }} </nz-tab>

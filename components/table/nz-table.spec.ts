@@ -316,7 +316,6 @@ describe('nz-table', () => {
 });
 
 @Component({
-  selector: 'nz-test-table-basic',
   template: `
     <nz-table
       #dynamicTable
@@ -365,7 +364,7 @@ describe('nz-table', () => {
   `
 })
 export class NzTestTableBasicComponent implements OnInit {
-  @ViewChild(NzTableComponent) nzTableComponent: NzTableComponent;
+  @ViewChild(NzTableComponent, { static: false }) nzTableComponent: NzTableComponent;
   pageIndex = 1;
   pageIndexChange = jasmine.createSpy('pageIndex callback');
   pageSize = 10;
@@ -408,7 +407,6 @@ export class NzTestTableBasicComponent implements OnInit {
 }
 
 @Component({
-  selector: 'nz-test-table-scroll',
   template: `
     <div style="display: block;" [style.width.px]="width">
       <nz-table #nzTable [nzData]="dataSet" [nzPageSize]="10" [nzScroll]="{ x: '600px', y: '240px' }">
@@ -451,7 +449,7 @@ export class NzTestTableBasicComponent implements OnInit {
   styleUrls: ['../style/index.less', '../spin/style/index.less', './style/index.less']
 })
 export class NzTestTableScrollComponent implements OnInit {
-  @ViewChild(NzTableComponent) nzTableComponent: NzTableComponent;
+  @ViewChild(NzTableComponent, { static: false }) nzTableComponent: NzTableComponent;
   dataSet: Array<{ name: string; age: number; address: string }> = [];
   width = 300;
 

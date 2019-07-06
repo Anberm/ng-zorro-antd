@@ -26,7 +26,7 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { merge, Subject } from 'rxjs';
-import { flatMap, startWith, takeUntil } from 'rxjs/operators';
+import { startWith, switchMap, takeUntil } from 'rxjs/operators';
 
 import { InputBoolean } from 'ng-zorro-antd/core';
 
@@ -42,7 +42,7 @@ import { NzThComponent } from './nz-th.component';
 })
 export class NzTheadComponent implements AfterContentInit, OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
-  @ViewChild('contentTemplate') templateRef: TemplateRef<void>;
+  @ViewChild('contentTemplate', { static: true }) templateRef: TemplateRef<void>;
   @ContentChildren(NzThComponent, { descendants: true }) listOfNzThComponent: QueryList<NzThComponent>;
   @Input() @InputBoolean() nzSingleSort = false;
   @Output() readonly nzSortChange = new EventEmitter<{ key: string; value: string }>();
@@ -62,7 +62,9 @@ export class NzTheadComponent implements AfterContentInit, OnDestroy, AfterViewI
     this.listOfNzThComponent.changes
       .pipe(
         startWith(true),
-        flatMap(() => merge(...this.listOfNzThComponent.map(th => th.nzSortChangeWithKey))),
+        switchMap(() =>
+          merge<{ key: string; value: string }>(...this.listOfNzThComponent.map(th => th.nzSortChangeWithKey))
+        ),
         takeUntil(this.destroy$)
       )
       .subscribe((data: { key: string; value: string }) => {

@@ -31,6 +31,7 @@ import { takeUntil } from 'rxjs/operators';
 import {
   isNotNil,
   toBoolean,
+  warnDeprecation,
   InputBoolean,
   NzFormatBeforeDropEvent,
   NzFormatEmitEvent,
@@ -77,19 +78,33 @@ export class NzTreeComponent extends NzTreeBase implements OnInit, OnDestroy, Co
   @Input() @InputBoolean() nzCheckable = false;
   @Input() @InputBoolean() nzAsyncData = false;
   @Input() @InputBoolean() nzDraggable = false;
-  @Input() @InputBoolean() nzExpandAll = false;
+
   @Input() @InputBoolean() nzHideUnMatched = false;
   @Input() @InputBoolean() nzSelectMode = false;
   @Input() @InputBoolean() nzCheckStrictly = false;
   @Input() @InputBoolean() nzBlockNode = false;
 
-  @Input() @ContentChild('nzTreeTemplate') nzTreeTemplate: TemplateRef<{ $implicit: NzTreeNode }>;
+  @Input() @ContentChild('nzTreeTemplate', { static: true }) nzTreeTemplate: TemplateRef<{ $implicit: NzTreeNode }>;
+
+  @Input() @InputBoolean() nzExpandAll = false;
 
   /**
-   * @deprecated use
-   * nzExpandAll instead
+   * @deprecated 9.0.0 use `nzExpandAll` instead.
    */
-  @Input() @InputBoolean() nzDefaultExpandAll = false;
+  @Input()
+  @InputBoolean()
+  set nzDefaultExpandAll(value: boolean) {
+    warnDeprecation(`'nzDefaultExpandAll' would be removed in 9.0.0. Please use 'nzExpandAll' instead.`);
+    this.nzExpandAll = value;
+    this._nzDefaultExpandAll = value;
+  }
+
+  get nzDefaultExpandAll(): boolean {
+    return this._nzDefaultExpandAll;
+  }
+
+  private _nzDefaultExpandAll = false;
+
   @Input() nzBeforeDrop: (confirm: NzFormatBeforeDropEvent) => Observable<boolean>;
 
   @Input()
@@ -110,29 +125,29 @@ export class NzTreeComponent extends NzTreeBase implements OnInit, OnDestroy, Co
   }
 
   /**
-   * @deprecated use
-   * nzExpandedKeys instead
+   * @deprecated 9.0.0 - use `nzExpandedKeys` instead.
    */
   @Input()
   set nzDefaultExpandedKeys(value: string[]) {
+    warnDeprecation(`'nzDefaultExpandedKeys' would be removed in 9.0.0. Please use 'nzExpandedKeys' instead.`);
     this.nzDefaultSubject.next({ type: 'nzExpandedKeys', keys: value });
   }
 
   /**
-   * @deprecated use
-   * nzSelectedKeys instead
+   * @deprecated 9.0.0 - use `nzSelectedKeys` instead.
    */
   @Input()
   set nzDefaultSelectedKeys(value: string[]) {
+    warnDeprecation(`'nzDefaultSelectedKeys' would be removed in 9.0.0. Please use 'nzSelectedKeys' instead.`);
     this.nzDefaultSubject.next({ type: 'nzSelectedKeys', keys: value });
   }
 
   /**
-   * @deprecated use
-   * nzCheckedKeys instead
+   * @deprecated 9.0.0 - use `nzCheckedKeys` instead.
    */
   @Input()
   set nzDefaultCheckedKeys(value: string[]) {
+    warnDeprecation(`'nzDefaultCheckedKeys' would be removed in 9.0.0. Please use 'nzCheckedKeys' instead.`);
     this.nzDefaultSubject.next({ type: 'nzCheckedKeys', keys: value });
   }
 
@@ -157,6 +172,10 @@ export class NzTreeComponent extends NzTreeBase implements OnInit, OnDestroy, Co
     this.nzTreeService.searchExpand(value);
     if (isNotNil(value)) {
       this.nzSearchValueChange.emit(this.nzTreeService.formatEvent('search', null, null));
+      /**
+       * @deprecated 9.0.0 - use `nzOnSearchNode` instead.
+       * Hide warning, need remove next version
+       */
       this.nzOnSearchNode.emit(this.nzTreeService.formatEvent('search', null, null));
     }
   }
@@ -166,36 +185,35 @@ export class NzTreeComponent extends NzTreeBase implements OnInit, OnDestroy, Co
   }
 
   /**
-   * To render nodes if root is changed
+   * To render nodes if root is changed.
    */
   get nzNodes(): NzTreeNode[] {
     return this.nzTreeService.rootNodes;
   }
 
-  // model bind
   @Output() readonly nzExpandedKeysChange: EventEmitter<string[]> = new EventEmitter<string[]>();
   @Output() readonly nzSelectedKeysChange: EventEmitter<string[]> = new EventEmitter<string[]>();
   @Output() readonly nzCheckedKeysChange: EventEmitter<string[]> = new EventEmitter<string[]>();
 
-  @Output() readonly nzSearchValueChange: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() readonly nzSearchValueChange = new EventEmitter<NzFormatEmitEvent>();
+
   /**
-   * @deprecated use
-   * nzSearchValueChange instead
+   * @deprecated use `nzSearchValueChange` instead.
    */
-  @Output() readonly nzOnSearchNode: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() readonly nzOnSearchNode = new EventEmitter<NzFormatEmitEvent>();
 
-  @Output() readonly nzClick: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() readonly nzDblClick: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() readonly nzContextMenu: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() readonly nzCheckBoxChange: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() readonly nzExpandChange: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() readonly nzClick = new EventEmitter<NzFormatEmitEvent>();
+  @Output() readonly nzDblClick = new EventEmitter<NzFormatEmitEvent>();
+  @Output() readonly nzContextMenu = new EventEmitter<NzFormatEmitEvent>();
+  @Output() readonly nzCheckBoxChange = new EventEmitter<NzFormatEmitEvent>();
+  @Output() readonly nzExpandChange = new EventEmitter<NzFormatEmitEvent>();
 
-  @Output() readonly nzOnDragStart: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() readonly nzOnDragEnter: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() readonly nzOnDragOver: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() readonly nzOnDragLeave: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() readonly nzOnDrop: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
-  @Output() readonly nzOnDragEnd: EventEmitter<NzFormatEmitEvent> = new EventEmitter();
+  @Output() readonly nzOnDragStart = new EventEmitter<NzFormatEmitEvent>();
+  @Output() readonly nzOnDragEnter = new EventEmitter<NzFormatEmitEvent>();
+  @Output() readonly nzOnDragOver = new EventEmitter<NzFormatEmitEvent>();
+  @Output() readonly nzOnDragLeave = new EventEmitter<NzFormatEmitEvent>();
+  @Output() readonly nzOnDrop = new EventEmitter<NzFormatEmitEvent>();
+  @Output() readonly nzOnDragEnd = new EventEmitter<NzFormatEmitEvent>();
 
   _searchValue: string;
   _nzMultiple: boolean = false;

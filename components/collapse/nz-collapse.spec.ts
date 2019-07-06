@@ -172,7 +172,6 @@ describe('collapse', () => {
 });
 
 @Component({
-  selector: 'nz-test-collapse-basic',
   template: `
     <ng-template #headerTemplate>template</ng-template>
     <nz-collapse [nzAccordion]="accordion" [nzBordered]="bordered">
@@ -192,7 +191,7 @@ describe('collapse', () => {
   `
 })
 export class NzTestCollapseBasicComponent {
-  @ViewChild('headerTemplate') headerTemplate: TemplateRef<void>;
+  @ViewChild('headerTemplate', { static: false }) headerTemplate: TemplateRef<void>;
   accordion = false;
   bordered = true;
   disabled = false;
@@ -206,7 +205,6 @@ export class NzTestCollapseBasicComponent {
 }
 
 @Component({
-  selector: 'nz-test-collapse-template',
   template: `
     <ng-template #headerTemplate>template</ng-template>
     <nz-collapse>
@@ -219,7 +217,6 @@ export class NzTestCollapseBasicComponent {
 export class NzTestCollapseTemplateComponent {}
 
 @Component({
-  selector: 'nz-test-collapse-icon',
   template: `
     <nz-collapse>
       <nz-collapse-panel>
@@ -232,7 +229,7 @@ export class NzTestCollapseTemplateComponent {}
         <p>Panel01</p>
       </nz-collapse-panel>
       <ng-template #expandedIcon>
-        <i nz-icon type="caret-right" class="ant-collapse-arrow"></i>
+        <i nz-icon nzType="caret-right" class="ant-collapse-arrow"></i>
       </ng-template>
     </nz-collapse>
   `

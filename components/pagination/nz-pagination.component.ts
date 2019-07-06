@@ -47,10 +47,11 @@ export class NzPaginationComponent implements OnInit, OnDestroy, OnChanges {
   @Input() nzInTable = false;
   @Input() nzSize: 'default' | 'small' = 'default';
   @Input() nzPageSizeOptions = [10, 20, 30, 40];
-  @Input() @ViewChild('renderItemTemplate') nzItemRender: TemplateRef<{
+  @Input() @ViewChild('renderItemTemplate', { static: true }) nzItemRender: TemplateRef<{
     $implicit: 'page' | 'prev' | 'next';
     page: number;
   }>;
+  @Input() @InputBoolean() nzDisabled = false;
   @Input() @InputBoolean() nzShowSizeChanger = false;
   @Input() @InputBoolean() nzHideOnSinglePage = false;
   @Input() @InputBoolean() nzShowQuickJumper = false;
@@ -80,7 +81,7 @@ export class NzPaginationComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   jumpPage(index: number): void {
-    if (index !== this.nzPageIndex) {
+    if (index !== this.nzPageIndex && !this.nzDisabled) {
       const pageIndex = this.validatePageIndex(index);
       if (pageIndex !== this.nzPageIndex) {
         this.updatePageIndexValue(pageIndex);

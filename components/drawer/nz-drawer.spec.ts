@@ -483,7 +483,6 @@ describe('NzDrawerService', () => {
 });
 
 @Component({
-  selector: 'nz-test-drawer',
   template: `
     <button (click)="open()">Open</button>
     <ng-template #customTitle>
@@ -511,8 +510,7 @@ describe('NzDrawerService', () => {
       <p>Some contents...</p>
       <p>Some contents...</p>
     </nz-drawer>
-  `,
-  styles: []
+  `
 })
 class NzTestDrawerComponent {
   visible = false;
@@ -526,9 +524,9 @@ class NzTestDrawerComponent {
   placement = 'left';
   offsetX = 0;
   offsetY = 0;
-  @ViewChild('customTitle') templateTitle: TemplateRef<void>;
+  @ViewChild('customTitle', { static: false }) templateTitle: TemplateRef<void>;
 
-  @ViewChild(NzDrawerComponent) drawerComponent: NzDrawerComponent;
+  @ViewChild(NzDrawerComponent, { static: false }) drawerComponent: NzDrawerComponent;
 
   open(): void {
     this.visible = true;
@@ -540,7 +538,6 @@ class NzTestDrawerComponent {
 }
 
 @Component({
-  selector: 'nz-test-drawer-with-service',
   template: `
     <ng-template #drawerTemplate>
       <span>Template</span>
@@ -548,7 +545,10 @@ class NzTestDrawerComponent {
   `
 })
 class NzTestDrawerWithServiceComponent {
-  @ViewChild('drawerTemplate') drawerTemplate: TemplateRef<{ $implicit: number; drawerRef: NzDrawerRef }>;
+  @ViewChild('drawerTemplate', { static: false }) drawerTemplate: TemplateRef<{
+    $implicit: number;
+    drawerRef: NzDrawerRef;
+  }>;
   templateOpenSpy = jasmine.createSpy('template afterOpen spy');
   templateCloseSpy = jasmine.createSpy('template afterClose spy');
   templateDrawerRef: NzDrawerRef;
@@ -567,7 +567,6 @@ class NzTestDrawerWithServiceComponent {
 }
 
 @Component({
-  selector: 'nz-drawer-custom-component',
   template: `
     <div>
       <p>Custom Component</p>

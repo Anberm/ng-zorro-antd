@@ -49,14 +49,13 @@ describe('nz-number', () => {
 });
 
 @Component({
-  selector: 'nz-test-number-component',
   template: `
     <nz-statistic-number [nzValue]="value | number" [nzValueTemplate]="template"></nz-statistic-number>
     <ng-template #tpl let-value>It's {{ value }}</ng-template>
   `
 })
 export class NzTestNumberComponent {
-  @ViewChild('tpl') tpl: TemplateRef<void>;
+  @ViewChild('tpl', { static: true }) tpl: TemplateRef<void>;
 
   value = 1;
   template: TemplateRef<void>;

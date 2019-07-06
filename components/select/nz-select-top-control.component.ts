@@ -42,7 +42,7 @@ export class NzSelectTopControlComponent implements OnInit, OnDestroy {
   inputValue: string;
   isComposing = false;
   private destroy$ = new Subject();
-  @ViewChild('inputElement') inputElement: ElementRef;
+  @ViewChild('inputElement', { static: false }) inputElement: ElementRef;
   @Input() nzShowSearch = false;
   @Input() nzPlaceHolder: string;
   @Input() nzOpen = false;
@@ -50,6 +50,7 @@ export class NzSelectTopControlComponent implements OnInit, OnDestroy {
   @Input() nzAllowClear = false;
   @Input() nzShowArrow = true;
   @Input() nzLoading = false;
+  @Input() nzCustomTemplate: TemplateRef<{ $implicit: NzOptionComponent }>;
   @Input() nzSuffixIcon: TemplateRef<void>;
   @Input() nzClearIcon: TemplateRef<void>;
   @Input() nzRemoveIcon: TemplateRef<void>;
@@ -63,9 +64,6 @@ export class NzSelectTopControlComponent implements OnInit, OnDestroy {
   }
 
   setInputValue(value: string): void {
-    if (this.inputElement) {
-      this.inputElement.nativeElement.value = value;
-    }
     this.inputValue = value;
     this.updateWidth();
     this.nzSelectService.updateSearchValue(value);

@@ -22,10 +22,9 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Params, PRIMARY_OUTLET, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { startWith } from 'rxjs/internal/operators/startWith';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, startWith } from 'rxjs/operators';
 
-import { InputBoolean } from 'ng-zorro-antd/core';
+import { InputBoolean, PREFIX } from 'ng-zorro-antd/core';
 
 export const NZ_ROUTE_DATA_BREADCRUMB = 'breadcrumb';
 
@@ -107,7 +106,7 @@ export class NzBreadCrumbComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         });
     } catch (e) {
-      throw new Error('[NG-ZORRO] You should import RouterModule if you want to use `NzAutoGenerate`');
+      throw new Error(`${PREFIX} You should import RouterModule if you want to use 'NzAutoGenerate'.`);
     }
   }
 

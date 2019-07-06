@@ -44,8 +44,10 @@ $ ng new PROJECT-NAME
 
 ```bash
 $ cd PROJECT-NAME
-$ ng add ng-zorro-antd --i18n=en_US
+$ ng add ng-zorro-antd
 ```
+
+<img style="display: block; border-radius: 4px; box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.2);" src="https://img.alicdn.com/tfs/TB19fFHdkxz61VjSZFtXXaDSVXa-680-243.svg">
 
 ### 4. Development & Debugging
 
@@ -141,7 +143,7 @@ You can get more info about how to customize styles at [customize theme](/docs/c
 
 ## Import a Component Individually
 
-From version 7.3.0, you can import a component's module and style files to use that component. For example, if you only want to use the `Button` component, you can import `NzButtonModule` instead of `NgZorroAntdModule`, and `Button`'s style file instead of `ng-zorro-antd.css`.
+You can import a component's module and style files to just use that component. For example, if you only want to use the `Button` component, you can import `NzButtonModule` instead of `NgZorroAntdModule`, and `Button`'s style file instead of `ng-zorro-antd.css`.
 
 In your modules:
 

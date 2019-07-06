@@ -364,7 +364,6 @@ describe('steps', () => {
 });
 
 @Component({
-  selector: 'nz-test-outer-steps',
   template: `
     <nz-steps
       [nzCurrent]="current"
@@ -387,7 +386,7 @@ describe('steps', () => {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NzTestOuterStepsComponent {
-  @ViewChild('progressTemplate') progressTemplate: TemplateRef<void>;
+  @ViewChild('progressTemplate', { static: false }) progressTemplate: TemplateRef<void>;
   current = 0;
   direction = 'horizontal';
   labelPlacement = 'horizontal';
@@ -399,7 +398,6 @@ export class NzTestOuterStepsComponent {
 }
 
 @Component({
-  selector: 'nz-test-inner-step-string',
   template: `
     <nz-steps [nzCurrent]="current">
       <nz-step [nzTitle]="title" [nzDescription]="description" [nzIcon]="icon" [nzStatus]="status"></nz-step>
@@ -408,13 +406,13 @@ export class NzTestOuterStepsComponent {
     </nz-steps>
     <ng-template #titleTemplate>titleTemplate</ng-template>
     <ng-template #descriptionTemplate>descriptionTemplate</ng-template>
-    <ng-template #iconTemplate><i nz-icon type="smile-o"></i></ng-template>
+    <ng-template #iconTemplate><i nz-icon nzType="smile-o"></i></ng-template>
   `
 })
 export class NzTestInnerStepStringComponent {
-  @ViewChild('titleTemplate') titleTemplate: TemplateRef<void>;
-  @ViewChild('descriptionTemplate') descriptionTemplate: TemplateRef<void>;
-  @ViewChild('iconTemplate') iconTemplate: TemplateRef<void>;
+  @ViewChild('titleTemplate', { static: false }) titleTemplate: TemplateRef<void>;
+  @ViewChild('descriptionTemplate', { static: false }) descriptionTemplate: TemplateRef<void>;
+  @ViewChild('iconTemplate', { static: false }) iconTemplate: TemplateRef<void>;
   status = 'process';
   current = 1;
   icon = 'anticon anticon-user';
@@ -423,7 +421,6 @@ export class NzTestInnerStepStringComponent {
 }
 
 @Component({
-  selector: 'nz-test-inner-step-template',
   template: `
     <nz-steps [nzCurrent]="1">
       <nz-step [nzTitle]="titleTemplate" [nzDescription]="descriptionTemplate" [nzIcon]="iconTemplate"></nz-step>
@@ -432,13 +429,12 @@ export class NzTestInnerStepStringComponent {
     </nz-steps>
     <ng-template #titleTemplate>titleTemplate</ng-template>
     <ng-template #descriptionTemplate>descriptionTemplate</ng-template>
-    <ng-template #iconTemplate><i nz-icon type="smile-o"></i></ng-template>
+    <ng-template #iconTemplate><i nz-icon nzType="smile-o"></i></ng-template>
   `
 })
 export class NzTestInnerStepTemplateComponent {}
 
 @Component({
-  selector: 'nz-test-step-for',
   template: `
     <nz-steps>
       <nz-step *ngFor="let step of steps; trackBy: trackById"></nz-step>
@@ -458,7 +454,6 @@ export class NzTestStepForComponent {
 }
 
 @Component({
-  selector: 'nz-test-step-async',
   template: `
     <nz-steps [nzCurrent]="1">
       <nz-step *ngFor="let step of steps; trackBy: trackById"></nz-step>

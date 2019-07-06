@@ -136,16 +136,16 @@ describe('nz-th', () => {
       expect(th.nativeElement.querySelector('.ant-table-column-sorter-down').classList).toContain('off');
       th.nativeElement.querySelector('.ant-table-column-sorters').firstElementChild.click();
       fixture.detectChanges();
-      expect(testComponent.sort).toBe('descend');
+      expect(testComponent.sort).toBe('ascend');
       expect(testComponent.sortChange).toHaveBeenCalledTimes(1);
-      expect(th.nativeElement.querySelector('.ant-table-column-sorter-up').classList).toContain('off');
-      expect(th.nativeElement.querySelector('.ant-table-column-sorter-down').classList).toContain('on');
+      expect(th.nativeElement.querySelector('.ant-table-column-sorter-up').classList).toContain('on');
+      expect(th.nativeElement.querySelector('.ant-table-column-sorter-down').classList).toContain('off');
       th.nativeElement.querySelector('.ant-table-column-sorters').firstElementChild.click();
       fixture.detectChanges();
       expect(testComponent.sortChange).toHaveBeenCalledTimes(2);
-      expect(testComponent.sort).toBe('ascend');
-      expect(th.nativeElement.querySelector('.ant-table-column-sorter-up').classList).toContain('on');
-      expect(th.nativeElement.querySelector('.ant-table-column-sorter-down').classList).toContain('off');
+      expect(testComponent.sort).toBe('descend');
+      expect(th.nativeElement.querySelector('.ant-table-column-sorter-up').classList).toContain('off');
+      expect(th.nativeElement.querySelector('.ant-table-column-sorter-down').classList).toContain('on');
       th.nativeElement.querySelector('.ant-table-column-sorters').firstElementChild.click();
       fixture.detectChanges();
       expect(testComponent.sortChange).toHaveBeenCalledTimes(3);
@@ -307,7 +307,6 @@ describe('nz-th', () => {
 });
 
 @Component({
-  selector: 'nz-th-test-nz-table',
   template: `
     <nz-table *ngIf="!destroy">
       <th
@@ -334,7 +333,7 @@ describe('nz-th', () => {
   `
 })
 export class NzThTestNzTableComponent {
-  @ViewChild(NzThComponent) nzThComponent: NzThComponent;
+  @ViewChild(NzThComponent, { static: false }) nzThComponent: NzThComponent;
   destroy = false;
   showCheckbox = false;
   checked = false;
@@ -362,7 +361,6 @@ export class NzThTestNzTableComponent {
 }
 
 @Component({
-  selector: 'nz-demo-table-default-filter',
   template: `
     <nz-table #filterTable [nzData]="displayData">
       <thead (nzSortChange)="sort($event)" nzSingleSort>
@@ -430,7 +428,7 @@ export class NzThTestTableDefaultFilterComponent {
   ];
   displayData: Array<{ name: string; age: number; address: string; [key: string]: string | number }> = [];
 
-  @ViewChild(NzThComponent) nzThComponent: NzThComponent;
+  @ViewChild(NzThComponent, { static: false }) nzThComponent: NzThComponent;
 
   sort(sort: { key: string; value: string }): void {
     this.sortName = sort.key;
@@ -468,7 +466,6 @@ export class NzThTestTableDefaultFilterComponent {
 }
 
 @Component({
-  selector: 'nz-disable-th',
   template: `
     <th class="nz-disable-th" [nzShowCheckbox]="true"></th>
   `

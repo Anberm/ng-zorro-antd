@@ -58,7 +58,6 @@ describe('nz-countdown', () => {
 });
 
 @Component({
-  selector: 'nz-test',
   template: `
     <nz-countdown [nzTitle]="'Countdown'" [nzValue]="value" [nzFormat]="format" [nzValueTemplate]="template">
     </nz-countdown>
@@ -68,8 +67,8 @@ describe('nz-countdown', () => {
   `
 })
 export class NzTestCountdownComponent {
-  @ViewChild(NzCountdownComponent) countdown: NzCountdownComponent;
-  @ViewChild('tpl') tpl: TemplateRef<number>;
+  @ViewChild(NzCountdownComponent, { static: true }) countdown: NzCountdownComponent;
+  @ViewChild('tpl', { static: true }) tpl: TemplateRef<number>;
 
   format: string;
   value: number;

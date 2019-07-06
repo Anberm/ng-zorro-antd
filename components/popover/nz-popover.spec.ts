@@ -191,7 +191,6 @@ describe('NzPopover', () => {
 });
 
 @Component({
-  selector: 'nz-popover-test-new',
   template: `
     <a #stringPopover nz-popover nzTitle="title-string" nzContent="content-string">Show</a>
     <a #templatePopover nz-popover [nzTitle]="templateTitle" [nzContent]="templateContent">Show</a>
@@ -209,21 +208,22 @@ describe('NzPopover', () => {
   `
 })
 export class NzPopoverTestNewComponent {
-  @ViewChild('stringPopover') stringPopover: ElementRef;
-  @ViewChild('stringPopover', { read: NzPopoverDirective }) stringPopoverNzPopoverDirective: NzPopoverDirective;
-  @ViewChild('templatePopover') templatePopover: ElementRef;
-  @ViewChild('templatePopover', { read: NzPopoverDirective }) templatePopoverNzPopoverDirective: NzPopoverDirective;
-  @ViewChild('inBtnGroup') inBtnGroup: ElementRef;
+  @ViewChild('stringPopover', { static: false }) stringPopover: ElementRef;
+  @ViewChild('stringPopover', { static: false, read: NzPopoverDirective })
+  stringPopoverNzPopoverDirective: NzPopoverDirective;
+  @ViewChild('templatePopover', { static: false }) templatePopover: ElementRef;
+  @ViewChild('templatePopover', { static: false, read: NzPopoverDirective })
+  templatePopoverNzPopoverDirective: NzPopoverDirective;
+  @ViewChild('inBtnGroup', { static: false }) inBtnGroup: ElementRef;
 }
 
 @Component({
-  selector: 'nz-popover-test-wrapper',
   template: `
     <nz-popover [nzTitle]="'NORMAL'" [nzTrigger]="'hover'"><span #normalTrigger nz-popover>Show</span></nz-popover>
 
     <nz-popover>
       <button #templateTrigger nz-popover>Show</button>
-      <ng-template #nzTemplate> <i nz-icon type="file"></i> <span>Show with icon</span> </ng-template>
+      <ng-template #nzTemplate> <i nz-icon nzType="file"></i> <span>Show with icon</span> </ng-template>
     </nz-popover>
 
     <nz-popover nzTitle="FOCUS" [nzTrigger]="'focus'"><span #focusTrigger nz-popover>Show</span></nz-popover>
@@ -234,14 +234,14 @@ export class NzPopoverTestNewComponent {
   `
 })
 export class NzPopoverTestWrapperComponent {
-  @ViewChild('normalTrigger') normalTrigger: ElementRef;
+  @ViewChild('normalTrigger', { static: false }) normalTrigger: ElementRef;
 
-  @ViewChild('templateTrigger') templateTrigger: ElementRef;
+  @ViewChild('templateTrigger', { static: false }) templateTrigger: ElementRef;
 
-  @ViewChild('focusTrigger') focusTrigger: ElementRef;
+  @ViewChild('focusTrigger', { static: false }) focusTrigger: ElementRef;
 
-  @ViewChild('clickTrigger') clickTrigger: ElementRef;
+  @ViewChild('clickTrigger', { static: false }) clickTrigger: ElementRef;
 
   visible: boolean;
-  @ViewChild('visibleTrigger') visibleTrigger: ElementRef;
+  @ViewChild('visibleTrigger', { static: false }) visibleTrigger: ElementRef;
 }

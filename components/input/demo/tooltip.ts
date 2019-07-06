@@ -4,18 +4,20 @@ import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/co
   selector: 'nz-demo-input-tooltip',
   encapsulation: ViewEncapsulation.None,
   template: `
-    <nz-tooltip nzTrigger="focus" nzPlacement="topLeft" nzOverlayClassName="numeric-input" [nzTitle]="title">
-      <input
-        #inputElement
-        style="width: 120px"
-        nz-input
-        nz-tooltip
-        placeholder="Input a number"
-        [ngModel]="value"
-        (ngModelChange)="onChange($event)"
-        (blur)="onBlur()"
-      />
-    </nz-tooltip>
+    <input
+      #inputElement
+      style="width: 120px"
+      nz-input
+      nz-tooltip
+      nzTrigger="focus"
+      nzPlacement="topLeft"
+      nzOverlayClassName="numeric-input"
+      [nzTitle]="title"
+      placeholder="Input a number"
+      [ngModel]="value"
+      (ngModelChange)="onChange($event)"
+      (blur)="onBlur()"
+    />
   `,
   styles: [
     `
@@ -34,7 +36,7 @@ export class NzDemoInputTooltipComponent {
   value = '';
   title = 'Input a number';
 
-  @ViewChild('inputElement') inputElement: ElementRef;
+  @ViewChild('inputElement', { static: false }) inputElement: ElementRef;
 
   onChange(value: string): void {
     this.updateValue(value);

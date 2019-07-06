@@ -65,12 +65,12 @@ describe('input-time', () => {
 });
 
 @Component({
-  selector: 'nz-test-time-input',
   template: `
     <input [(ngModel)]="value" [nzTime]="'HH:mm:ss'" />
   `
 })
 export class NzTestTimeInputComponent {
-  @ViewChild(NzTimeValueAccessorDirective) nzTimeValueAccessorDirective: NzTimeValueAccessorDirective;
+  @ViewChild(NzTimeValueAccessorDirective, { static: false })
+  nzTimeValueAccessorDirective: NzTimeValueAccessorDirective;
   value = new Date(0, 0, 0, 0, 0, 0);
 }

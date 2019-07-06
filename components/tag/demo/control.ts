@@ -11,7 +11,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
       {{ sliceTagName(tag) }}
     </nz-tag>
     <nz-tag *ngIf="!inputVisible" class="editable-tag" nzNoAnimation (click)="showInput()">
-      <i nz-icon type="plus"></i> New Tag
+      <i nz-icon nzType="plus"></i> New Tag
     </nz-tag>
     <input
       #inputElement
@@ -38,7 +38,7 @@ export class NzDemoTagControlComponent {
   tags = ['Unremovable', 'Tag 2', 'Tag 3'];
   inputVisible = false;
   inputValue = '';
-  @ViewChild('inputElement') inputElement: ElementRef;
+  @ViewChild('inputElement', { static: false }) inputElement: ElementRef;
 
   handleClose(removedTag: {}): void {
     this.tags = this.tags.filter(tag => tag !== removedTag);

@@ -291,7 +291,6 @@ describe('nz-empty', () => {
 });
 
 @Component({
-  selector: 'nz-empty-test-basic',
   template: `
     <nz-empty [nzNotFoundImage]="image" [nzNotFoundContent]="content" [nzNotFoundFooter]="footer">
       <ng-template #imageTpl>Image</ng-template>
@@ -301,9 +300,9 @@ describe('nz-empty', () => {
   `
 })
 export class NzEmptyTestBasicComponent {
-  @ViewChild('imageTpl') imageTpl: TemplateRef<void>;
-  @ViewChild('contentTpl') contentTpl: TemplateRef<void>;
-  @ViewChild('footerTpl') footerTpl: TemplateRef<void>;
+  @ViewChild('imageTpl', { static: false }) imageTpl: TemplateRef<void>;
+  @ViewChild('contentTpl', { static: false }) contentTpl: TemplateRef<void>;
+  @ViewChild('footerTpl', { static: false }) footerTpl: TemplateRef<void>;
 
   image?: TemplateRef<void> | string;
   content?: TemplateRef<void> | string;
@@ -311,7 +310,6 @@ export class NzEmptyTestBasicComponent {
 }
 
 @Component({
-  selector: 'nz-empty-test-service',
   template: `
     <nz-list [nzDataSource]="[]" [nzNoResult]="noResult"></nz-list>
     <ng-template #tpl let-component>
@@ -320,7 +318,7 @@ export class NzEmptyTestBasicComponent {
   `
 })
 export class NzEmptyTestServiceComponent {
-  @ViewChild('tpl') template: TemplateRef<void>;
+  @ViewChild('tpl', { static: false }) template: TemplateRef<void>;
 
   noResult?: string | null;
 
@@ -336,6 +334,7 @@ export class NzEmptyTestServiceComponent {
 }
 
 @Component({
+  // tslint:disable-next-line:no-selector
   selector: 'nz-empty-test-custom',
   template: `
     <div>I'm in component {{ name }}</div>

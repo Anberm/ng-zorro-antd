@@ -27,11 +27,11 @@ import {
 import { fromEvent, merge, Subject } from 'rxjs';
 import { auditTime, startWith, takeUntil } from 'rxjs/operators';
 
-import { responsiveMap, Breakpoint, InputBoolean } from 'ng-zorro-antd/core';
+import { responsiveMap, warn, Breakpoint, InputBoolean } from 'ng-zorro-antd/core';
 import { NzDescriptionsItemRenderProps, NzDescriptionsSize } from './nz-descriptions-definitions';
 import { NzDescriptionsItemComponent } from './nz-descriptions-item.component';
 
-const defaultColumnMap: { [size: string]: number } = {
+const defaultColumnMap: { [key in Breakpoint]: number } = {
   xxl: 3,
   xl: 3,
   lg: 3,
@@ -65,7 +65,7 @@ export class NzDescriptionsComponent implements OnChanges, OnDestroy, AfterConte
   @ContentChildren(NzDescriptionsItemComponent) items: QueryList<NzDescriptionsItemComponent>;
 
   @Input() @InputBoolean() nzBordered = false;
-  @Input() nzColumn: number | { [key: string]: number } = defaultColumnMap;
+  @Input() nzColumn: number | { [key in Breakpoint]: number } = defaultColumnMap;
   @Input() nzSize: NzDescriptionsSize = 'default';
   @Input() nzTitle: string | TemplateRef<void> = '';
 
@@ -133,7 +133,7 @@ export class NzDescriptionsComponent implements OnChanges, OnDestroy, AfterConte
     let width = 0;
 
     const column = (this.realColumn = this.getColumn());
-    const items: NzDescriptionsItemComponent[] = this.items.toArray();
+    const items = this.items.toArray();
     const matrix: NzDescriptionsItemRenderProps[][] = [];
     const flushRow = () => {
       matrix.push(currentRow);
@@ -152,7 +152,7 @@ export class NzDescriptionsComponent implements OnChanges, OnDestroy, AfterConte
       // Warn user about that.
       if (width >= column) {
         if (width > column && isDevMode()) {
-          console.warn(`"nzColumn" is ${column} but we have row length ${width}`);
+          warn(`"nzColumn" is ${column} but we have row length ${width}`);
         }
         flushRow();
       }

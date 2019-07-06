@@ -52,11 +52,7 @@ export class NzSelectService {
   searchValue = '';
   isShowNotFound = false;
   // open
-  open$ = this.openRaw$.pipe(
-    distinctUntilChanged(),
-    share(),
-    tap(() => this.clearInput())
-  );
+  open$ = this.openRaw$.pipe(distinctUntilChanged());
   activatedOption: NzOptionComponent | null;
   activatedOption$ = new ReplaySubject<NzOptionComponent | null>(1);
   listOfSelectedValue$ = this.listOfSelectedValueWithEmit$.pipe(map(data => data.value));
@@ -103,7 +99,7 @@ export class NzSelectService {
   // display in top control
   listOfCachedSelectedOption: NzOptionComponent[] = [];
   // selected value or ViewChildren change
-  valueOrOption$ = combineLatest(this.listOfSelectedValue$, this.mapOfTemplateOption$).pipe(
+  valueOrOption$ = combineLatest([this.listOfSelectedValue$, this.mapOfTemplateOption$]).pipe(
     tap(data => {
       this.listOfSelectedValue = data[0];
       this.listOfNzOptionComponent = data[1].listOfNzOptionComponent;
@@ -179,27 +175,20 @@ export class NzSelectService {
 
   updateListOfTagOption(): void {
     if (this.isTagsMode) {
-      // https://github.com/NG-ZORRO/ng-zorro-antd/issues/3424
-      this.listOfTagOption = [...this.listOfCachedSelectedOption, ...this.listOfSelectedValue].reduce(
-        (options: NzOptionComponent[], componentOrValue) => {
-          if (
-            typeof componentOrValue === 'string' &&
-            !this.listOfTemplateOption.find(o => this.compareWith(o.nzValue, componentOrValue))
-          ) {
-            const nzOptionComponent = new NzOptionComponent();
-            nzOptionComponent.nzValue = componentOrValue;
-            nzOptionComponent.nzLabel = componentOrValue;
-            options.push(nzOptionComponent);
-          } else if (
-            componentOrValue.nzValue &&
-            !this.listOfTemplateOption.find(o => this.compareWith(o.nzValue, componentOrValue.nzValue))
-          ) {
-            options.push(componentOrValue);
-          }
-          return options;
-        },
-        []
+      const listOfMissValue = this.listOfSelectedValue.filter(
+        value => !this.listOfTemplateOption.find(o => this.compareWith(o.nzValue, value))
       );
+      this.listOfTagOption = listOfMissValue.map(value => {
+        const cachedOption = this.listOfCachedSelectedOption.find(o => this.compareWith(o.nzValue, value));
+        if (cachedOption) {
+          return cachedOption;
+        } else {
+          const nzOptionComponent = new NzOptionComponent();
+          nzOptionComponent.nzValue = value;
+          nzOptionComponent.nzLabel = value;
+          return nzOptionComponent;
+        }
+      });
       this.listOfTagAndTemplateOption = [...this.listOfTemplateOption.concat(this.listOfTagOption)];
     } else {
       this.listOfTagAndTemplateOption = [...this.listOfTemplateOption];
@@ -328,6 +317,9 @@ export class NzSelectService {
   }
 
   onKeyDown(e: KeyboardEvent): void {
+    if (this.disabled) {
+      return;
+    }
     const keyCode = e.keyCode;
     const eventTarget = e.target as HTMLInputElement;
     const listOfFilteredOptionWithoutDisabled = this.listOfFilteredOption.filter(item => !item.nzDisabled);

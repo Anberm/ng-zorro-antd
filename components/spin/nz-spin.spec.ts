@@ -104,9 +104,8 @@ describe('spin', () => {
 });
 
 @Component({
-  selector: 'nz-test-spin-basic',
   template: `
-    <ng-template #indicatorTemplate><i nz-icon type="loading" style="font-size: 24px;"></i> </ng-template>
+    <ng-template #indicatorTemplate><i nz-icon nzType="loading" style="font-size: 24px;"></i> </ng-template>
     <nz-spin
       [nzTip]="tip"
       [nzSize]="size"
@@ -120,7 +119,7 @@ describe('spin', () => {
   `
 })
 export class NzTestSpinBasicComponent {
-  @ViewChild('indicatorTemplate') indicatorTemplate: TemplateRef<void>;
+  @ViewChild('indicatorTemplate', { static: false }) indicatorTemplate: TemplateRef<void>;
   size = 'default';
   delay = 0;
   spinning = true;

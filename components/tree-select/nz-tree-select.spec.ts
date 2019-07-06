@@ -475,13 +475,13 @@ describe('tree-select component', () => {
       treeSelect.nativeElement.click();
       fixture.detectChanges();
       flush();
+      fixture.detectChanges();
       expect(overlayContainerElement.querySelector('i.anticon.anticon-frown-o')).toBeTruthy();
     }));
   });
 });
 
 @Component({
-  selector: 'nz-test-tree-select-basic',
   template: `
     <nz-tree-select
       style="width:250px;position: relative;display: block;"
@@ -502,7 +502,7 @@ describe('tree-select component', () => {
   `
 })
 export class NzTestTreeSelectBasicComponent {
-  @ViewChild(NzTreeSelectComponent) nzSelectTreeComponent: NzTreeSelectComponent;
+  @ViewChild(NzTreeSelectComponent, { static: false }) nzSelectTreeComponent: NzTreeSelectComponent;
   expandKeys = ['1001', '10001'];
   value: string | string[] | null = '10001';
   size = 'default';
@@ -578,7 +578,6 @@ export class NzTestTreeSelectBasicComponent {
 }
 
 @Component({
-  selector: 'nz-test-tree-select-checkable',
   template: `
     <nz-tree-select
       style="width: 250px"
@@ -593,7 +592,7 @@ export class NzTestTreeSelectBasicComponent {
   `
 })
 export class NzTestTreeSelectCheckableComponent {
-  @ViewChild(NzTreeSelectComponent) nzSelectTreeComponent: NzTreeSelectComponent;
+  @ViewChild(NzTreeSelectComponent, { static: false }) nzSelectTreeComponent: NzTreeSelectComponent;
   expandKeys = ['1001', '10001'];
   value: string[] | null = ['1000122'];
   showSearch = false;
@@ -663,7 +662,6 @@ export class NzTestTreeSelectCheckableComponent {
 }
 
 @Component({
-  selector: 'nz-test-tree-select-form',
   template: `
     <form [formGroup]="formGroup">
       <nz-tree-select formControlName="select" style="width: 250px" [nzNodes]="nodes"> </nz-tree-select>
@@ -705,7 +703,6 @@ export class NzTestTreeSelectFormComponent {
 }
 
 @Component({
-  selector: 'nz-test-tree-select-customized-icon',
   template: `
     <nz-tree-select [nzNodes]="nodes" [(ngModel)]="value">
       <ng-template #nzTreeTemplate let-node>

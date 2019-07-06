@@ -21,7 +21,7 @@ NG-ZORRO 致力于提供给程序员**愉悦**的开发体验。
 
 ### 1. 安装脚手架工具
 
-> 使用 `@angular/cli` 前，务必确认 [Node.js](https://nodejs.org/en/) 已经升级到 v8.10 或以上，强烈建议升级至最新版本的 `@angular/cli`。
+> 使用 `@angular/cli` 前，务必确认 [Node.js](https://nodejs.org/en/) 已经升级到 v12.1 或以上，强烈建议升级至最新版本的 `@angular/cli`。
 > 如果你想了解更多CLI工具链的功能和命令，建议访问 [Angular CLI](https://github.com/angular/angular-cli) 了解更多。
 
 ```bash
@@ -46,6 +46,9 @@ $ ng new PROJECT-NAME
 ```bash
 $ ng add ng-zorro-antd
 ```
+
+<img style="display: block; border-radius: 4px; box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.2);" src="https://img.alicdn.com/tfs/TB19fFHdkxz61VjSZFtXXaDSVXa-680-243.svg">
+
 
 开发者可以通过增加参数来完成个性化的初始化配置，例如国际化或者自定义主题等，详细可以参考 [脚手架](/docs/schematics/zh) 部分。
 
@@ -147,7 +150,7 @@ export class AppModule { }
 
 ## 单独引入某个组件
 
-从 7.3.0 版本起，你可以引入子 module 和单独打包的 CSS/less 文件来单独使用某个组件。
+你可以通过引入子 module 和单独打包的 CSS/less 文件来单独使用某个组件。
 
 例如，你只想使用 Button 组件，那么你就可以引入 `NzButtonModule` 而不是 `NgZorroAntdModule`，在 `style.css` 里导入组件对应的样式文件而不是全部的样式文件。
 

@@ -396,7 +396,7 @@ describe('upload', () => {
           });
           it('should be console.warn error', () => {
             let warnMsg = '';
-            console.warn = jasmine.createSpy().and.callFake((res: string) => (warnMsg = res));
+            console.warn = jasmine.createSpy().and.callFake((...res: string[]) => (warnMsg = res.join(' ')));
             expect(instance._nzChange).toBeUndefined();
             instance.beforeUpload = (): Observable<any> => {
               return throwError('');
@@ -478,7 +478,7 @@ describe('upload', () => {
           });
           it('should be console.warn error', () => {
             let warnMsg = '';
-            console.warn = jasmine.createSpy().and.callFake((res: string) => (warnMsg = res));
+            console.warn = jasmine.createSpy().and.callFake((...res: string[]) => (warnMsg = res.join(' ')));
             instance.nzFilter = [
               {
                 name: 'f1',
@@ -1235,10 +1235,10 @@ describe('upload', () => {
 
       it('should be warn "Must return Subscription type in [nzCustomRequest] property"', () => {
         let warnMsg = '';
-        console.warn = jasmine.createSpy().and.callFake((res: string) => (warnMsg = res));
+        console.warn = jasmine.createSpy().and.callFake((...res: string[]) => (warnMsg = res.join(' ')));
         comp.options.customRequest = (() => {}) as any;
         comp.onChange(PNGSMALL as any);
-        expect(warnMsg).toContain(`Must return Subscription type`);
+        expect(warnMsg).toContain(`Must return Subscription type in '[nzCustomRequest]' property`);
       });
     });
   });
@@ -1279,7 +1279,7 @@ describe('upload', () => {
   `
 })
 class TestUploadComponent {
-  @ViewChild('upload') comp: NzUploadComponent;
+  @ViewChild('upload', { static: false }) comp: NzUploadComponent;
   show = true;
   nzType: UploadType = 'select';
   nzLimit = 0;
@@ -1344,7 +1344,7 @@ class TestUploadComponent {
   encapsulation: ViewEncapsulation.None
 })
 class TestUploadListComponent {
-  @ViewChild('list') comp: NzUploadListComponent;
+  @ViewChild('list', { static: false }) comp: NzUploadListComponent;
   listType: UploadListType = 'picture-card';
   items: any[] = [
     {
@@ -1388,7 +1388,7 @@ class TestUploadListComponent {
   `
 })
 class TestUploadBtnComponent {
-  @ViewChild('btn') comp: NzUploadBtnComponent;
+  @ViewChild('btn', { static: false }) comp: NzUploadBtnComponent;
   classes: string[] = ['test'];
   options: ZipButtonOptions = {
     disabled: false,

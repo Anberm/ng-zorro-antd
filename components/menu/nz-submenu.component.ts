@@ -25,6 +25,7 @@ import {
   Output,
   QueryList,
   SimpleChanges,
+  TemplateRef,
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
@@ -59,17 +60,17 @@ import { NzSubmenuService } from './nz-submenu.service';
   templateUrl: './nz-submenu.component.html',
   styles: [
     `
-      .ant-menu-submenu-placement-bottomLeft {
+      :root .ant-menu-submenu.ant-menu-submenu-placement-bottomLeft {
         top: 6px;
         position: relative;
       }
 
-      .ant-menu-submenu-placement-rightTop {
+      :root .ant-menu-submenu.ant-menu-submenu-placement-rightTop {
         left: 4px;
         position: relative;
       }
 
-      .ant-menu-submenu-placement-leftTop {
+      :root .ant-menu-submenu.ant-menu-submenu-placement-leftTop {
         right: 4px;
         position: relative;
       }
@@ -79,12 +80,14 @@ import { NzSubmenuService } from './nz-submenu.service';
 export class NzSubMenuComponent implements OnInit, OnDestroy, AfterContentInit, OnChanges {
   @Input() nzMenuClassName: string;
   @Input() nzPaddingLeft: number;
+  @Input() nzTitle: string | TemplateRef<void>;
+  @Input() nzIcon: string;
   @Input() @InputBoolean() nzOpen = false;
   @Input() @InputBoolean() nzDisabled = false;
   @Output() readonly nzOpenChange: EventEmitter<boolean> = new EventEmitter();
 
-  @ViewChild(CdkConnectedOverlay) cdkConnectedOverlay: CdkConnectedOverlay;
-  @ViewChild(CdkOverlayOrigin, { read: ElementRef }) cdkOverlayOrigin: ElementRef;
+  @ViewChild(CdkConnectedOverlay, { static: true }) cdkConnectedOverlay: CdkConnectedOverlay;
+  @ViewChild(CdkOverlayOrigin, { static: true, read: ElementRef }) cdkOverlayOrigin: ElementRef;
   @ContentChildren(NzSubMenuComponent, { descendants: true })
   listOfNzSubMenuComponent: QueryList<NzSubMenuComponent>;
   @ContentChildren(NzMenuItemDirective, { descendants: true })
@@ -149,11 +152,9 @@ export class NzSubMenuComponent implements OnInit, OnDestroy, AfterContentInit, 
   ) {}
 
   ngOnInit(): void {
-    combineLatest(this.nzSubmenuService.mode$, this.nzSubmenuService.open$)
+    combineLatest([this.nzSubmenuService.mode$, this.nzSubmenuService.open$])
       .pipe(takeUntil(this.destroy$))
-      .subscribe(data => {
-        const mode = data[0];
-        const open = data[1];
+      .subscribe(([mode, open]) => {
         if (open && mode === 'inline') {
           this.expandState = 'expanded';
         } else if (open && mode === 'horizontal') {
@@ -167,11 +168,11 @@ export class NzSubMenuComponent implements OnInit, OnDestroy, AfterContentInit, 
         this.overlayPositions =
           mode === 'horizontal' ? [POSITION_MAP.bottomLeft] : [POSITION_MAP.rightTop, POSITION_MAP.leftTop];
         if (open !== this.nzOpen) {
+          this.setTriggerWidth();
           this.nzOpen = open;
           this.nzOpenChange.emit(this.nzOpen);
         }
         this.setClassMap();
-        this.setTriggerWidth();
       });
     this.nzSubmenuService.menuOpen$.pipe(takeUntil(this.destroy$)).subscribe((data: boolean) => {
       this.nzMenuService.menuOpen$.next(data);
@@ -197,6 +198,7 @@ export class NzSubMenuComponent implements OnInit, OnDestroy, AfterContentInit, 
         flatMap(() =>
           merge(this.listOfNzMenuItemDirective.changes, ...this.listOfNzMenuItemDirective.map(menu => menu.selected$))
         ),
+        startWith(true),
         map(() => this.listOfNzMenuItemDirective.some(e => e.nzSelected)),
         takeUntil(this.destroy$)
       )
@@ -209,6 +211,7 @@ export class NzSubMenuComponent implements OnInit, OnDestroy, AfterContentInit, 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.nzOpen) {
       this.nzSubmenuService.setOpenState(this.nzOpen);
+      this.setTriggerWidth();
     }
     if (changes.nzDisabled) {
       this.nzSubmenuService.disabled = this.nzDisabled;
