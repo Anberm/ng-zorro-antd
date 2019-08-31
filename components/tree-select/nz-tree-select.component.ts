@@ -37,6 +37,7 @@ import { filter, tap } from 'rxjs/operators';
 import {
   isNotNil,
   slideMotion,
+  warnDeprecation,
   zoomMotion,
   InputBoolean,
   NzFormatEmitEvent,
@@ -103,6 +104,7 @@ export class NzTreeSelectComponent extends NzTreeBase implements ControlValueAcc
   @Input() @InputBoolean() nzShowLine = false;
   @Input() @InputBoolean() nzDropdownMatchSelectWidth = true;
   @Input() @InputBoolean() nzCheckable = false;
+  @Input() @InputBoolean() nzHideUnMatched = false;
   @Input() @InputBoolean() nzShowIcon = false;
   @Input() @InputBoolean() nzShowSearch = false;
   @Input() @InputBoolean() nzDisabled = false;
@@ -116,7 +118,26 @@ export class NzTreeSelectComponent extends NzTreeBase implements ControlValueAcc
   @Input() nzSize: NzSizeLDSType = 'default';
   @Input() nzPlaceHolder = '';
   @Input() nzDropdownStyle: { [key: string]: string };
-  @Input() nzDefaultExpandedKeys: string[] = [];
+  /**
+   * @deprecated 9.0.0 - use `nzExpandedKeys` instead.
+   */
+  @Input()
+  set nzDefaultExpandedKeys(value: string[]) {
+    warnDeprecation(`'nzDefaultExpandedKeys' would be removed in 9.0.0. Please use 'nzExpandedKeys' instead.`);
+    this.expandedKeys = value;
+  }
+  get nzDefaultExpandedKeys(): string[] {
+    return this.expandedKeys;
+  }
+
+  @Input()
+  set nzExpandedKeys(value: string[]) {
+    this.expandedKeys = value;
+  }
+  get nzExpandedKeys(): string[] {
+    return this.expandedKeys;
+  }
+
   @Input() nzDisplayWith: (node: NzTreeNode) => string | undefined = (node: NzTreeNode) => node.title;
   @Input() nzMaxTagCount: number;
   @Input() nzMaxTagPlaceholder: TemplateRef<{ $implicit: NzTreeNode[] }>;
@@ -142,6 +163,7 @@ export class NzTreeSelectComponent extends NzTreeBase implements ControlValueAcc
   dropDownPosition: 'top' | 'center' | 'bottom' = 'bottom';
   selectionChangeSubscription: Subscription;
   selectedNodes: NzTreeNode[] = [];
+  expandedKeys: string[] = [];
   value: string[] = [];
 
   onChange: (value: string[] | string | null) => void;
@@ -284,7 +306,7 @@ export class NzTreeSelectComponent extends NzTreeBase implements ControlValueAcc
 
   onExpandedKeysChange(value: NzFormatEmitEvent): void {
     this.nzExpandChange.emit(value);
-    this.nzDefaultExpandedKeys = [...value.keys!];
+    this.expandedKeys = [...value.keys!];
   }
 
   setInputValue(value: string): void {
@@ -335,7 +357,7 @@ export class NzTreeSelectComponent extends NzTreeBase implements ControlValueAcc
         }),
         filter((event: NzFormatEmitEvent) => {
           const node = event.node!;
-          return this.nzCheckable ? !node.isDisabled && !node.isDisableCheckbox : !node.isDisabled;
+          return this.nzCheckable ? !node.isDisabled && !node.isDisableCheckbox : !node.isDisabled && node.isSelectable;
         })
       ),
       this.nzCheckable ? this.nzTreeCheckBoxChange : observableOf(),

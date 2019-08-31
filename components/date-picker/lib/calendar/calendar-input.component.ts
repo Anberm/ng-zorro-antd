@@ -9,15 +9,17 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnInit,
   Output,
+  ViewChild,
   ViewEncapsulation
 } from '@angular/core';
 
+import { CandyDate } from 'ng-zorro-antd/core';
 import { DateHelperService, NzCalendarI18nInterface } from 'ng-zorro-antd/i18n';
-import { CandyDate } from '../candy-date/candy-date';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -34,24 +36,29 @@ export class CalendarInputComponent implements OnInit {
   @Input() disabledDate: (d: Date) => boolean;
 
   @Input() value: CandyDate;
+  @Input() autoFocus: boolean;
   @Output() readonly valueChange = new EventEmitter<CandyDate>();
+  @ViewChild('inputElement', { static: true }) inputRef: ElementRef;
 
   prefixCls: string = 'ant-calendar';
   invalidInputClass: string = '';
 
   constructor(private dateHelper: DateHelperService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.autoFocus) {
+      this.inputRef.nativeElement.focus();
+    }
+  }
 
-  onInputKeyup(event: Event): void {
+  onInputKeyup(event: KeyboardEvent): void {
     const date = this.checkValidInputDate(event);
 
     if (!date || (this.disabledDate && this.disabledDate(date.nativeDate))) {
       return;
     }
 
-    if (!date.isSame(this.value, 'second')) {
-      // Not same with original value
+    if (event.key === 'Enter') {
       this.value = date;
       this.valueChange.emit(this.value);
     }
@@ -66,7 +73,7 @@ export class CalendarInputComponent implements OnInit {
     const date = new CandyDate(input);
 
     this.invalidInputClass = '';
-    if (date.isInvalid() || input !== this.toReadableInput(date)) {
+    if (!date.isValid() || input !== this.toReadableInput(date)) {
       // Should also match the input format exactly
       this.invalidInputClass = `${this.prefixCls}-input-invalid`;
       return null;

@@ -26,8 +26,12 @@ import { NzPopoverModule } from 'ng-zorro-antd/popover';
 
 | Param | Description | Type | Default value |
 | ----- | ----------- | ---- | ------------- |
-| nzTitle | Title of the card | `string \| TemplateRef<void>` | - |
-| nzTemplate | Used to define the content | `string \| TemplateRef<void>` | - |
+| `[nzPopoverTitle]` | Title of the popover | `string \| TemplateRef<void>` | - |
+| `[nzPopoverContent]` | Content of the popover | `string \| TemplateRef<void>` | - |
+| `[nzPopoverTrigger]` | Popover trigger mode | `'click' \| 'focus' \| 'hover'` | `'hover'` |
+| `[nzPopoverPlacement]` | The position of the popover relative to the target | `'top' \| 'left' \| 'right' \| 'bottom' \| 'topLeft' \| 'topRight' \| 'bottomLeft' \| 'bottomRight' \| 'leftTop' \| 'leftBottom' \| 'rightTop' \| 'rightBottom'` | `'top'` |
+
+> From version 8.2.0, API without prefix above, e.g `nzTitle` is deprecated, please upgrade as soon as possible.
 
 Consult [Tooltip's documentation](/components/tooltip/en#api) to find more APIs.
 

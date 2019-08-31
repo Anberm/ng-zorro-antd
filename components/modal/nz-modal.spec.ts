@@ -9,7 +9,7 @@ import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/t
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
-import { dispatchFakeEvent, dispatchKeyboardEvent, NzMeasureScrollbarService } from 'ng-zorro-antd/core';
+import { dispatchFakeEvent, dispatchKeyboardEvent } from 'ng-zorro-antd/core';
 import { NzI18nService } from 'ng-zorro-antd/i18n';
 import { NzIconTestModule } from 'ng-zorro-antd/icon/testing';
 import en_US from '../i18n/languages/en_US';
@@ -23,7 +23,6 @@ import { NzModalModule } from './nz-modal.module';
 import { NzModalService } from './nz-modal.service';
 
 let counter = 0;
-
 describe('modal testing (legacy)', () => {
   describe('demo-async', () => {
     let fixture: ComponentFixture<NzDemoModalAsyncComponent>;
@@ -33,8 +32,7 @@ describe('modal testing (legacy)', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [NoopAnimationsModule, NzButtonModule, NzModalModule],
-        declarations: [NzDemoModalAsyncComponent],
-        providers: [NzMeasureScrollbarService]
+        declarations: [NzDemoModalAsyncComponent]
       }).compileComponents();
     }));
 
@@ -73,8 +71,7 @@ describe('modal testing (legacy)', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [NoopAnimationsModule, NzButtonModule, NzModalModule],
-        declarations: [NzDemoModalConfirmPromiseComponent],
-        providers: [NzMeasureScrollbarService]
+        declarations: [NzDemoModalConfirmPromiseComponent]
       }).compileComponents();
     }));
 
@@ -123,8 +120,7 @@ describe('modal testing (legacy)', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [NoopAnimationsModule, NzModalModule, NzIconTestModule],
-        declarations: [TestBasicServiceComponent],
-        providers: [NzMeasureScrollbarService]
+        declarations: [TestBasicServiceComponent]
       }).compileComponents();
     }));
 
@@ -139,7 +135,7 @@ describe('modal testing (legacy)', () => {
     });
 
     it('should correctly render all basic props', fakeAsync(() => {
-      spyOn(console, 'log');
+      const spy = spyOn(console, 'log');
 
       // [Hack] Codes that can't be covered by normal operations
       // @ts-ignore
@@ -177,10 +173,11 @@ describe('modal testing (legacy)', () => {
       flush();
       expect(console.log).toHaveBeenCalledWith('click ok');
       expectModalDestroyed(tempModalId, false); // shouldn't destroy when ok button returns false
+      spy.calls.reset();
     })); // /basic props
 
     it('should be closed when clicking cancel button', fakeAsync(() => {
-      spyOn(console, 'log');
+      const spy = spyOn(console, 'log');
       // change and click mask
       modalInstance.nzMask = true;
       // should show mask
@@ -200,6 +197,7 @@ describe('modal testing (legacy)', () => {
       flush();
       fixture.detectChanges();
       expectModalDestroyed(tempModalId, true); // should be destroyed
+      spy.calls.reset();
     }));
 
     it('should be closed when clicking ESC', fakeAsync(() => {
@@ -226,8 +224,7 @@ describe('modal testing (legacy)', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [NoopAnimationsModule, NzModalModule],
-        declarations: [TestVaryServiceComponent, TestVaryServiceCustomComponent],
-        providers: [NzMeasureScrollbarService]
+        declarations: [TestVaryServiceComponent, TestVaryServiceCustomComponent]
       });
       TestBed.overrideModule(BrowserDynamicTestingModule, {
         set: { entryComponents: [TestVaryServiceCustomComponent] }
@@ -278,8 +275,7 @@ describe('modal testing (legacy)', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [NoopAnimationsModule, NzModalModule],
-        declarations: [TestConfirmModalComponent, TestConfirmCustomComponent],
-        providers: [NzMeasureScrollbarService]
+        declarations: [TestConfirmModalComponent, TestConfirmCustomComponent]
       }).compileComponents();
 
       TestBed.overrideModule(BrowserDynamicTestingModule, {
@@ -293,7 +289,7 @@ describe('modal testing (legacy)', () => {
     });
 
     it('boundary detection for options', fakeAsync(() => {
-      spyOn(console, 'warn');
+      const spy = spyOn(console, 'warn');
 
       const tempModalId = generateUniqueId();
       const modalAgent = instance.createConfirm() as NzModalRef;
@@ -307,6 +303,7 @@ describe('modal testing (legacy)', () => {
       flush();
       fixture.detectChanges();
       expectModalDestroyed(tempModalId, true);
+      spy.calls.reset();
     }));
 
     it('should render other confirm modals', fakeAsync(() => {
@@ -315,6 +312,17 @@ describe('modal testing (legacy)', () => {
       flush();
       fixture.detectChanges();
       ids.forEach(id => expectModalDestroyed(id, false));
+    }));
+
+    it('should disable buttons', fakeAsync(() => {
+      const modalRef = instance.createDisabledModal();
+      fixture.detectChanges();
+      flush();
+      fixture.detectChanges();
+      const buttons = modalRef.getElement().querySelectorAll('.ant-modal-confirm-btns button') as NodeListOf<
+        HTMLButtonElement
+      >;
+      buttons.forEach(button => expect(button.disabled).toBe(true));
     }));
 
     it('should render content with component', fakeAsync(() => {
@@ -363,8 +371,7 @@ describe('modal testing (legacy)', () => {
 
     const injector = TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, NzButtonModule, NzModalModule],
-      declarations: [NzDemoModalAsyncComponent],
-      providers: [NzMeasureScrollbarService]
+      declarations: [NzDemoModalAsyncComponent]
     });
     fixture = TestBed.createComponent(NzDemoModalAsyncComponent);
     const comp = fixture.componentInstance as NzDemoModalAsyncComponent;
@@ -437,7 +444,6 @@ describe('NzModal', () => {
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, NzModalModule],
-      providers: [NzMeasureScrollbarService],
       declarations: [NzDemoModalBasicComponent, NzDemoModalMaskComponent, ModalByServiceComponent]
     });
 
@@ -929,6 +935,13 @@ export class TestConfirmModalComponent {
   createCustomContentWithComponent(): NzModalRef {
     return this.modalService.confirm({
       nzContent: TestConfirmCustomComponent
+    });
+  }
+
+  createDisabledModal(): NzModalRef {
+    return this.modalService.confirm({
+      nzCancelDisabled: true,
+      nzOkDisabled: true
     });
   }
 }

@@ -27,7 +27,7 @@ import {
 } from '@angular/core';
 import { startWith, takeUntil } from 'rxjs/operators';
 
-import { InputBoolean, NzUpdateHostClassService } from 'ng-zorro-antd/core';
+import { InputBoolean, NzDomEventService, NzUpdateHostClassService } from 'ng-zorro-antd/core';
 import { NzRowDirective } from 'ng-zorro-antd/grid';
 
 import { NzFormExplainComponent } from './nz-form-explain.component';
@@ -58,6 +58,7 @@ export class NzFormItemComponent extends NzRowDirective
   @ContentChildren(NzFormExplainComponent, { descendants: true })
   listOfNzFormExplainComponent: QueryList<NzFormExplainComponent>;
   withHelpClass = false;
+  tipsMode = false;
 
   updateFlexStyle(): void {
     if (this.nzFlex) {
@@ -67,6 +68,12 @@ export class NzFormItemComponent extends NzRowDirective
     }
   }
 
+  setWithHelpViaTips(value: boolean): void {
+    this.tipsMode = true;
+    this.withHelpClass = value;
+    this.cdr.markForCheck();
+  }
+
   constructor(
     elementRef: ElementRef,
     renderer: Renderer2,
@@ -74,26 +81,30 @@ export class NzFormItemComponent extends NzRowDirective
     mediaMatcher: MediaMatcher,
     ngZone: NgZone,
     platform: Platform,
+    nzDomEventService: NzDomEventService,
     private cdr: ChangeDetectorRef
   ) {
-    super(elementRef, renderer, nzUpdateHostClassService, mediaMatcher, ngZone, platform);
+    super(elementRef, renderer, nzUpdateHostClassService, mediaMatcher, ngZone, platform, nzDomEventService);
     renderer.addClass(elementRef.nativeElement, 'ant-form-item');
   }
 
   ngAfterContentInit(): void {
-    this.listOfNzFormExplainComponent.changes
-      .pipe(
-        startWith(true),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(() => {
-        this.withHelpClass = this.listOfNzFormExplainComponent && this.listOfNzFormExplainComponent.length > 0;
-        this.cdr.markForCheck();
-      });
+    if (!this.tipsMode) {
+      this.listOfNzFormExplainComponent.changes
+        .pipe(
+          startWith(true),
+          takeUntil(this.destroy$)
+        )
+        .subscribe(() => {
+          this.withHelpClass = this.listOfNzFormExplainComponent && this.listOfNzFormExplainComponent.length > 0;
+          this.cdr.markForCheck();
+        });
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
+
     this.updateFlexStyle();
   }
 

@@ -26,10 +26,8 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { slideMotion } from 'ng-zorro-antd/core';
+import { slideMotion, CandyDate } from 'ng-zorro-antd/core';
 import { DateHelperService } from 'ng-zorro-antd/i18n';
-
-import { CandyDate } from './lib/candy-date/candy-date';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -107,14 +105,18 @@ export class NzPickerComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.autoFocus) {
-      if (this.isRange) {
-        const firstInput = (this.pickerInput.nativeElement as HTMLElement).querySelector(
-          'input:first-child'
-        ) as HTMLInputElement;
-        firstInput.focus(); // Focus on the first input
-      } else {
-        this.pickerInput.nativeElement.focus();
-      }
+      this.focus();
+    }
+  }
+
+  focus(): void {
+    if (this.isRange) {
+      const firstInput = (this.pickerInput.nativeElement as HTMLElement).querySelector(
+        'input:first-child'
+      ) as HTMLInputElement;
+      firstInput.focus(); // Focus on the first input
+    } else {
+      this.pickerInput.nativeElement.focus();
     }
   }
 
@@ -135,6 +137,7 @@ export class NzPickerComponent implements OnInit, AfterViewInit {
     if (this.realOpenState) {
       this.overlayOpen = false;
       this.openChange.emit(this.overlayOpen);
+      this.focus();
     }
   }
 
