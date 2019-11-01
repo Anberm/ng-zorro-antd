@@ -8,9 +8,11 @@
 
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
 
-import { InputBoolean } from 'ng-zorro-antd/core';
+import { InputBoolean, NzConfigService, WithConfig } from 'ng-zorro-antd/core';
 
 import { NzCollapsePanelComponent } from './nz-collapse-panel.component';
+
+const NZ_CONFIG_COMPONENT_NAME = 'collapse';
 
 @Component({
   selector: 'nz-collapse',
@@ -28,8 +30,10 @@ import { NzCollapsePanelComponent } from './nz-collapse-panel.component';
 })
 export class NzCollapseComponent {
   private listOfNzCollapsePanelComponent: NzCollapsePanelComponent[] = [];
-  @Input() @InputBoolean() nzAccordion = false;
-  @Input() @InputBoolean() nzBordered = true;
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, false) @InputBoolean() nzAccordion: boolean;
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, true) @InputBoolean() nzBordered: boolean;
+
+  constructor(public nzConfigService: NzConfigService) {}
 
   addPanel(value: NzCollapsePanelComponent): void {
     this.listOfNzCollapsePanelComponent.push(value);

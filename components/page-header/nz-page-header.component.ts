@@ -14,7 +14,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   TemplateRef,
@@ -32,7 +31,7 @@ import { NzPageHeaderFooterDirective } from './nz-page-header-cells';
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {
-    class: 'ant-page-header',
+    class: 'ant-page-header ant-page-header-ghost',
     '[class.ant-page-header-has-footer]': 'nzPageHeaderFooter'
   },
   styles: [
@@ -47,7 +46,7 @@ import { NzPageHeaderFooterDirective } from './nz-page-header-cells';
     `
   ]
 })
-export class NzPageHeaderComponent implements OnInit, OnChanges {
+export class NzPageHeaderComponent implements OnChanges {
   isTemplateRefBackIcon = false;
   isStringBackIcon = false;
 
@@ -61,8 +60,6 @@ export class NzPageHeaderComponent implements OnInit, OnChanges {
   >;
 
   constructor(private location: Location) {}
-
-  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty('nzBackIcon')) {

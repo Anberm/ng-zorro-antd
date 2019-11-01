@@ -40,6 +40,7 @@ import {
   warnDeprecation,
   zoomMotion,
   InputBoolean,
+  NzConfigService,
   NzFormatEmitEvent,
   NzNoAnimationDirective,
   NzSizeLDSType,
@@ -47,7 +48,8 @@ import {
   NzTreeBaseService,
   NzTreeHigherOrderServiceToken,
   NzTreeNode,
-  NzTreeNodeOptions
+  NzTreeNodeOptions,
+  WithConfig
 } from 'ng-zorro-antd/core';
 import { NzTreeComponent } from 'ng-zorro-antd/tree';
 
@@ -56,6 +58,8 @@ import { NzTreeSelectService } from './nz-tree-select.service';
 export function higherOrderServiceFactory(injector: Injector): NzTreeBaseService {
   return injector.get(NzTreeSelectService);
 }
+
+const NZ_CONFIG_COMPONENT_NAME = 'treeSelect';
 
 @Component({
   selector: 'nz-tree-select',
@@ -99,23 +103,24 @@ export function higherOrderServiceFactory(injector: Injector): NzTreeBaseService
   ]
 })
 export class NzTreeSelectComponent extends NzTreeBase implements ControlValueAccessor, OnInit, OnDestroy, OnChanges {
-  @Input() @InputBoolean() nzAllowClear = true;
-  @Input() @InputBoolean() nzShowExpand = true;
-  @Input() @InputBoolean() nzShowLine = false;
-  @Input() @InputBoolean() nzDropdownMatchSelectWidth = true;
-  @Input() @InputBoolean() nzCheckable = false;
-  @Input() @InputBoolean() nzHideUnMatched = false;
-  @Input() @InputBoolean() nzShowIcon = false;
-  @Input() @InputBoolean() nzShowSearch = false;
+  @Input() @InputBoolean() nzAllowClear: boolean = true;
+  @Input() @InputBoolean() nzShowExpand: boolean = true;
+  @Input() @InputBoolean() nzShowLine: boolean = false;
+  @Input() @InputBoolean() @WithConfig(NZ_CONFIG_COMPONENT_NAME, true) nzDropdownMatchSelectWidth: boolean;
+  @Input() @InputBoolean() nzCheckable: boolean = false;
+  @Input() @InputBoolean() @WithConfig(NZ_CONFIG_COMPONENT_NAME, false) nzHideUnMatched: boolean;
+  @Input() @InputBoolean() @WithConfig(NZ_CONFIG_COMPONENT_NAME, false) nzShowIcon: boolean;
+  @Input() @InputBoolean() nzShowSearch: boolean = false;
   @Input() @InputBoolean() nzDisabled = false;
   @Input() @InputBoolean() nzAsyncData = false;
   @Input() @InputBoolean() nzMultiple = false;
   @Input() @InputBoolean() nzDefaultExpandAll = false;
+  @Input() @InputBoolean() nzCheckStrictly = false;
   @Input() nzExpandedIcon: TemplateRef<{ $implicit: NzTreeNode }>;
   @Input() nzNotFoundContent: string;
   @Input() nzNodes: Array<NzTreeNode | NzTreeNodeOptions> = [];
   @Input() nzOpen = false;
-  @Input() nzSize: NzSizeLDSType = 'default';
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, 'default') nzSize: NzSizeLDSType;
   @Input() nzPlaceHolder = '';
   @Input() nzDropdownStyle: { [key: string]: string };
   /**
@@ -153,7 +158,11 @@ export class NzTreeSelectComponent extends NzTreeBase implements ControlValueAcc
   @ViewChild(CdkOverlayOrigin, { static: true }) cdkOverlayOrigin: CdkOverlayOrigin;
   @ViewChild(CdkConnectedOverlay, { static: false }) cdkConnectedOverlay: CdkConnectedOverlay;
 
-  @Input() @ContentChild('nzTreeTemplate', { static: true }) nzTreeTemplate: TemplateRef<{ $implicit: NzTreeNode }>;
+  @Input() nzTreeTemplate: TemplateRef<{ $implicit: NzTreeNode }>;
+  @ContentChild('nzTreeTemplate', { static: true }) nzTreeTemplateChild: TemplateRef<{ $implicit: NzTreeNode }>;
+  get treeTemplate(): TemplateRef<{ $implicit: NzTreeNode }> {
+    return this.nzTreeTemplate || this.nzTreeTemplateChild;
+  }
 
   triggerWidth: number;
   isComposing = false;
@@ -204,6 +213,7 @@ export class NzTreeSelectComponent extends NzTreeBase implements ControlValueAcc
 
   constructor(
     nzTreeService: NzTreeSelectService,
+    public nzConfigService: NzConfigService,
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
     private elementRef: ElementRef,

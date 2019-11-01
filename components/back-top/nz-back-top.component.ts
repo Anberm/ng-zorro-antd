@@ -22,9 +22,11 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { fadeMotion, toNumber, NzScrollService } from 'ng-zorro-antd/core';
+import { fadeMotion, InputNumber, NzConfigService, NzScrollService, WithConfig } from 'ng-zorro-antd/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { distinctUntilChanged, throttleTime } from 'rxjs/operators';
+
+const NZ_CONFIG_COMPONENT_NAME = 'backTop';
 
 @Component({
   selector: 'nz-back-top',
@@ -42,17 +44,7 @@ export class NzBackTopComponent implements OnInit, OnDestroy {
   visible: boolean = false;
 
   @Input() nzTemplate: TemplateRef<void>;
-
-  private _visibilityHeight: number = 400;
-
-  @Input()
-  set nzVisibilityHeight(value: number) {
-    this._visibilityHeight = toNumber(value, 400);
-  }
-
-  get nzVisibilityHeight(): number {
-    return this._visibilityHeight;
-  }
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, 400) @InputNumber() nzVisibilityHeight: number;
 
   @Input()
   set nzTarget(el: string | HTMLElement) {
@@ -63,6 +55,7 @@ export class NzBackTopComponent implements OnInit, OnDestroy {
   @Output() readonly nzClick: EventEmitter<boolean> = new EventEmitter();
 
   constructor(
+    public nzConfigService: NzConfigService,
     private scrollSrv: NzScrollService,
     // tslint:disable-next-line:no-any
     @Inject(DOCUMENT) private doc: any,

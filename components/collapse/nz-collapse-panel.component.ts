@@ -22,9 +22,11 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { collapseMotion, InputBoolean } from 'ng-zorro-antd/core';
+import { collapseMotion, InputBoolean, NzConfigService, WithConfig } from 'ng-zorro-antd/core';
 
 import { NzCollapseComponent } from './nz-collapse.component';
+
+const NZ_CONFIG_COMPONENT_NAME = 'collapsePanel';
 
 @Component({
   selector: 'nz-collapse-panel',
@@ -49,7 +51,7 @@ import { NzCollapseComponent } from './nz-collapse.component';
 export class NzCollapsePanelComponent implements OnInit, OnDestroy {
   @Input() @InputBoolean() nzActive = false;
   @Input() @InputBoolean() nzDisabled = false;
-  @Input() @InputBoolean() nzShowArrow = true;
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, true) @InputBoolean() nzShowArrow: boolean;
   @Input() nzExtra: string | TemplateRef<void>;
   @Input() nzHeader: string | TemplateRef<void>;
   @Input() nzExpandedIcon: string | TemplateRef<void>;
@@ -66,6 +68,7 @@ export class NzCollapsePanelComponent implements OnInit, OnDestroy {
   }
 
   constructor(
+    public nzConfigService: NzConfigService,
     private cdr: ChangeDetectorRef,
     @Host() private nzCollapseComponent: NzCollapseComponent,
     elementRef: ElementRef,

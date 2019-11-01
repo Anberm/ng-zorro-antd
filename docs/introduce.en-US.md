@@ -30,6 +30,8 @@ Following the Ant Design specification, we developed a Angular UI library `ng-zo
 - A set of high-quality Angular components out of the box.
 - Written in TypeScript with complete defined types.
 - Support OnPush mode, high performance.
+- Support Customize theme.
+- Support import Component individually.
 
 ## Environment Support
 
@@ -80,6 +82,8 @@ $ npm install ng-zorro-antd
 - [GongDao](https://www.gongdao.com/)
 - [UC Express](http://www.uce.cn/)
 - [Qingflow](https://qingflow.com/)
+- [DataGrand](http://datagrand.com/)
+- [ScentBird](https://www.scentbird.com/)
 - [Southern Institute of Technology](https://www.sit.ac.nz/)
 - [Hapify (Dynamic boilerplates tool)](https://hub.hapify.io/)
 

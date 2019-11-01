@@ -22,14 +22,16 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { NzSizeLDSType, NzSizeMap, NzUpdateHostClassService } from 'ng-zorro-antd/core';
+import {
+  NzConfigService,
+  NzShapeSCType,
+  NzSizeLDSType,
+  NzSizeMap,
+  NzUpdateHostClassService,
+  WithConfig
+} from 'ng-zorro-antd/core';
 
-export type NzAvatarShape = 'square' | 'circle';
-export type NzAvatarSize = NzSizeLDSType | number;
-
-export interface NzAvatarSizeMap {
-  [size: string]: string;
-}
+const NZ_CONFIG_COMPONENT_NAME = 'avatar';
 
 @Component({
   selector: 'nz-avatar',
@@ -41,8 +43,8 @@ export interface NzAvatarSizeMap {
   encapsulation: ViewEncapsulation.None
 })
 export class NzAvatarComponent implements OnChanges {
-  @Input() nzShape: NzAvatarShape = 'circle';
-  @Input() nzSize: NzAvatarSize = 'default';
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, 'circle') nzShape: NzShapeSCType;
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, 'default') nzSize: NzSizeLDSType | number;
   @Input() nzText: string;
   @Input() nzSrc: string;
   @Input() nzSrcSet: string;
@@ -63,6 +65,7 @@ export class NzAvatarComponent implements OnChanges {
   private sizeMap: NzSizeMap = { large: 'lg', small: 'sm' };
 
   constructor(
+    public nzConfigService: NzConfigService,
     private elementRef: ElementRef,
     private cd: ChangeDetectorRef,
     private updateHostClassService: NzUpdateHostClassService,

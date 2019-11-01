@@ -18,9 +18,11 @@ import {
   TemplateRef,
   ViewEncapsulation
 } from '@angular/core';
-import { InputBoolean } from 'ng-zorro-antd/core';
+import { InputBoolean, NzConfigService, NzSizeDSType, WithConfig } from 'ng-zorro-antd/core';
 import { NzCardGridDirective } from './nz-card-grid.directive';
 import { NzCardTabComponent } from './nz-card-tab.component';
+
+const NZ_CONFIG_COMPONENT_NAME = 'card';
 
 @Component({
   selector: 'nz-card',
@@ -47,20 +49,20 @@ import { NzCardTabComponent } from './nz-card-tab.component';
   }
 })
 export class NzCardComponent {
-  @Input() @InputBoolean() nzBordered = true;
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, true) @InputBoolean() nzBordered: boolean;
   @Input() @InputBoolean() nzLoading = false;
-  @Input() @InputBoolean() nzHoverable = false;
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, false) @InputBoolean() nzHoverable: boolean;
   @Input() nzBodyStyle: { [key: string]: string };
   @Input() nzCover: TemplateRef<void>;
   @Input() nzActions: Array<TemplateRef<void>> = [];
   @Input() nzType: string;
-  @Input() nzSize: 'default' | 'small' = 'default';
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, 'default') nzSize: NzSizeDSType;
   @Input() nzTitle: string | TemplateRef<void>;
   @Input() nzExtra: string | TemplateRef<void>;
   @ContentChild(NzCardTabComponent, { static: false }) tab: NzCardTabComponent;
   @ContentChildren(NzCardGridDirective) grids: QueryList<NzCardGridDirective>;
 
-  constructor(renderer: Renderer2, elementRef: ElementRef) {
+  constructor(public nzConfigService: NzConfigService, renderer: Renderer2, elementRef: ElementRef) {
     renderer.addClass(elementRef.nativeElement, 'ant-card');
   }
 }

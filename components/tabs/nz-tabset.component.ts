@@ -34,7 +34,16 @@ import {
 import { NavigationEnd, Router, RouterLink, RouterLinkWithHref } from '@angular/router';
 import { merge, Subject, Subscription } from 'rxjs';
 
-import { toNumber, InputBoolean, NzSizeLDSType, NzUpdateHostClassService, PREFIX } from 'ng-zorro-antd/core';
+import {
+  toNumber,
+  InputBoolean,
+  NzConfigService,
+  NzFourDirectionType,
+  NzSizeLDSType,
+  NzUpdateHostClassService,
+  PREFIX,
+  WithConfig
+} from 'ng-zorro-antd/core';
 import { filter, startWith, takeUntil } from 'rxjs/operators';
 
 import { NzTabComponent } from './nz-tab.component';
@@ -50,9 +59,11 @@ export class NzTabChangeEvent {
   tab: NzTabComponent;
 }
 
-export type NzTabPosition = 'top' | 'bottom' | 'left' | 'right';
+export type NzTabPosition = NzFourDirectionType;
 export type NzTabPositionMode = 'horizontal' | 'vertical';
 export type NzTabType = 'line' | 'card';
+
+const NZ_CONFIG_COMPONENT_NAME = 'tabs';
 
 @Component({
   selector: 'nz-tabset',
@@ -88,14 +99,14 @@ export class NzTabSetComponent
   @ViewChild('tabContent', { static: false }) tabContent: ElementRef;
 
   @Input() nzTabBarExtraContent: TemplateRef<void>;
-  @Input() nzShowPagination = true;
-  @Input() nzAnimated: NzAnimatedInterface | boolean = true;
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, true) nzShowPagination: boolean;
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, true) nzAnimated: NzAnimatedInterface | boolean;
   @Input() nzHideAll = false;
   @Input() nzTabPosition: NzTabPosition = 'top';
-  @Input() nzSize: NzSizeLDSType = 'default';
-  @Input() nzTabBarGutter: number;
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, 'default') nzSize: NzSizeLDSType;
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME) nzTabBarGutter: number;
   @Input() nzTabBarStyle: { [key: string]: string };
-  @Input() nzType: NzTabType = 'line';
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, 'line') nzType: NzTabType;
 
   @Input() @InputBoolean() nzLinkRouter = false;
   @Input() @InputBoolean() nzLinkExact = true;
@@ -194,6 +205,7 @@ export class NzTabSetComponent
   }
 
   constructor(
+    public nzConfigService: NzConfigService,
     private renderer: Renderer2,
     private nzUpdateHostClassService: NzUpdateHostClassService,
     private elementRef: ElementRef,
@@ -298,6 +310,8 @@ export class NzTabSetComponent
   ngOnDestroy(): void {
     this.tabsSubscription.unsubscribe();
     this.tabLabelSubscription.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   ngAfterViewInit(): void {
@@ -316,6 +330,7 @@ export class NzTabSetComponent
         )
         .subscribe(() => {
           this.updateRouterActive();
+          this.cdr.markForCheck();
         });
     }
   }
@@ -325,7 +340,7 @@ export class NzTabSetComponent
       const index = this.findShouldActiveTabIndex();
       if (index !== this._selectedIndex) {
         this.nzSelectedIndex = index;
-        this.nzSelectedIndexChange.next(index);
+        this.nzSelectedIndexChange.emit(index);
       }
       this.nzHideAll = index === -1;
     }

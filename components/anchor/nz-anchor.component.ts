@@ -25,7 +25,15 @@ import {
 import { fromEvent, Subscription } from 'rxjs';
 import { distinctUntilChanged, throttleTime } from 'rxjs/operators';
 
-import { toNumber, InputBoolean, InputNumber, NgStyleInterface, NzScrollService } from 'ng-zorro-antd/core';
+import {
+  toNumber,
+  InputBoolean,
+  InputNumber,
+  NgStyleInterface,
+  NzConfigService,
+  NzScrollService,
+  WithConfig
+} from 'ng-zorro-antd/core';
 
 import { NzAnchorLinkComponent } from './nz-anchor-link.component';
 
@@ -34,6 +42,7 @@ interface Section {
   top: number;
 }
 
+const NZ_CONFIG_COMPONENT_NAME = 'anchor';
 const sharpMatcherRegx = /#([^#]+)$/;
 
 @Component({
@@ -48,10 +57,19 @@ export class NzAnchorComponent implements OnDestroy, AfterViewInit {
   @ViewChild('ink', { static: false }) private ink: ElementRef;
 
   @Input() @InputBoolean() nzAffix = true;
-  @Input() @InputBoolean() nzShowInkInFixed = false;
-  @Input() @InputNumber() nzBounds: number = 5;
 
   @Input()
+  @WithConfig(NZ_CONFIG_COMPONENT_NAME, false)
+  @InputBoolean()
+  nzShowInkInFixed: boolean;
+
+  @Input()
+  @WithConfig(NZ_CONFIG_COMPONENT_NAME, 5)
+  @InputNumber()
+  nzBounds: number;
+
+  @Input()
+  @WithConfig<number>(NZ_CONFIG_COMPONENT_NAME)
   set nzOffsetTop(value: number) {
     this._offsetTop = toNumber(value, 0);
     this.wrapperStyle = {
@@ -84,6 +102,7 @@ export class NzAnchorComponent implements OnDestroy, AfterViewInit {
   private destroyed = false;
 
   constructor(
+    public nzConfigService: NzConfigService,
     private scrollSrv: NzScrollService,
     /* tslint:disable-next-line:no-any */
     @Inject(DOCUMENT) private doc: any,

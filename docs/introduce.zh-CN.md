@@ -31,6 +31,8 @@ widget: <nz-github-btn></nz-github-btn>
 - 开箱即用的高质量 Angular 组件，与 Angular 保持同步升级。
 - 使用 TypeScript 构建，提供完整的类型定义文件。
 - 支持 OnPush 模式，性能卓越。
+- 支持自定义主题。
+- 支持使用单独某个组件。
 
 ## 支持环境
 
@@ -80,9 +82,11 @@ $ ng add ng-zorro-antd
 - [优速快递](http://www.uce.cn/)
 - [轻流](https://qingflow.com/)
 - [航天信息股份有限公司](http://www.aisino.com/)
+- [达观数据](http://datagrand.com/)
 - [Ververica](https://www.ververica.com/)
 - [Apache Flink](https://flink.apache.org/)
 - [Process Automation Group](http://pag.company/)
+- [ScentBird](https://www.scentbird.com/)
 - [Southern Institute of Technology](https://www.sit.ac.nz/)
 - [Hapify (Dynamic boilerplates tool)](https://hub.hapify.io/)
 
