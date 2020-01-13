@@ -1,5 +1,5 @@
 import { Component, DebugElement } from '@angular/core';
-import { fakeAsync, tick, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NzTagComponent } from './nz-tag.component';
@@ -57,8 +57,7 @@ describe('tag', () => {
       tick(1000);
       fixture.detectChanges();
       expect(testComponent.afterClose).toHaveBeenCalledTimes(1);
-      tag = fixture.debugElement.query(By.directive(NzTagComponent));
-      expect(tag).toBeNull();
+      expect(fixture.nativeElement.querySelector('nz-tag')).toBeFalsy();
     }));
     it('should color work', () => {
       fixture.detectChanges();
@@ -74,6 +73,19 @@ describe('tag', () => {
       fixture.detectChanges();
       expect(tag.nativeElement.classList).toContain('ant-tag-green');
       expect(tag.nativeElement.style.backgroundColor).toBe('');
+    });
+
+    it('should status color work', () => {
+      fixture.detectChanges();
+      testComponent.color = 'success';
+      fixture.detectChanges();
+      expect(tag.nativeElement.classList).toContain('ant-tag-success');
+      testComponent.color = 'processing';
+      fixture.detectChanges();
+      expect(tag.nativeElement.classList).toContain('ant-tag-processing');
+      testComponent.color = 'invalid';
+      fixture.detectChanges();
+      expect(tag.nativeElement.classList).not.toContain('ant-tag-invalid');
     });
     it('issues #1176', () => {
       testComponent.color = 'green';

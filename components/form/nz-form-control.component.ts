@@ -8,7 +8,6 @@
 
 import {
   AfterContentInit,
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -24,11 +23,10 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { FormControl, FormControlDirective, FormControlName, NgControl, NgModel } from '@angular/forms';
+
+import { helpMotion, NgClassType, toBoolean } from 'ng-zorro-antd/core';
 import { Subscription } from 'rxjs';
 import { startWith } from 'rxjs/operators';
-
-import { helpMotion, toBoolean, NgClassType, NzUpdateHostClassService } from 'ng-zorro-antd/core';
-import { NzColDirective, NzRowDirective } from 'ng-zorro-antd/grid';
 import { NzFormItemComponent } from './nz-form-item.component';
 
 export type NzFormControlStatusType = 'warning' | 'validating' | 'error' | 'success' | null;
@@ -40,7 +38,6 @@ export type NzFormControlStatusType = 'warning' | 'validating' | 'error' | 'succ
   animations: [helpMotion],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [NzUpdateHostClassService],
   templateUrl: './nz-form-control.component.html',
   styles: [
     `
@@ -53,8 +50,7 @@ export type NzFormControlStatusType = 'warning' | 'validating' | 'error' | 'succ
     `
   ]
 })
-export class NzFormControlComponent extends NzColDirective
-  implements OnDestroy, OnInit, AfterContentInit, AfterViewInit, OnDestroy {
+export class NzFormControlComponent implements OnDestroy, OnInit, AfterContentInit, OnDestroy {
   private _hasFeedback = false;
   private validateChanges: Subscription = Subscription.EMPTY;
   private validateString: string | null;
@@ -121,11 +117,7 @@ export class NzFormControlComponent extends NzColDirective
     if (this.validateString === 'warning') {
       this.status = 'warning';
       this.iconType = 'exclamation-circle-fill';
-    } else if (
-      this.validateString === 'validating' ||
-      this.validateString === 'pending' ||
-      this.validateControlStatus('PENDING')
-    ) {
+    } else if (this.validateString === 'validating' || this.validateString === 'pending' || this.validateControlStatus('PENDING')) {
       this.status = 'validating';
       this.iconType = 'loading';
     } else if (this.validateString === 'error' || this.validateControlStatus('INVALID')) {
@@ -175,25 +167,20 @@ export class NzFormControlComponent extends NzColDirective
   }
 
   constructor(
-    nzUpdateHostClassService: NzUpdateHostClassService,
     elementRef: ElementRef,
     @Optional() @Host() private nzFormItemComponent: NzFormItemComponent,
-    @Optional() @Host() nzRowDirective: NzRowDirective,
     private cdr: ChangeDetectorRef,
     renderer: Renderer2
   ) {
-    super(nzUpdateHostClassService, elementRef, nzFormItemComponent || nzRowDirective, renderer);
     renderer.addClass(elementRef.nativeElement, 'ant-form-item-control-wrapper');
   }
 
   ngOnInit(): void {
-    super.ngOnInit();
     this.setControlClassMap();
   }
 
   ngOnDestroy(): void {
     this.removeSubscribe();
-    super.ngOnDestroy();
   }
 
   ngAfterContentInit(): void {
@@ -204,9 +191,5 @@ export class NzFormControlComponent extends NzColDirective
         this.nzValidateStatus = this.defaultValidateControl;
       }
     }
-  }
-
-  ngAfterViewInit(): void {
-    super.ngAfterViewInit();
   }
 }

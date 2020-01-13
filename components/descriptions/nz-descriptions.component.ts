@@ -22,23 +22,15 @@ import {
   TemplateRef,
   ViewEncapsulation
 } from '@angular/core';
+
+import { InputBoolean, NzBreakpointEnum, NzConfigService, NzDomEventService, responsiveMap, warn, WithConfig } from 'ng-zorro-antd/core';
 import { merge, Subject } from 'rxjs';
 import { auditTime, finalize, startWith, switchMap, takeUntil } from 'rxjs/operators';
-
-import {
-  responsiveMap,
-  warn,
-  InputBoolean,
-  NzBreakpoint,
-  NzConfigService,
-  NzDomEventService,
-  WithConfig
-} from 'ng-zorro-antd/core';
 import { NzDescriptionsItemRenderProps, NzDescriptionsLayout, NzDescriptionsSize } from './nz-descriptions-definitions';
 import { NzDescriptionsItemComponent } from './nz-descriptions-item.component';
 
 const NZ_CONFIG_COMPONENT_NAME = 'descriptions';
-const defaultColumnMap: { [key in NzBreakpoint]: number } = {
+const defaultColumnMap: { [key in NzBreakpointEnum]: number } = {
   xxl: 3,
   xl: 3,
   lg: 3,
@@ -73,7 +65,7 @@ export class NzDescriptionsComponent implements OnChanges, OnDestroy, AfterConte
 
   @Input() @InputBoolean() @WithConfig(NZ_CONFIG_COMPONENT_NAME, false) nzBordered: boolean;
   @Input() nzLayout: NzDescriptionsLayout = 'horizontal';
-  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, defaultColumnMap) nzColumn: number | { [key in NzBreakpoint]: number };
+  @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, defaultColumnMap) nzColumn: number | { [key in NzBreakpointEnum]: number };
   @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, 'default') nzSize: NzDescriptionsSize;
   @Input() nzTitle: string | TemplateRef<void> = '';
   @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, true) @InputBoolean() nzColon: boolean;
@@ -100,10 +92,7 @@ export class NzDescriptionsComponent implements OnChanges, OnDestroy, AfterConte
   }
 
   ngAfterContentInit(): void {
-    const contentChange$ = this.items.changes.pipe(
-      startWith(this.items),
-      takeUntil(this.destroy$)
-    );
+    const contentChange$ = this.items.changes.pipe(startWith(this.items), takeUntil(this.destroy$));
 
     merge(
       contentChange$,
@@ -176,11 +165,11 @@ export class NzDescriptionsComponent implements OnChanges, OnDestroy, AfterConte
     this.itemMatrix = matrix;
   }
 
-  private matchMedia(): NzBreakpoint {
-    let bp: NzBreakpoint = NzBreakpoint.md;
+  private matchMedia(): NzBreakpointEnum {
+    let bp: NzBreakpointEnum = NzBreakpointEnum.md;
 
     Object.keys(responsiveMap).map((breakpoint: string) => {
-      const castBP = breakpoint as NzBreakpoint;
+      const castBP = breakpoint as NzBreakpointEnum;
       const matchBelow = this.mediaMatcher.matchMedia(responsiveMap[castBP]).matches;
       if (matchBelow) {
         bp = castBP;
