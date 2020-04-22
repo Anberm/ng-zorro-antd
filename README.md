@@ -26,7 +26,7 @@ An enterprise-class UI components based on Ant Design and Angular.
 
 </div>
 
-[![](https://cdn-images-1.medium.com/max/2000/1*NIlj0-TdLMbo_hzSBP8tmg.png)](http://ng.ant.design)
+[![](https://img.alicdn.com/tfs/TB1t6QPylr0gK0jSZFnXXbRRXXa-4000-1378.png)](http://ng.ant.design)
 
 English | [简体中文](README-zh_CN.md)
 
@@ -38,12 +38,12 @@ English | [简体中文](README-zh_CN.md)
 - Written in TypeScript with predictable static types.
 - The whole package of development and design resources and tools.
 - Support OnPush mode, high performance.
-- Support Customize theme.
-- Support import Component individually.
+- Powerful theme customization in every detail.
+- Internationalization support for dozens of languages.
 
 ## 🖥 Environment Support
 
-* Angular `^8.0.0`
+* Angular `^9.0.0` [![npm package](https://img.shields.io/npm/v/ng-zorro-antd.svg?style=flat-square)](https://www.npmjs.org/package/ng-zorro-antd)
 * Server-side Rendering
 * Modern browsers and Internet Explorer 11+ (with [polyfills](https://angular.io/guide/browser-support))
 * [Electron](http://electron.atom.io/)
@@ -52,7 +52,6 @@ English | [简体中文](README-zh_CN.md)
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | IE11, Edge | last 2 versions | last 2 versions | last 2 versions | last 2 versions | last 2 versions
 
-> Listing `@angular/cdk` as its dependency, `ng-zorro-antd` supports the most recent two versions of all major browsers.
 
 ## 🎨 Design Specification
 

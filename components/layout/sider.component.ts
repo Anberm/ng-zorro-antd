@@ -6,26 +6,29 @@
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
 
-import { MediaMatcher } from '@angular/cdk/layout';
 import { Platform } from '@angular/cdk/platform';
 import {
-  AfterViewInit,
+  AfterContentInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ContentChild,
   EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
   TemplateRef,
   ViewEncapsulation
 } from '@angular/core';
-
-import { IndexableObject, InputBoolean, NzBreakpointKey, NzDomEventService, siderResponsiveMap, toCssPixel } from 'ng-zorro-antd/core';
+import { NzBreakpointKey, NzBreakpointService, siderResponsiveMap } from 'ng-zorro-antd/core/services';
+import { BooleanInput } from 'ng-zorro-antd/core/types';
+import { inNextTick, InputBoolean, toCssPixel } from 'ng-zorro-antd/core/util';
+import { NzMenuDirective } from 'ng-zorro-antd/menu';
 import { Subject } from 'rxjs';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'nz-sider',
@@ -47,7 +50,7 @@ import { finalize, takeUntil } from 'rxjs/operators';
       [nzReverseArrow]="nzReverseArrow"
       [nzTrigger]="nzTrigger"
       [nzZeroTrigger]="nzZeroTrigger"
-      [siderWidth]="hostStyleMap.width"
+      [siderWidth]="widthSetting"
       (click)="setCollapsed(!nzCollapsed)"
     ></div>
   `,
@@ -57,11 +60,19 @@ import { finalize, takeUntil } from 'rxjs/operators';
     '[class.ant-layout-sider-light]': `nzTheme === 'light'`,
     '[class.ant-layout-sider-dark]': `nzTheme === 'dark'`,
     '[class.ant-layout-sider-collapsed]': `nzCollapsed`,
-    '[style]': 'hostStyleMap'
+    '[style.flex]': 'flexSetting',
+    '[style.maxWidth]': 'widthSetting',
+    '[style.minWidth]': 'widthSetting',
+    '[style.width]': 'widthSetting'
   }
 })
-export class NzSiderComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+export class NzSiderComponent implements OnInit, OnDestroy, OnChanges, AfterContentInit {
+  static ngAcceptInputType_nzReverseArrow: BooleanInput;
+  static ngAcceptInputType_nzCollapsible: BooleanInput;
+  static ngAcceptInputType_nzCollapsed: BooleanInput;
+
   private destroy$ = new Subject();
+  @ContentChild(NzMenuDirective) nzMenuDirective: NzMenuDirective | null = null;
   @Output() readonly nzCollapsedChange = new EventEmitter();
   @Input() nzWidth: string | number = 200;
   @Input() nzTheme: 'light' | 'dark' = 'dark';
@@ -73,65 +84,65 @@ export class NzSiderComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
   @Input() @InputBoolean() nzCollapsible = false;
   @Input() @InputBoolean() nzCollapsed = false;
   matchBreakPoint = false;
-  hostStyleMap: IndexableObject = {};
+  flexSetting: string | null = null;
+  widthSetting: string | null = null;
 
   updateStyleMap(): void {
-    let widthSetting: string;
-    if (this.nzCollapsed) {
-      widthSetting = `${this.nzCollapsedWidth}px`;
-    } else {
-      widthSetting = toCssPixel(this.nzWidth);
-    }
-    const flexSetting = `0 0 ${widthSetting}`;
-    this.hostStyleMap = {
-      flex: flexSetting,
-      maxWidth: widthSetting,
-      minWidth: widthSetting,
-      width: widthSetting
-    };
+    this.widthSetting = this.nzCollapsed ? `${this.nzCollapsedWidth}px` : toCssPixel(this.nzWidth);
+    this.flexSetting = `0 0 ${this.widthSetting}`;
     this.cdr.markForCheck();
   }
 
-  updateBreakpointMatch(): void {
-    if (this.nzBreakpoint) {
-      this.matchBreakPoint = this.mediaMatcher.matchMedia(siderResponsiveMap[this.nzBreakpoint]).matches;
-      this.setCollapsed(this.matchBreakPoint);
+  updateMenuInlineCollapsed(): void {
+    if (this.nzMenuDirective && this.nzMenuDirective.nzMode === 'inline' && this.nzCollapsedWidth !== 0) {
+      this.nzMenuDirective.setInlineCollapsed(this.nzCollapsed);
     }
-    this.cdr.markForCheck();
   }
 
   setCollapsed(collapsed: boolean): void {
-    this.nzCollapsed = collapsed;
-    this.nzCollapsedChange.emit(collapsed);
-    this.cdr.markForCheck();
+    if (collapsed !== this.nzCollapsed) {
+      this.nzCollapsed = collapsed;
+      this.nzCollapsedChange.emit(collapsed);
+      this.updateMenuInlineCollapsed();
+      this.updateStyleMap();
+      this.cdr.markForCheck();
+    }
   }
 
-  constructor(
-    private mediaMatcher: MediaMatcher,
-    private platform: Platform,
-    private cdr: ChangeDetectorRef,
-    private nzDomEventService: NzDomEventService
-  ) {}
+  constructor(private platform: Platform, private cdr: ChangeDetectorRef, private breakpointService: NzBreakpointService) {}
 
   ngOnInit(): void {
     this.updateStyleMap();
-  }
 
-  ngOnChanges(): void {
-    this.updateStyleMap();
-  }
-
-  ngAfterViewInit(): void {
     if (this.platform.isBrowser) {
-      Promise.resolve().then(() => this.updateBreakpointMatch());
-      this.nzDomEventService
-        .registerResizeListener()
-        .pipe(
-          takeUntil(this.destroy$),
-          finalize(() => this.nzDomEventService.unregisterResizeListener())
-        )
-        .subscribe(() => this.updateBreakpointMatch());
+      this.breakpointService
+        .subscribe(siderResponsiveMap, true)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(map => {
+          const breakpoint = this.nzBreakpoint;
+          if (breakpoint) {
+            inNextTick().subscribe(() => {
+              this.matchBreakPoint = !map[breakpoint];
+              this.setCollapsed(this.matchBreakPoint);
+              this.cdr.markForCheck();
+            });
+          }
+        });
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const { nzCollapsed, nzCollapsedWidth, nzWidth } = changes;
+    if (nzCollapsed || nzCollapsedWidth || nzWidth) {
+      this.updateStyleMap();
+    }
+    if (nzCollapsed) {
+      this.updateMenuInlineCollapsed();
+    }
+  }
+
+  ngAfterContentInit(): void {
+    this.updateMenuInlineCollapsed();
   }
 
   ngOnDestroy(): void {

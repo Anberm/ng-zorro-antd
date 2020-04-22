@@ -1,7 +1,6 @@
 ---
 order: 0
 title: Ant Design of Angular
-widget: <nz-github-btn></nz-github-btn>
 ---
 
 Following the Ant Design specification, we developed an Angular UI library `ng-zorro-antd` that contains a set of high-quality components and demos for building rich, interactive user interfaces.
@@ -30,8 +29,8 @@ Following the Ant Design specification, we developed an Angular UI library `ng-z
 - A set of high-quality Angular components out of the box.
 - Written in TypeScript with complete defined types.
 - Support OnPush mode, high performance.
-- Support Customize theme.
-- Support import Component individually.
+- Powerful theme customization in every detail.
+- Internationalization support for dozens of languages.
 
 ## Environment Support
 
@@ -45,7 +44,7 @@ Following the Ant Design specification, we developed an Angular UI library `ng-z
 
 ## Angular Support
 
-Now Supports Angular `^8.0.0`.
+`ng-zorro-antd` keeps the same major version with `@angular/core`, now supports Angular `^9.0.0`.
 
 ## Design Specification
 

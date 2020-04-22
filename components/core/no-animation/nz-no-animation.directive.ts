@@ -9,8 +9,8 @@
 import { coerceElement } from '@angular/cdk/coercion';
 import { AfterViewInit, Directive, ElementRef, Inject, Input, OnChanges, Optional, Renderer2 } from '@angular/core';
 import { ANIMATION_MODULE_TYPE } from '@angular/platform-browser/animations';
-
-import { InputBoolean } from '../util/convert';
+import { BooleanInput } from 'ng-zorro-antd/core/types';
+import { InputBoolean } from 'ng-zorro-antd/core/util';
 
 const DISABLED_CLASSNAME = 'nz-animate-disabled';
 
@@ -19,6 +19,8 @@ const DISABLED_CLASSNAME = 'nz-animate-disabled';
   exportAs: 'nzNoAnimation'
 })
 export class NzNoAnimationDirective implements OnChanges, AfterViewInit {
+  static ngAcceptInputType_nzNoAnimation: BooleanInput;
+
   @Input() @InputBoolean() nzNoAnimation: boolean = false;
 
   constructor(

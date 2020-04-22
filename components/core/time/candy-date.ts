@@ -6,42 +6,61 @@
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
 
-import {
-  differenceInCalendarDays,
-  differenceInCalendarMonths,
-  differenceInCalendarYears,
-  differenceInHours,
-  differenceInMinutes,
-  differenceInSeconds,
-  isSameDay,
-  isSameHour,
-  isSameMinute,
-  isSameMonth,
-  isSameSecond,
-  isSameYear,
-  isToday,
-  isValid,
-  setYear,
-  startOfMonth,
-  startOfWeek
-} from 'date-fns';
-import addMonths from 'date-fns/add_months';
-import addYears from 'date-fns/add_years';
-import setDay from 'date-fns/set_day';
-import setMonth from 'date-fns/set_month';
-import { warn } from '../logger';
-import { IndexableObject } from '../types';
+import addMonths from 'date-fns/addMonths';
+import addYears from 'date-fns/addYears';
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
+import differenceInCalendarMonths from 'date-fns/differenceInCalendarMonths';
+import differenceInCalendarYears from 'date-fns/differenceInCalendarYears';
+import differenceInHours from 'date-fns/differenceInHours';
+import differenceInMinutes from 'date-fns/differenceInMinutes';
+import differenceInSeconds from 'date-fns/differenceInSeconds';
+import isFirstDayOfMonth from 'date-fns/isFirstDayOfMonth';
+import isLastDayOfMonth from 'date-fns/isLastDayOfMonth';
+import isSameDay from 'date-fns/isSameDay';
+import isSameHour from 'date-fns/isSameHour';
+import isSameMinute from 'date-fns/isSameMinute';
+import isSameMonth from 'date-fns/isSameMonth';
+import isSameSecond from 'date-fns/isSameSecond';
+import isSameYear from 'date-fns/isSameYear';
+import isToday from 'date-fns/isToday';
+import isValid from 'date-fns/isValid';
+import setDay from 'date-fns/setDay';
+import setMonth from 'date-fns/setMonth';
+import setYear from 'date-fns/setYear';
+import startOfMonth from 'date-fns/startOfMonth';
+import startOfWeek from 'date-fns/startOfWeek';
+import { warn } from 'ng-zorro-antd/core/logger';
+import { IndexableObject, NzSafeAny } from 'ng-zorro-antd/core/types';
 
+export type WeekDayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 export type CandyDateCompareGrain = 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second';
 export type CandyDateType = CandyDate | Date | null;
+export type SingleValue = CandyDate | null;
+export type CompatibleValue = SingleValue | SingleValue[];
 
-export function sortRangeValue(rangeValue: CandyDate[]): CandyDate[] {
+export function sortRangeValue(rangeValue: SingleValue[]): SingleValue[] {
   if (Array.isArray(rangeValue)) {
     const [start, end] = rangeValue;
     return start && end && start.isAfterSecond(end) ? [end, start] : [start, end];
   }
   return rangeValue;
 }
+
+export function normalizeRangeValue(value: SingleValue[]): CandyDate[] {
+  const [start, end] = value || [];
+  const newStart = start || new CandyDate();
+  const newEnd = end?.isSameMonth(newStart) ? end.addMonths(1) : end || newStart.addMonths(1);
+  return [newStart, newEnd];
+}
+
+export function cloneDate(value: CompatibleValue): CompatibleValue {
+  if (Array.isArray(value)) {
+    return value.map(v => (v instanceof CandyDate ? v.clone() : null));
+  } else {
+    return value instanceof CandyDate ? value.clone() : null;
+  }
+}
+
 /**
  * Wrapping kind APIs for date operating and unify
  * NOTE: every new API return new CandyDate object without side effects to the former Date object
@@ -76,13 +95,13 @@ export class CandyDate implements IndexableObject {
   //   return this;
   // }
 
-  calendarStart(options?: { weekStartsOn: number | undefined }): CandyDate {
+  calendarStart(options?: { weekStartsOn: WeekDayIndex | undefined }): CandyDate {
     return new CandyDate(startOfWeek(startOfMonth(this.nativeDate), options));
   }
 
   // ---------------------------------------------------------------------
   // | Native shortcuts
-  // ---------------------------------------------------------------------
+  // -----------------------------------------------------------------------------\
 
   getYear(): number {
     return this.nativeDate.getFullYear();
@@ -150,7 +169,7 @@ export class CandyDate implements IndexableObject {
     return new CandyDate(addMonths(this.nativeDate, amount));
   }
 
-  setDay(day: number, options?: { weekStartsOn: number }): CandyDate {
+  setDay(day: number, options?: { weekStartsOn: WeekDayIndex }): CandyDate {
     return new CandyDate(setDay(this.nativeDate, day, options));
   }
 
@@ -305,8 +324,15 @@ export class CandyDate implements IndexableObject {
     return isValid(this.nativeDate);
   }
 
-  // tslint:disable-next-line: no-any
-  private toNativeDate(date: any): Date {
+  isFirstDayOfMonth(): boolean {
+    return isFirstDayOfMonth(this.nativeDate);
+  }
+
+  isLastDayOfMonth(): boolean {
+    return isLastDayOfMonth(this.nativeDate);
+  }
+
+  private toNativeDate(date: NzSafeAny): Date {
     return date instanceof CandyDate ? date.nativeDate : date;
   }
 }

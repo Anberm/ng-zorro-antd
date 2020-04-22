@@ -22,8 +22,9 @@ import {
   Tree
 } from '@angular-devkit/schematics';
 import { FileSystemSchematicContext } from '@angular-devkit/schematics/tools';
-import { getDefaultComponentOptions, getProjectFromWorkspace, ts } from '@angular/cdk/schematics';
+import { getDefaultComponentOptions, getProjectFromWorkspace } from '@angular/cdk/schematics';
 import { Schema as ComponentOptions, Style } from '@schematics/angular/component/schema';
+import * as ts from 'typescript';
 import {
   addDeclarationToModule,
   addEntryComponentToModule,
@@ -64,11 +65,7 @@ function getModuleClassnamePrefix(source: any): string {
   const className = getFirstNgModuleName(source);
   if (className) {
     const execArray = /(\w+)Module/gi.exec(className);
-    if (execArray && execArray[1]) {
-      return execArray[1];
-    } else {
-      return null;
-    }
+    return execArray?.[1] ?? null;
   } else {
     return null;
   }

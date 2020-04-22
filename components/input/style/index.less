@@ -1,6 +1,8 @@
 @import '../../style/themes/index';
 @import '../../style/mixins/index';
 @import './mixin';
+@import './affix';
+@import './allow-clear';
 
 // Input styles
 .@{ant-prefix}-input {
@@ -17,23 +19,6 @@
     width: 100%;
     text-align: start;
     vertical-align: top; // https://github.com/ant-design/ant-design/issues/6403
-    &-rtl {
-      direction: rtl;
-    }
-  }
-  &-rtl {
-    direction: rtl;
-  }
-}
-
-// Input with affix: prefix or suffix
-.@{ant-prefix}-input-affix-wrapper {
-  .reset-component;
-  .input-affix-wrapper(~'@{ant-prefix}-input');
-
-  // https://github.com/ant-design/ant-design/issues/6144
-  .@{ant-prefix}-input {
-    min-height: 100%; // use min-height, assume that no smaller height to override
   }
 }
 
@@ -47,17 +32,5 @@
   }
 }
 
-.@{ant-prefix}-input-clear-icon {
-  .clear-icon;
-  vertical-align: 0;
-}
-
-.@{ant-prefix}-input-textarea-clear-icon {
-  .clear-icon;
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 8px 8px 0 0;
-}
-
 @import './search-input';
+@import './rtl';

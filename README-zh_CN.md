@@ -25,7 +25,7 @@ Ant Design 的 Angular 实现，开发和服务于企业级后台产品。
 
 </div>
 
-[![](https://cdn-images-1.medium.com/max/2000/1*NIlj0-TdLMbo_hzSBP8tmg.png)](http://ng.ant.design)
+[![](https://img.alicdn.com/tfs/TB1t6QPylr0gK0jSZFnXXbRRXXa-4000-1378.png)](http://ng.ant.design)
 
 [English](README.md) | 简体中文
 
@@ -35,12 +35,13 @@ Ant Design 的 Angular 实现，开发和服务于企业级后台产品。
 - 开箱即用的高质量 Angular 组件，与 Angular 保持同步升级。
 - 使用 TypeScript 构建，提供完整的类型定义文件。
 - 支持 OnPush 模式，性能卓越。
-- 支持自定义主题。
-- 支持使用单独某个组件。
+- 数十个国际化语言支持。
+- 深入每个细节的主题定制能力。
+
 
 ## 🖥 支持环境
 
-- Angular `^8.0.0`
+- Angular `^9.0.0` [![npm package](https://img.shields.io/npm/v/ng-zorro-antd.svg?style=flat-square)](https://www.npmjs.org/package/ng-zorro-antd)
 - 支持服务端渲染
 - 现代浏览器，以及 Internet Explorer 11+ （使用 [polyfills](https://angular.io/guide/browser-support)）
 - [Electron](http://electron.atom.io/)
@@ -49,7 +50,6 @@ Ant Design 的 Angular 实现，开发和服务于企业级后台产品。
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | IE11, Edge| last 2 versions| last 2 versions| last 2 versions| last 2 versions| last 2 versions
 
-> 由于 `@angular/cdk` 的缘故，`ng-zorro-antd` 支持主要浏览器的最新两个主版本。
 
 ## 🎨 设计规范
 

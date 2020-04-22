@@ -6,16 +6,15 @@
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
 
-// tslint:disable no-any
-
 import { Inject, Injectable, Optional } from '@angular/core';
+import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { Observable, Subject } from 'rxjs';
 
 import { filter, mapTo } from 'rxjs/operators';
 
 import { NZ_CONFIG, NzConfig, NzConfigKey } from './config';
 
-const isDefined = function(value?: any): boolean {
+const isDefined = function (value?: NzSafeAny): boolean {
   return value !== undefined;
 };
 
@@ -50,7 +49,6 @@ export class NzConfigService {
 }
 
 // tslint:disable:no-invalid-this
-// tslint:disable:no-any
 
 /**
  * This decorator is used to decorate properties. If a property is decorated, it would try to load default value from
@@ -58,7 +56,7 @@ export class NzConfigService {
  */
 // tslint:disable-next-line:typedef
 export function WithConfig<T>(componentName: NzConfigKey, innerDefaultValue?: T) {
-  return function ConfigDecorator(target: any, propName: any, originalDescriptor?: TypedPropertyDescriptor<T>): any {
+  return function ConfigDecorator(target: NzSafeAny, propName: NzSafeAny, originalDescriptor?: TypedPropertyDescriptor<T>): NzSafeAny {
     const privatePropName = `$$__assignedValue__${propName}`;
 
     Object.defineProperty(target, privatePropName, {
@@ -69,7 +67,7 @@ export function WithConfig<T>(componentName: NzConfigKey, innerDefaultValue?: T)
 
     return {
       get(): T | undefined {
-        const originalValue = originalDescriptor && originalDescriptor.get ? originalDescriptor.get.bind(this)() : this[privatePropName];
+        const originalValue = originalDescriptor?.get ? originalDescriptor.get.bind(this)() : this[privatePropName];
 
         if (isDefined(originalValue)) {
           return originalValue;
@@ -81,7 +79,7 @@ export function WithConfig<T>(componentName: NzConfigKey, innerDefaultValue?: T)
         return isDefined(configValue) ? configValue : innerDefaultValue;
       },
       set(value?: T): void {
-        if (originalDescriptor && originalDescriptor.set) {
+        if (originalDescriptor?.set) {
           originalDescriptor.set.bind(this)(value);
         } else {
           this[privatePropName] = value;

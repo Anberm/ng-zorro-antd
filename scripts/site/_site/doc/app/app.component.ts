@@ -1,7 +1,7 @@
 import { Platform } from '@angular/cdk/platform';
 import { DOCUMENT } from '@angular/common';
 import {
-  AfterViewInit,
+  AfterContentInit,
   Component,
   ElementRef,
   HostListener,
@@ -32,23 +32,28 @@ interface DocPageMeta {
   zh: string;
 }
 
+type SiteTheme = 'default' | 'dark' | 'compact';
+
 @Component({
-  selector   : 'app-root',
+  selector: 'app-root',
   templateUrl: './app.component.html'
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterContentInit {
+
   /**
    * When the screen size is smaller that 768 pixel, show the drawer and hide
    * the navigation on the side.
    **/
   showDrawer = false;
   isDrawerOpen = false;
-  isExperimental = false;
+  page: 'docs' | 'components' | 'experimental' | string = 'docs';
+  windowWidth = 1400;
   routerList = ROUTER_LIST;
   componentList: DocPageMeta[] = [];
   searchComponent = null;
   // tslint:disable-next-line:no-any
   docsearch: any = null;
+  theme: SiteTheme = 'default';
 
   get useDocsearch(): boolean {
     if (!this.platform.isBrowser) {
@@ -58,7 +63,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   language = 'zh';
-  oldVersionList = [ '0.5.x', '0.6.x', '0.7.x', '1.8.x', '7.5.x' ];
   currentVersion = VERSION.full;
 
   @ViewChild('searchInput', { static: false }) searchInput: ElementRef<HTMLInputElement>;
@@ -68,6 +72,38 @@ export class AppComponent implements OnInit, AfterViewInit {
     url.splice(-1);
     // tslint:disable-next-line:prefer-template
     this.router.navigateByUrl(url.join('/') + '/' + language);
+  }
+
+  initTheme(): void {
+    if (!this.platform.isBrowser) {
+      return;
+    }
+    const theme = localStorage.getItem('site-theme') as SiteTheme || 'default';
+    this.onThemeChange(theme);
+  }
+
+  onThemeChange(theme: SiteTheme): void {
+    if (!this.platform.isBrowser) {
+      return;
+    }
+    this.theme = theme;
+    this.appService.theme$.next(theme);
+    this.renderer.setAttribute(document.body, 'data-theme', theme);
+    const dom = document.getElementById('site-theme');
+    if (dom) {
+      dom.remove();
+    }
+    localStorage.removeItem('site-theme');
+    if (theme !== 'default') {
+      const style = document.createElement('link');
+      style.type = 'text/css';
+      style.rel = 'stylesheet';
+      style.id = 'site-theme';
+      style.href = `assets/${theme}.css`;
+
+      localStorage.setItem('site-theme', theme);
+      document.body.append(style);
+    }
   }
 
   constructor(
@@ -82,8 +118,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     // tslint:disable-next-line:no-any
     @Inject(DOCUMENT) private document: any
-  ) {
-  }
+  ) {}
 
   navigateToPage(url: string): void {
     if (url) {
@@ -91,12 +126,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setExperimental(isExperimental: boolean): void {
-    this.isExperimental = isExperimental;
-    if (isExperimental) {
-      this.router.navigateByUrl(`/docs/experimental/${this.language}`);
-    } else {
-      this.router.navigateByUrl(`/docs/introduce/${this.language}`);
+  setPage(url: string): void {
+    const match = url.match(/\/(\w+)/);
+    if (match && match[1]) {
+      this.page = match[1];
     }
   }
 
@@ -114,7 +147,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.routerList.components.forEach(group => {
-      this.componentList = this.componentList.concat([ ...group.children ]);
+      this.componentList = this.componentList.concat([...group.children]);
     });
 
     this.router.events.subscribe(event => {
@@ -133,16 +166,16 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (this.router.url !== '/' + this.searchComponent) {
           this.searchComponent = null;
         }
-        this.isExperimental = this.router.url.search('experimental') !== -1;
+        this.setPage(this.router.url);
         this.language = this.router.url
-          .split('/')[this.router.url.split('/').length - 1]
-          .split('#')[0]
+          .split('/')
+          [this.router.url.split('/').length - 1].split('#')[0]
           .split('?')[0];
         this.appService.language$.next(this.language);
         this.nzI18nService.setLocale(this.language === 'en' ? en_US : zh_CN);
         this.updateDocMetaAndLocale();
         if (this.docsearch) {
-          this.docsearch!.algoliaOptions = { hitsPerPage: 5, facetFilters: [ `tags:${this.language}` ] };
+          this.docsearch!.algoliaOptions = { hitsPerPage: 5, facetFilters: [`tags:${this.language}`] };
         }
 
         if (environment.production && this.platform.isBrowser) {
@@ -161,10 +194,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
 
     this.initColor();
+    this.initTheme();
     this.detectLanguage();
   }
 
-  ngAfterViewInit(): void {
+  ngAfterContentInit(): void {
     if (this.useDocsearch) {
       this.initDocsearch();
     }
@@ -175,7 +209,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   updateDocMetaAndLocale(): void {
     if (this.platform.isBrowser) {
       const isEn = this.language === 'en';
-      const enDescription = 'An enterprise-class UI design language and Angular-based implementation with a set of high-quality Angular components, one of best Angular UI library for enterprises';
+      const enDescription =
+        'An enterprise-class UI design language and Angular-based implementation with a set of high-quality Angular components, one of best Angular UI library for enterprises';
       const zhDescription = 'Ant Design 的 Angular 实现，开发和服务于企业级后台产品，开箱即用的高质量 Angular 组件。';
       const descriptionContent = isEn ? enDescription : zhDescription;
       this.meta.updateTag({
@@ -202,11 +237,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   initDocsearch() {
     this.loadScript('https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js').then(() => {
       this.docsearch = docsearch({
-        appId         : 'BH4D9OD16A',
-        apiKey        : '9f7d9d6527ff52ec484e90bb1f256971',
-        indexName     : 'ng_zorro',
-        inputSelector : '#search-box input',
-        algoliaOptions: { hitsPerPage: 5, facetFilters: [ `tags:${this.language}` ] },
+        appId: 'BH4D9OD16A',
+        apiKey: '9f7d9d6527ff52ec484e90bb1f256971',
+        indexName: 'ng_zorro',
+        inputSelector: '#search-box input',
+        algoliaOptions: { hitsPerPage: 5, facetFilters: [`tags:${this.language}`] },
         transformData(hits: any) {
           // tslint:disable-line:no-any
           hits.forEach((hit: any) => {
@@ -216,12 +251,12 @@ export class AppComponent implements OnInit, AfterViewInit {
           });
           return hits;
         },
-        debug         : false
+        debug: false
       });
     });
   }
 
-  @HostListener('document:keyup.s', [ '$event' ])
+  @HostListener('document:keyup.s', ['$event'])
   onKeyUp(event: KeyboardEvent) {
     if (this.useDocsearch && this.searchInput && this.searchInput.nativeElement && event.target === document.body) {
       this.searchInput.nativeElement.focus();
@@ -233,13 +268,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   initColor() {
     if (!this.platform.isBrowser) {
-      return
+      return;
     }
     const node = document.createElement('link');
     node.rel = 'stylesheet/less';
     node.type = 'text/css';
     node.href = '/assets/color.less';
-    document.getElementsByTagName('head')[ 0 ].appendChild(node);
+    document.getElementsByTagName('head')[0].appendChild(node);
   }
 
   lessLoaded = false;
@@ -299,7 +334,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           map(() => window.innerWidth)
         )
         .subscribe(width => {
-          const showDrawer = width <= 995;
+          this.windowWidth = width;
+          const showDrawer = width <= 768;
           if (this.showDrawer !== showDrawer) {
             this.showDrawer = showDrawer;
           }
@@ -316,7 +352,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     const hasLanguage = pathname.match(/(en|zh)(\/?)$/);
     if (language === 'zh-cn' && !hasLanguage) {
       this.nzI18nService.setLocale(zh_CN);
-      this.router.navigate([ 'docs', 'introduce', 'zh' ]);
+      this.router.navigate(['docs', 'introduce', 'zh']);
     }
   }
 }

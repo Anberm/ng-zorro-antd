@@ -6,8 +6,9 @@
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
 
-export * from './nz-embed-empty.component';
-export * from './nz-empty.component';
-export * from './nz-empty.module';
-export * from './nz-empty.service';
-export * from './nz-empty-config';
+export * from './embed-empty.component';
+export * from './empty.component';
+export * from './empty.module';
+export * from './config';
+export { NzEmptySimpleComponent } from './partial/simple';
+export { NzEmptyDefaultComponent } from './partial/default';

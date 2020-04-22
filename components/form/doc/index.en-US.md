@@ -54,17 +54,14 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 | -------- | ----------- | ---- | ------------- | ------------- |
 | `[nzLayout]`| Form layout | `'horizontal' \| 'vertical' \| 'inline'` | `'horizontal'` |
 | `[nzNoColon]`| change default props `[nzNoColon]` value of `nz-form-label` | `boolean` | `false` | ✅ |
-
+| `[nzAutoTips]`| Set default props `[nzAutoTips]` value of `nz-form-control`, please refer to the example: **Auto tips** | `Record<string, Record<string, string>>` | `{}` | ✅ |
+| `[nzDisableAutoTips]`| Set default props `[nzDisableAutoTip]` value of `nz-form-control` | `boolean` | `false` | ✅ |
 
 ### nz-form-item
 
 Used to separate the item in forms, contains label(optional) and control field.
 
 > All api in [nz-row](/components/grid/zh) can be used in `nz-form-item`.
-
-| Property | Description | Type | Default Value |
-| --- | --- | --- | --- |
-| `[nzFlex]`| display flex | `boolean` | `false` |
 
 ### nz-form-label
 
@@ -94,6 +91,8 @@ A form consists of one or more form fields whose type includes input, textarea, 
 | `[nzWarningTip]`| Tip display when validate warning | `string  \|  TemplateRef<{ $implicit: FormControl  \|  NgModel }>` | - |
 | `[nzErrorTip]`| Tip display when validate error | `string  \|  TemplateRef<{ $implicit: FormControl  \|  NgModel }>` | - |
 | `[nzValidatingTip]`| Tip display when validating | `string  \|  TemplateRef<{ $implicit: FormControl  \|  NgModel }>` | - |
+| `[nzAutoTips]`| The object of the tips, please refer to the example: **Auto tips** | `Record<string, string \| Record<string, string>>` | - | - |
+| `[nzDisableAutoTips]`| Disable Auto Tips | `boolean` | - | - |
 
 ### nz-form-split
 

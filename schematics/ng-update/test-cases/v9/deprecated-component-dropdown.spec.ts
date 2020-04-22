@@ -3,6 +3,7 @@ import { TempScopedNodeJsSyncHost } from '@angular-devkit/core/node/testing';
 import { HostTree } from '@angular-devkit/schematics';
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
 import * as shx from 'shelljs';
+import { SchematicsTestNGConfig, SchematicsTestTsConfig } from '../config';
 
 describe('dropdown components migration', () => {
   let runner: SchematicTestRunner;
@@ -11,30 +12,19 @@ describe('dropdown components migration', () => {
   let tmpDirPath: string;
   let previousWorkingDir: string;
   let warnOutput: string[];
-  let errorOutput: string[];
 
   beforeEach(() => {
     runner = new SchematicTestRunner('test', require.resolve('../../../migration.json'));
     host = new TempScopedNodeJsSyncHost();
     tree = new UnitTestTree(new HostTree(host));
 
-    writeFile('/tsconfig.json', JSON.stringify({
-      compilerOptions: {
-        experimentalDecorators: true,
-        lib: ['es2015']
-      }
-    }));
-    writeFile('/angular.json', JSON.stringify({
-      projects: {t: {architect: {build: {options: {tsConfig: './tsconfig.json'}}}}}
-    }));
+    writeFile('/tsconfig.json', JSON.stringify(SchematicsTestTsConfig));
+    writeFile('/angular.json', JSON.stringify(SchematicsTestNGConfig));
 
     warnOutput = [];
-    errorOutput = [];
     runner.logger.subscribe(logEntry => {
       if (logEntry.level === 'warn') {
         warnOutput.push(logEntry.message);
-      } else if (logEntry.level === 'error') {
-        errorOutput.push(logEntry.message);
       }
     });
 

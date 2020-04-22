@@ -121,3 +121,131 @@ You can get more information about custom-webpack builder following the articles
 * [Customize Webpack Configuration in Your Angular Application](https://netbasal.com/customize-webpack-configuration-in-your-angular-application-d09683f6bd22)
 
 All less vars can be checked [here](https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/scripts/site/_site/doc/theme.less) is a sample of theme define file.
+
+## Official Themes
+
+We have some official themes, try them out and give us some feedback!
+
+- 🌑 Dark Theme (supported in 9+)
+- 📦 Compact Theme (supported in 9+)
+
+### Method 1
+
+Import `ng-zorro-antd.dark.less` or `ng-zorro-antd.compact.less` in the style file.
+
+```less
+@import "~ng-zorro-antd/ng-zorro-antd.dark.less";    // Import the official dark less style file
+@import "~ng-zorro-antd/ng-zorro-antd.compact.less"; // Import the official compact less style file
+```
+
+### Method 2
+
+If the project does not use Less, you can include `ng-zorro-antd.dark.css` or `ng-zorro-antd.compact.css` in the CSS file or add to the `angular.json` config.
+
+CSS file：
+
+```css
+@import "~ng-zorro-antd/ng-zorro-antd.dark.css";
+```
+
+angular.json
+
+```json
+{
+  "build": {
+    "options": {
+      "styles": [
+        "node_modules/ng-zorro-antd/ng-zorro-antd.dark.css"
+      ]
+    }
+  }
+}
+```
+
+### Method 3
+
+using less-loader in webpack to introduce as needed.
+
+```javascript
+const darkThemeVars = require('ng-zorro-antd/dark-theme');
+const compactThemeVars = require('ng-zorro-antd/compact-theme');
+module.exports = {
+  module: {
+    rules: [
+      {
+        test   : /\.less$/,
+        loader: 'less-loader',
+        options: {
+          modifyVars: {
+          'hack': `true;@import "${require.resolve('ng-zorro-antd/style/color/colorPalette.less')}";`,
+            ...darkThemeVars,
+            ...compactThemeVars
+          },
+          javascriptEnabled: true
+        }
+      }
+    ]
+  }
+};
+
+```
+
+## Switch Theming
+
+When using @angular/cli to configure themes, you must build applications for each theme. When you want to switch themes without reloading the application (like this website), you can use the following method to compile the theme into a style file, and switch at runtime:
+
+Note: Make sure theme variables exist in global styles, not in component scope styles, because component styles that have higher priority will prevent the theme override.
+
+1. Install Dependencies
+
+```bash
+npm i less -D less-plugin-clean-css -D
+```
+
+2. Script
+
+Take the dark theme, for example, use the less-compiler to compile the application's style entry file, and replace the style variables in the ` modifyVars`,  and output to target path.
+
+```js
+const less = require('less');
+const LessPluginCleanCSS = require('less-plugin-clean-css');
+const fs = require('fs');
+const darkThemeVars = require('ng-zorro-antd/dark-theme');
+
+const appStyles = 'path/src/styles.less' // style entry path for the application
+const themeContent = `@import '${appStyles}'`
+
+less.render(themeContent, {
+  javascriptEnabled: true,
+  plugins: [new LessPluginCleanCSS({ advanced: true })],
+  modifyVars: {
+    ...darkThemeVars
+  }
+}).then(data => {
+  fs.writeFileSync(
+    // output path for the theme style
+    'path/assets/themes/style.dark.css',
+    data.css
+  )
+});
+```
+
+3. Switch Theme at Runtime
+
+Dynamically create a `link` tag, dynamically load style files into the application, and remove them otherwise.
+```ts
+changeTheme(theme: 'default' | 'dark'): void {
+  if (theme === 'dark') {
+    const style = document.createElement('link');
+    style.type = 'text/css';
+    style.rel = 'stylesheet';
+    style.id = 'dark-theme';
+    style.href = 'assets/themes/style.dark.css';
+  } else {
+    const dom = document.getElementById('dark-theme');
+    if (dom) {
+      dom.remove();
+    }
+  }
+}
+```

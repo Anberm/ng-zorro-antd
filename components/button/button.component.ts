@@ -17,18 +17,19 @@ import {
   Input,
   OnChanges,
   OnDestroy,
-  OnInit,
   Renderer2,
   SimpleChanges,
   ViewEncapsulation
 } from '@angular/core';
+import { NzConfigService, WithConfig } from 'ng-zorro-antd/core/config';
+import { BooleanInput } from 'ng-zorro-antd/core/types';
+import { InputBoolean } from 'ng-zorro-antd/core/util';
 
-import { IndexableObject, InputBoolean, NzConfigService, WithConfig } from 'ng-zorro-antd/core';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { Subject } from 'rxjs';
 import { filter, startWith, takeUntil } from 'rxjs/operators';
 
-export type NzButtonType = 'primary' | 'dashed' | 'danger' | 'link' | null;
+export type NzButtonType = 'primary' | 'default' | 'dashed' | 'danger' | 'link' | null;
 export type NzButtonShape = 'circle' | 'round' | null;
 export type NzButtonSize = 'large' | 'default' | 'small';
 
@@ -40,13 +41,34 @@ const NZ_CONFIG_COMPONENT_NAME = 'button';
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  host: { '[class]': 'hostClassMap' },
   template: `
     <i nz-icon nzType="loading" *ngIf="nzLoading"></i>
     <ng-content></ng-content>
-  `
+  `,
+  host: {
+    '[class.ant-btn]': `true`,
+    '[class.ant-btn-primary]': `nzType === 'primary'`,
+    '[class.ant-btn-dashed]': `nzType === 'dashed'`,
+    '[class.ant-btn-link]': `nzType === 'link'`,
+    '[class.ant-btn-danger]': `nzType === 'danger'`,
+    '[class.ant-btn-circle]': `nzShape === 'circle'`,
+    '[class.ant-btn-round]': `nzShape === 'round'`,
+    '[class.ant-btn-lg]': `nzSize === 'large'`,
+    '[class.ant-btn-sm]': `nzSize === 'small'`,
+    '[class.ant-btn-dangerous]': `nzDanger`,
+    '[class.ant-btn-loading]': `nzLoading`,
+    '[class.ant-btn-background-ghost]': `nzGhost`,
+    '[class.ant-btn-block]': `nzBlock`,
+    '[class.ant-input-search-button]': `nzSearch`
+  }
 })
-export class NzButtonComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit, AfterContentInit {
+export class NzButtonComponent implements OnDestroy, OnChanges, AfterViewInit, AfterContentInit {
+  static ngAcceptInputType_nzBlock: BooleanInput;
+  static ngAcceptInputType_nzGhost: BooleanInput;
+  static ngAcceptInputType_nzSearch: BooleanInput;
+  static ngAcceptInputType_nzLoading: BooleanInput;
+  static ngAcceptInputType_nzDanger: BooleanInput;
+
   @ContentChild(NzIconDirective, { read: ElementRef }) nzIconDirectiveElement: ElementRef;
   @Input() @InputBoolean() nzBlock: boolean = false;
   @Input() @InputBoolean() nzGhost: boolean = false;
@@ -58,27 +80,6 @@ export class NzButtonComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   @Input() @WithConfig(NZ_CONFIG_COMPONENT_NAME, 'default') nzSize: NzButtonSize;
   private destroy$ = new Subject<void>();
   private loading$ = new Subject<boolean>();
-  hostClassMap: IndexableObject = {};
-
-  updateHostClassMap(): void {
-    this.hostClassMap = {
-      ['ant-btn']: true,
-      ['ant-btn-primary']: this.nzType === 'primary',
-      ['ant-btn-dashed']: this.nzType === 'dashed',
-      ['ant-btn-link']: this.nzType === 'link',
-      ['ant-btn-danger']: this.nzType === 'danger',
-      ['ant-btn-circle']: this.nzShape === 'circle',
-      ['ant-btn-round']: this.nzShape === 'round',
-      ['ant-btn-lg']: this.nzSize === 'large',
-      ['ant-btn-sm']: this.nzSize === 'small',
-      ['ant-btn-dangerous']: this.nzDanger,
-      ['ant-btn-loading']: this.nzLoading,
-      ['ant-btn-background-ghost']: this.nzGhost,
-      ['ant-btn-block']: this.nzBlock,
-      ['ant-input-search-button']: this.nzSearch
-    };
-    this.cdr.markForCheck();
-  }
 
   insertSpan(nodes: NodeList, renderer: Renderer2): void {
     nodes.forEach(node => {
@@ -91,6 +92,17 @@ export class NzButtonComponent implements OnInit, OnDestroy, OnChanges, AfterVie
     });
   }
 
+  assertIconOnly(element: HTMLButtonElement, renderer: Renderer2): void {
+    const listOfNode = Array.from(element.childNodes);
+    const iconCount = listOfNode.filter(node => node.nodeName === 'I').length;
+    const noText = listOfNode.every(node => node.nodeName !== '#text');
+    const noSpan = listOfNode.every(node => node.nodeName !== 'SPAN');
+    const isIconOnly = noSpan && noText && iconCount === 1;
+    if (isIconOnly) {
+      renderer.addClass(element, 'ant-btn-icon-only');
+    }
+  }
+
   constructor(
     private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
@@ -101,16 +113,11 @@ export class NzButtonComponent implements OnInit, OnDestroy, OnChanges, AfterVie
       .getConfigChangeEventForComponent(NZ_CONFIG_COMPONENT_NAME)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.updateHostClassMap();
+        this.cdr.markForCheck();
       });
   }
 
-  ngOnInit(): void {
-    this.updateHostClassMap();
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    this.updateHostClassMap();
     const { nzLoading } = changes;
     if (nzLoading) {
       this.loading$.next(this.nzLoading);
@@ -118,6 +125,7 @@ export class NzButtonComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   }
 
   ngAfterViewInit(): void {
+    this.assertIconOnly(this.elementRef.nativeElement, this.renderer);
     this.insertSpan(this.elementRef.nativeElement.childNodes, this.renderer);
   }
 

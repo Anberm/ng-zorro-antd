@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { NzFormatEmitEvent, NzTreeNodeOptions } from 'ng-zorro-antd/core';
-import { NzTreeComponent } from 'ng-zorro-antd/tree';
+import { NzFormatEmitEvent, NzTreeComponent, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 
 @Component({
   selector: 'nz-demo-tree-basic',
@@ -13,6 +12,7 @@ import { NzTreeComponent } from 'ng-zorro-antd/tree';
       [nzExpandedKeys]="defaultExpandedKeys"
       [nzSelectedKeys]="defaultSelectedKeys"
       (nzClick)="nzClick($event)"
+      (nzContextMenu)="nzClick($event)"
       (nzCheckBoxChange)="nzCheck($event)"
       (nzExpandChange)="nzCheck($event)"
     >
